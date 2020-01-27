@@ -1,0 +1,48 @@
+package com.krupatek.courier.service;
+
+import com.krupatek.courier.model.Client;
+import com.krupatek.courier.repository.ClientRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class ClientServiceImpl implements ClientService {
+
+    @Autowired
+    ClientRepository clientRepository;
+
+    @Override
+    public List<Client> findAllByClientName(String clientName) {
+        return clientRepository.findAllByClientName(clientName);
+    }
+
+    @Override
+    public List<Client> findAll() {
+        return clientRepository.findAll();
+    }
+
+    @Override
+    public Client saveAndFlush(Client client) {
+        return clientRepository.saveAndFlush(client);
+    }
+
+    @Override
+    public List<Client> findByClientNameStartsWith(String clientName) {
+        return clientRepository.findByClientNameStartsWith(clientName);
+    }
+
+    @Override
+    public List<Client> fetch(int offset, int limit, String filterText) {
+        Pageable pageable = PageRequest.of(offset, limit);
+        return clientRepository.findByClientNameStartsWith(filterText, pageable);
+    }
+
+    @Override
+    public int getCount(String filterText) {
+        return clientRepository.findByClientNameStartsWith(filterText).size();
+    }
+}
