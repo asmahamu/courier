@@ -20,6 +20,8 @@ import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
+import com.vaadin.flow.data.converter.StringToDoubleConverter;
+import com.vaadin.flow.data.converter.StringToIntegerConverter;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
@@ -59,7 +61,7 @@ public class NewAccountCopyForm extends Div {
         TextField docNo = new TextField();
         docNo.setLabel("Doc No. : ");
         docNo.setValueChangeMode(ValueChangeMode.EAGER);
-        binder.bind(docNo, AccountCopy::getDocNo, AccountCopy::setDocNo);
+        binder.forField(docNo).asRequired("Every Account copy must have Doc no").bind(AccountCopy::getDocNo, AccountCopy::setDocNo);
 
         // Date
         DatePicker podDate = new DatePicker();
@@ -74,14 +76,12 @@ public class NewAccountCopyForm extends Div {
         cashCreditSelect.setLabel("Cash / Cr : ");
         cashCreditSelect.setItems("Cash", "Cr");
         binder.bind(cashCreditSelect, AccountCopy::getPodType, AccountCopy::setPodType);
-        cashCreditSelect.addFocusShortcut(Key.KEY_C);
 
         // Document / Parcel
         Select<String> selectDocumentOrParcelType = new Select<>();
         selectDocumentOrParcelType.setLabel("Document / Parcel : ");
         selectDocumentOrParcelType.setItems("D", "P");
         binder.bind(selectDocumentOrParcelType, AccountCopy::getdP, AccountCopy::setdP);
-        selectDocumentOrParcelType.addFocusShortcut(Key.KEY_D);
 
         formLayout.add(docNo, podDate, cashCreditSelect, selectDocumentOrParcelType);
 
@@ -117,7 +117,8 @@ public class NewAccountCopyForm extends Div {
         TextField pincode = new TextField();
         pincode.setLabel("Pincode : ");
         pincode.setValueChangeMode(ValueChangeMode.EAGER);
-        binder.bind(pincode,
+        binder.forField(pincode).asRequired("Every Account copy must have pincode").
+                bind(
                 AccountCopy::getPlaceCode,
                 AccountCopy::setPlaceCode);
 
@@ -125,13 +126,13 @@ public class NewAccountCopyForm extends Div {
         TextField receiverName = new TextField();
         receiverName.setLabel("Receiver Name : ");
         receiverName.setValueChangeMode(ValueChangeMode.EAGER);
-        binder.bind(receiverName, AccountCopy::getReceiverName, AccountCopy::setReceiverName);
+        binder.forField(receiverName).asRequired("Every Account copy must receiver name").bind(AccountCopy::getReceiverName, AccountCopy::setReceiverName);
 
         // Courier Name
         Select<String> courierSelect = new Select<>();
         courierSelect.setLabel("Courier Name : ");
         courierSelect.setItems("TRACKON", "HORIZON", "BLUE DART", "PAFEX", "FEDEX", "PRIME TRACK");
-//        courierSelect.setValue("FEDEX");
+        courierSelect.setValue("TRACKON");
         binder.bind(courierSelect, AccountCopy::getToParty, AccountCopy::setToParty);
 
         formLayout.add(pincode, receiverName, courierSelect);
@@ -139,8 +140,6 @@ public class NewAccountCopyForm extends Div {
         formLayout.setColspan(pincode, 1);
         formLayout.setColspan(receiverName, 2);
         formLayout.setColspan(courierSelect, 1);
-
-
 
         // Booking Type
         Select<String> bookingTypeSelect = new Select<>();
@@ -152,25 +151,26 @@ public class NewAccountCopyForm extends Div {
         Select<String> modeSelect = new Select<>();
         modeSelect.setLabel("Mode : ");
         modeSelect.setItems("S", "L", "A");
-        modeSelect.setValue("S");
         binder.bind(modeSelect, AccountCopy::getMode, AccountCopy::setMode);
 
         // Weight
         TextField weight = new TextField();
         weight.setLabel("Weight : ");
         weight.setValueChangeMode(ValueChangeMode.EAGER);
-        binder.bind(weight,
-                c -> c.getWeight().toString(),
-                (c, t) -> c.setWeight(Double.valueOf(t)));
+        binder.forField(weight).withConverter(
+                new StringToDoubleConverter("Not a number")).bind(
+                AccountCopy::getWeight,
+                AccountCopy::setWeight);
 
 
         // Rate
         TextField rate = new TextField();
         rate.setLabel("Rate : ");
         rate.setValueChangeMode(ValueChangeMode.EAGER);
-        binder.bind(rate,
-                c -> c.getRate().toString(),
-                (c, t) -> c.setRate(Integer.valueOf(t)));
+        binder.forField(rate).withConverter(
+                new StringToIntegerConverter("Not a number")).bind(
+                AccountCopy::getRate,
+                AccountCopy::setRate);
 
         formLayout.add(bookingTypeSelect, modeSelect, weight, rate);
 
@@ -194,6 +194,25 @@ public class NewAccountCopyForm extends Div {
         save.getStyle().set("marginRight", "10px");
         formLayout.add(actions);
         add(formLayout);
+
+        docNo.addKeyDownListener(Key.ENTER, event ->
+                podDate.focus());
+
+        podDate.addValueChangeListener(e -> cashCreditSelect.focus());
+        cashCreditSelect.addValueChangeListener(e -> selectDocumentOrParcelType.focus());
+        selectDocumentOrParcelType.addValueChangeListener(e -> clientsComboBox.focus());
+        clientsComboBox.addValueChangeListener(e -> destinationComboBox.focus());
+        destinationComboBox.addValueChangeListener(e -> pincode.focus());
+        pincode.addKeyDownListener(Key.ENTER, e -> receiverName.focus());
+        receiverName.addKeyDownListener(Key.ENTER, e -> courierSelect.focus());
+        courierSelect.addValueChangeListener(e -> bookingTypeSelect.focus());
+        bookingTypeSelect.addValueChangeListener(e -> modeSelect.focus());
+        modeSelect.addValueChangeListener(e -> weight.focus());
+        weight.addKeyDownListener(Key.ENTER, e -> rate.focus());
+        rate.addKeyDownListener(Key.ENTER, e -> save.focus());
+
+        docNo.focus();
+
         binder.readBean(accountCopy);
     }
 
