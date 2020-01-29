@@ -8,6 +8,7 @@ import com.krupatek.courier.utils.DateUtils;
 import com.krupatek.courier.view.ClientProfileForm;
 import com.krupatek.courier.view.CustomerBillingDetailsForm;
 import com.krupatek.courier.view.SystemSettingsForm;
+import com.krupatek.courier.view.accountcopy.AccountCopyEditor;
 import com.krupatek.courier.view.accountcopy.NewAccountCopyForm;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.contextmenu.MenuItem;
@@ -88,7 +89,7 @@ public class MainView extends VerticalLayout {
         } );
         accountCopyMenuItem.getSubMenu().addItem("Edit Account Copy", e -> {
             component.removeAll();
-            component.add(new NewAccountCopyForm(accountCopyService, clientService, destinationService, dateUtils));
+            component.add(new AccountCopyEditor(accountCopyService));
         } );
         billingDetails.getSubMenu().addItem("Direct Edition", e -> {
             component.removeAll();

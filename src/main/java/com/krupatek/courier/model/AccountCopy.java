@@ -22,7 +22,7 @@ public class AccountCopy {
     private String dP = "D";
 
     @Column(name = "mode")
-    private String mode;
+    private String mode = "L";
 
     @Column(name = "client_name")
     private String clientName;

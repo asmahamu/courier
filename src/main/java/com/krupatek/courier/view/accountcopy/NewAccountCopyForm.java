@@ -11,6 +11,7 @@ import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
@@ -41,6 +42,10 @@ public class NewAccountCopyForm extends Div {
             DestinationService destinationService,
             DateUtils dateUtils) {
         super();
+        Dialog dialog = new Dialog();
+        HorizontalLayout horizontalLayout = new HorizontalLayout();
+        horizontalLayout.setPadding(true);
+        horizontalLayout.setMargin(false);
         FormLayout formLayout = new FormLayout();
         formLayout.setResponsiveSteps(
                 new FormLayout.ResponsiveStep("25em", 1),
@@ -52,7 +57,7 @@ public class NewAccountCopyForm extends Div {
 
         Label title = new Label();
         title.setSizeFull();
-        title.setText("Account Copy");
+        title.setText("Create New Account Copy");
         formLayout.add(title, 4);
 
         Binder<AccountCopy> binder = new Binder<>(AccountCopy.class);
@@ -193,7 +198,10 @@ public class NewAccountCopyForm extends Div {
         actions.add(save, reset);
         save.getStyle().set("marginRight", "10px");
         formLayout.add(actions);
-        add(formLayout);
+        horizontalLayout.add(formLayout);
+        dialog.add(horizontalLayout);
+
+        dialog.open();
 
         docNo.addKeyDownListener(Key.ENTER, event ->
                 podDate.focus());
@@ -214,6 +222,7 @@ public class NewAccountCopyForm extends Div {
         docNo.focus();
 
         binder.readBean(accountCopy);
+
     }
 
 /*
