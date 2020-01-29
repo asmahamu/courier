@@ -1,6 +1,7 @@
 package com.krupatek.courier.view.accountcopy;
 
 import com.krupatek.courier.model.AccountCopy;
+import com.krupatek.courier.model.AccountCopyFilter;
 import com.krupatek.courier.service.AccountCopyService;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.HeaderRow;
@@ -17,12 +18,10 @@ import com.vaadin.flow.spring.annotation.UIScope;
 import org.springframework.data.domain.Page;
 import org.springframework.util.StringUtils;
 
-import java.util.logging.Logger;
-
 @SpringComponent
 @UIScope
 public class AccountCopyEditor extends Div {
-    private  String filter;
+    private  AccountCopyFilter filter;
     public AccountCopyEditor(
             AccountCopyService accountCopyService) {
         super();
@@ -41,6 +40,10 @@ public class AccountCopyEditor extends Div {
         docNo.setPlaceholder("Filter by Doc No");
         docNo.setValueChangeMode(ValueChangeMode.EAGER);
 
+        TextField clientName = new TextField();
+        clientName.setPlaceholder("Filter by Client Name");
+        clientName.setValueChangeMode(ValueChangeMode.EAGER);
+
         Grid<AccountCopy> accountCopyGrid = new Grid<>(AccountCopy.class);
         accountCopyGrid.setWidth("1300px");
         accountCopyGrid.setHeight("500px");
@@ -58,11 +61,11 @@ public class AccountCopyEditor extends Div {
 
         HeaderRow hr = accountCopyGrid.prependHeaderRow();
         hr.getCell(accountCopyGrid.getColumnByKey("docNo")).setComponent(docNo);
+        hr.getCell(accountCopyGrid.getColumnByKey("clientName")).setComponent(clientName);
 
         accountCopyGrid.setColumnReorderingAllowed(false);
 
-
-        DataProvider<AccountCopy, String> dataProvider =
+        DataProvider<AccountCopy, AccountCopyFilter> dataProvider =
                 DataProvider.fromFilteringCallbacks(
                         // First callback fetches items based on a query
                         query -> {
@@ -72,43 +75,41 @@ public class AccountCopyEditor extends Div {
                             // The number of items to load
                             int limit = query.getLimit();
 
-                            String filter = query.getFilter().orElse("");
+                            AccountCopyFilter accountCopyFilter = query.getFilter().orElse(new AccountCopyFilter());
+                            String docNoFilter = accountCopyFilter.getDocNoFilter();
+                            String clientNameFilter = accountCopyFilter.getClientNameFilter();
 
 
                             Page<AccountCopy> accountCopies = accountCopyService
-                                    .findByDocNoStartsWith(offset, limit, filter);
-                            Logger.getLogger(AccountCopyEditor.class.getName()).info("Filter is "+filter+" and count from fetch is "+accountCopies.getTotalElements());
+                                    .findByDocNoStartsWithAndClientNameStartsWith(offset, limit, docNoFilter, clientNameFilter);
                             return accountCopies.stream();
                         },
                         // Second callback fetches the number of items
                         // for a query
                         query -> {
-                            String filter = query.getFilter().orElse("");
-                            Integer count = Math.toIntExact(accountCopyService.countByDocNoStartsWith(filter));
-                            Logger.getLogger(AccountCopyEditor.class.getName()).info("Filter is "+filter+" and count is "+count);
-                            return count;
+                            AccountCopyFilter accountCopyFilter = query.getFilter().orElse(new AccountCopyFilter());
+                            String docNoFilter = accountCopyFilter.getDocNoFilter();
+                            String clientNameFilter = accountCopyFilter.getClientNameFilter();
+                            return Math.toIntExact(accountCopyService.countByDocNoStartsWithAndClientNameStartsWith(docNoFilter, clientNameFilter));
                         });
 
 //        listAccountCopy("", accountCopyGrid, accountCopyService);
 
-
-        ConfigurableFilterDataProvider<AccountCopy, Void, String> wrapper =
+        filter = new AccountCopyFilter();
+        ConfigurableFilterDataProvider<AccountCopy, Void, AccountCopyFilter> wrapper =
                 dataProvider.withConfigurableFilter();
         wrapper.setFilter(filter);
         accountCopyGrid.setDataProvider(wrapper);
 
         docNo.addValueChangeListener(event -> {
-            filter = event.getValue();
-            if (filter.trim().isEmpty()) {
-                // null disables filtering
-                filter = null;
-            }
-            Logger.getLogger(AccountCopyEditor.class.getName()).info("Filter is "+filter);
-            wrapper.setFilter(filter);
+            filter.setDocNoFilter(event.getValue());
             wrapper.refreshAll();
         });
 
-
+        clientName.addValueChangeListener(event -> {
+            filter.setClientNameFilter(event.getValue());
+            wrapper.refreshAll();
+        });
 
         verticalLayout.add(title ,accountCopyGrid);
         horizontalLayout.add(verticalLayout);
