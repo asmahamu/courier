@@ -5,6 +5,7 @@ import com.krupatek.courier.model.AccountCopyFilter;
 import com.krupatek.courier.service.AccountCopyService;
 import com.krupatek.courier.service.ClientService;
 import com.krupatek.courier.service.DestinationService;
+import com.krupatek.courier.service.RateMasterService;
 import com.krupatek.courier.utils.DateUtils;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
@@ -34,6 +35,7 @@ public class AccountCopyEditor extends Div {
             AccountCopyService accountCopyService,
             ClientService clientService,
             DestinationService destinationService,
+            RateMasterService rateMasterService,
             DateUtils dateUtils) {
         super();
         VerticalLayout verticalLayout = new VerticalLayout();
@@ -136,13 +138,20 @@ public class AccountCopyEditor extends Div {
                     accountCopyService,
                     clientService,
                     destinationService,
+                    rateMasterService,
                     dateUtils,
                     listener.getItem());
             add(accountCopyForm);
         });
 
         Button addNewBtn = new Button("New Account Copy", VaadinIcon.PLUS.create());
-        addNewBtn.addClickListener(e -> add(new NewAccountCopyForm(accountCopyService, clientService, destinationService,  dateUtils, new AccountCopy())));
+        addNewBtn.addClickListener(e -> add(new NewAccountCopyForm(
+                accountCopyService,
+                clientService,
+                destinationService,
+                rateMasterService,
+                dateUtils,
+                new AccountCopy())));
         verticalLayout.add(title ,accountCopyGrid, addNewBtn);
 
         horizontalLayout.add(verticalLayout);

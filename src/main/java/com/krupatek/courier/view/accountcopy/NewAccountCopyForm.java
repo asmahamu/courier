@@ -6,6 +6,7 @@ import com.krupatek.courier.model.Destination;
 import com.krupatek.courier.service.AccountCopyService;
 import com.krupatek.courier.service.ClientService;
 import com.krupatek.courier.service.DestinationService;
+import com.krupatek.courier.service.RateMasterService;
 import com.krupatek.courier.utils.DateUtils;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
@@ -38,9 +39,11 @@ public class NewAccountCopyForm extends Div {
             AccountCopyService accountCopyService,
             ClientService clientService,
             DestinationService destinationService,
+            RateMasterService rateMasterService,
             DateUtils dateUtils,
             AccountCopy accountCopy) {
         super();
+
         Dialog dialog = new Dialog();
         HorizontalLayout horizontalLayout = new HorizontalLayout();
         horizontalLayout.setPadding(true);

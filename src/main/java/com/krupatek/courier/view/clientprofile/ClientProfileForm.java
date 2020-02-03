@@ -177,10 +177,11 @@ public class ClientProfileForm extends Div {
                         binder.writeBean(this.client);
                         clientService.saveAndFlush(this.client
                         );
+                        Notification.show("Client profile updated successfully.");
                         // A real application would also save the updated person
                         // using the application's backend
                     } catch (ValidationException e) {
-                        Notification.show("Person could not be saved, " +
+                        Notification.show("Client could not be saved, " +
                                 "please check error messages for each field.");
                     }
                 });

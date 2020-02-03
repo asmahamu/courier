@@ -1,0 +1,24 @@
+package com.krupatek.courier.service;
+
+import com.krupatek.courier.model.RateIntEntry;
+import com.krupatek.courier.repository.RateIntMasterRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class RateIntMasterServiceImpl implements RateIntMasterService {
+    @Autowired
+    RateIntMasterRepository rateIntMasterRepository;
+
+    @Override
+    public List<RateIntEntry> findAllByClientName(String clientName) {
+        return rateIntMasterRepository.findAllByClientName(clientName);
+    }
+
+    @Override
+    public RateIntEntry saveAndFlush(RateIntEntry rateEntry) {
+        return rateIntMasterRepository.saveAndFlush(rateEntry);
+    }
+}
