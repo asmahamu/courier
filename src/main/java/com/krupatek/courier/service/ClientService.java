@@ -1,6 +1,7 @@
 package com.krupatek.courier.service;
 
 import com.krupatek.courier.model.Client;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,7 +12,6 @@ public interface ClientService {
     List<Client> findAll();
     Client saveAndFlush(Client client);
     List<Client> findByClientNameStartsWith(String clientName);
-    List<Client> fetch(int offset, int limit,
-                           String filterText);
-    int getCount(String filterText);
+    Page<Client> findByClientNameStartsWith(int offset, int limit, String clientName);
+    long countByClientNameStartsWith(String clientName);
 }

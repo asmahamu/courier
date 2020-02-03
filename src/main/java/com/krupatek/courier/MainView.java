@@ -1,15 +1,16 @@
 package com.krupatek.courier;
 
+import com.krupatek.courier.model.AccountCopy;
 import com.krupatek.courier.repository.CompanyRepository;
 import com.krupatek.courier.service.AccountCopyService;
 import com.krupatek.courier.service.ClientService;
 import com.krupatek.courier.service.DestinationService;
 import com.krupatek.courier.utils.DateUtils;
-import com.krupatek.courier.view.ClientProfileForm;
 import com.krupatek.courier.view.CustomerBillingDetailsForm;
 import com.krupatek.courier.view.SystemSettingsForm;
 import com.krupatek.courier.view.accountcopy.AccountCopyEditor;
 import com.krupatek.courier.view.accountcopy.NewAccountCopyForm;
+import com.krupatek.courier.view.clientprofile.ClientProfileEditor;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.contextmenu.SubMenu;
@@ -75,7 +76,7 @@ public class MainView extends VerticalLayout {
         masters.getSubMenu().addItem("Client Profile",
                 e -> {
                     component.removeAll();
-                    component.add(new ClientProfileForm(clientService));
+                    component.add(new ClientProfileEditor(clientService));
                 });
         masters.getSubMenu().addItem("Edit Profile",
                 e -> selected.setText("Edit Profile"));
@@ -85,11 +86,11 @@ public class MainView extends VerticalLayout {
         MenuItem accountCopyMenuItem = billingDetails.getSubMenu().addItem("Account Copy");
         accountCopyMenuItem.getSubMenu().addItem("Create Account Copy", e -> {
             component.removeAll();
-            component.add(new NewAccountCopyForm(accountCopyService, clientService, destinationService,  dateUtils));
+            component.add(new NewAccountCopyForm(accountCopyService, clientService, destinationService,  dateUtils, new AccountCopy()));
         } );
         accountCopyMenuItem.getSubMenu().addItem("Edit Account Copy", e -> {
             component.removeAll();
-            component.add(new AccountCopyEditor(accountCopyService));
+            component.add(new AccountCopyEditor(accountCopyService, clientService, destinationService,  dateUtils));
         } );
         billingDetails.getSubMenu().addItem("Direct Edition", e -> {
             component.removeAll();

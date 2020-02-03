@@ -3,6 +3,7 @@ package com.krupatek.courier.service;
 import com.krupatek.courier.model.Client;
 import com.krupatek.courier.repository.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -36,13 +37,13 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public List<Client> fetch(int offset, int limit, String filterText) {
+    public Page<Client> findByClientNameStartsWith(int offset, int limit, String clientName) {
         Pageable pageable = PageRequest.of(offset, limit);
-        return clientRepository.findByClientNameStartsWith(filterText, pageable);
+        return clientRepository.findByClientNameStartsWith(clientName, pageable);
     }
 
     @Override
-    public int getCount(String filterText) {
-        return clientRepository.findByClientNameStartsWith(filterText).size();
+    public long countByClientNameStartsWith(String clientName) {
+        return clientRepository.countByClientNameStartsWith(clientName);
     }
 }

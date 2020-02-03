@@ -1,9 +1,10 @@
-package com.krupatek.courier.view;
+package com.krupatek.courier.view.clientprofile;
 
 import com.krupatek.courier.model.Client;
 import com.krupatek.courier.service.ClientService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
@@ -21,9 +22,15 @@ import java.util.List;
 public class ClientProfileForm extends Div {
     private Client client;
 
-    public ClientProfileForm(ClientService clientService) {
+    public ClientProfileForm(ClientService clientService, Client client) {
         super();
 
+        Dialog dialog = new Dialog();
+
+        this.client = client;
+        HorizontalLayout horizontalLayout = new HorizontalLayout();
+        horizontalLayout.setPadding(true);
+        horizontalLayout.setMargin(false);
         FormLayout formLayout = new FormLayout();
         formLayout.setResponsiveSteps(
                 new FormLayout.ResponsiveStep("25em", 1),
@@ -53,7 +60,6 @@ public class ClientProfileForm extends Div {
         // Client Name
 
         List<Client> clientList = clientService.findAll();
-        client = clientList.get(0);
 
         List<String> clientNameList = new ArrayList<>();
         clientList.forEach(c -> clientNameList.add(c.getClientName()));
@@ -80,8 +86,8 @@ public class ClientProfileForm extends Div {
                 title.setText(event.getValue());
                 List<Client> searchResult = clientService.findAllByClientName(event.getValue());
                 if (searchResult.size() > 0) {
-                    client = searchResult.get(0);
-                    binder.readBean(client);
+                    this.client = searchResult.get(0);
+                    binder.readBean(this.client);
                 }
             }
         });
@@ -159,15 +165,17 @@ public class ClientProfileForm extends Div {
         formLayout.add(new Label(""), 2);
 
 
+/*
         Button add = new Button("Add", event -> {
-           client = new Client();
+           this.client = new Client();
            binder.readBean(client);
         });
+*/
         Button save = new Button("Save",
                 event -> {
                     try {
-                        binder.writeBean(client);
-                        clientService.saveAndFlush(client
+                        binder.writeBean(this.client);
+                        clientService.saveAndFlush(this.client
                         );
                         // A real application would also save the updated person
                         // using the application's backend
@@ -177,13 +185,20 @@ public class ClientProfileForm extends Div {
                     }
                 });
         Button reset = new Button("Reset",
-                event -> binder.readBean(client));
+                event -> binder.readBean(this.client));
+
+        Button cancel = new Button("Cancel", event -> dialog.close());
 
         HorizontalLayout actions = new HorizontalLayout();
-        actions.add(add, save, reset);
+        actions.setAlignItems(HorizontalLayout.Alignment.END);
+        actions.add(save, reset, cancel);
         save.getStyle().set("marginRight", "10px");
         formLayout.add(actions);
-        add(formLayout);
-//        binder.readBean(company);
+        horizontalLayout.add(formLayout);
+        dialog.add(horizontalLayout);
+        dialog.open();
+
+        clientCode.focus();
+        binder.readBean(client);
     }
 }

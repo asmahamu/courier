@@ -34,13 +34,12 @@ import java.util.stream.Collectors;
 @UIScope
 public class NewAccountCopyForm extends Div {
 
-    private AccountCopy accountCopy;
-
     public NewAccountCopyForm(
             AccountCopyService accountCopyService,
             ClientService clientService,
             DestinationService destinationService,
-            DateUtils dateUtils) {
+            DateUtils dateUtils,
+            AccountCopy accountCopy) {
         super();
         Dialog dialog = new Dialog();
         HorizontalLayout horizontalLayout = new HorizontalLayout();
@@ -52,8 +51,6 @@ public class NewAccountCopyForm extends Div {
                 new FormLayout.ResponsiveStep("25em", 2),
                 new FormLayout.ResponsiveStep("25em", 3),
                 new FormLayout.ResponsiveStep("25em", 4));
-
-        accountCopy = new AccountCopy();
 
         Label title = new Label();
         title.setSizeFull();
@@ -194,10 +191,14 @@ public class NewAccountCopyForm extends Div {
         Button reset = new Button("Reset",
                 event -> binder.readBean(accountCopy));
 
+        Button cancel = new Button("Cancel", event -> dialog.close());
+
         HorizontalLayout actions = new HorizontalLayout();
-        actions.add(save, reset);
+        actions.setAlignItems(HorizontalLayout.Alignment.END);
+        actions.add(save, reset, cancel);
         save.getStyle().set("marginRight", "10px");
-        formLayout.add(actions);
+        formLayout.add(new Label(""), 3);
+        formLayout.add(actions, 1);
         horizontalLayout.add(formLayout);
         dialog.add(horizontalLayout);
 
