@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class RateMasterServiceImpl implements RateMasterService {
@@ -20,5 +21,15 @@ public class RateMasterServiceImpl implements RateMasterService {
     @Override
     public RateEntry saveAndFlush(RateEntry rateEntry) {
         return rateMasterRepository.saveAndFlush(rateEntry);
+    }
+
+    @Override
+    public RateEntry findByClientNameAndCourierAndStateCodeAndPodTypeAndMode(String clientName, String courier, String stateCode, String podType, String mode) {
+        return rateMasterRepository.findByClientNameAndCourierAndStateCodeAndPodTypeAndMode(clientName, courier, stateCode, podType, mode);
+    }
+
+    @Override
+    public Set<String> findDistinctClientName() {
+        return rateMasterRepository.findDistinctClientName();
     }
 }

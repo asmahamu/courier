@@ -1,13 +1,9 @@
 package com.krupatek.courier.view.accountcopy;
 
-import com.krupatek.courier.model.AccountCopy;
-import com.krupatek.courier.model.Client;
-import com.krupatek.courier.model.Destination;
-import com.krupatek.courier.service.AccountCopyService;
-import com.krupatek.courier.service.ClientService;
-import com.krupatek.courier.service.DestinationService;
-import com.krupatek.courier.service.RateMasterService;
+import com.krupatek.courier.model.*;
+import com.krupatek.courier.service.*;
 import com.krupatek.courier.utils.DateUtils;
+import com.krupatek.courier.utils.RateUtils;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -29,17 +25,23 @@ import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @SpringComponent
 @UIScope
 public class NewAccountCopyForm extends Div {
 
+    private boolean isDomestic = true; // False means International.
+
     public NewAccountCopyForm(
             AccountCopyService accountCopyService,
             ClientService clientService,
-            DestinationService destinationService,
             RateMasterService rateMasterService,
+            RateIntMasterService rateIntMasterService,
+            PlaceGenerationService placeGenerationService,
+            NetworkService networkService,
             DateUtils dateUtils,
             AccountCopy accountCopy) {
         super();
@@ -96,22 +98,27 @@ public class NewAccountCopyForm extends Div {
 
         List<String> clientNameList = clientList.parallelStream().map(Client::getClientName).collect(Collectors.toList());
         ComboBox<String> clientsComboBox = new ComboBox<>();
-//        clientsComboBox.setDataProvider(createClientDataProvider(clientService));
         clientsComboBox.setLabel("Client Name : ");
-//        clientsComboBox.setItemLabelGenerator(Client::getClientName);
         clientsComboBox.setItems(clientNameList);
         clientsComboBox.setClearButtonVisible(true);
         binder.bind(clientsComboBox, AccountCopy::getClientName, AccountCopy::setClientName);
 
         // Destination
-        List<Destination> destinationList = destinationService.findAll();
-        List<String> destinationNameList = destinationList.parallelStream().map(Destination::getDestName).collect(Collectors.toList());
-
         ComboBox<String> destinationComboBox = new ComboBox<>();
         destinationComboBox.setLabel("Destination : ");
-        destinationComboBox.setItems(destinationNameList);
+        destinationComboBox.setItems(placeGenerationService.findDistinctCityName());
         destinationComboBox.setClearButtonVisible(true);
-        binder.bind(destinationComboBox, AccountCopy::getDestination, AccountCopy::setDestination);
+        binder.bind(destinationComboBox, AccountCopy::getDestination,  (e, r) -> {
+            e.setDestination(r);
+            e.setPlaceCode(r);
+            if(isDomestic) {
+                PlaceGeneration placeGeneration = placeGenerationService.findByCityName(accountCopy.getDestination());
+                e.setStateCode(placeGeneration.getPlaceCode());
+            } else {
+                Optional<Network> network = networkService.findOne(r);
+                network.ifPresent(value -> e.setStateCode(value.getZoneName()));
+            }
+        });
         formLayout.add(clientsComboBox, destinationComboBox);
 
         formLayout.setColspan(clientsComboBox, 2);
@@ -151,6 +158,11 @@ public class NewAccountCopyForm extends Div {
         bookingTypeSelect.setLabel("Booking Type : ");
         bookingTypeSelect.setItems("Dom", "Int");
         bookingTypeSelect.setValue("Dom");
+        bookingTypeSelect.addValueChangeListener(e -> {
+            isDomestic = !e.getValue().equals("Int");
+           updateClientName(clientsComboBox, rateMasterService, rateIntMasterService);
+           updateDestination(destinationComboBox, placeGenerationService, networkService);
+        });
 
         // Mode
         Select<String> modeSelect = new Select<>();
@@ -220,28 +232,63 @@ public class NewAccountCopyForm extends Div {
         courierSelect.addValueChangeListener(e -> bookingTypeSelect.focus());
         bookingTypeSelect.addValueChangeListener(e -> modeSelect.focus());
         modeSelect.addValueChangeListener(e -> weight.focus());
-        weight.addKeyDownListener(Key.ENTER, e -> rate.focus());
+        weight.addKeyDownListener(Key.ENTER, e -> {
+            try {
+                binder.writeBean(accountCopy);
+                Logger.getLogger(NewAccountCopyForm.class.getName()).info("AccountCopy : "+
+                        accountCopy.getClientName()+", "+
+                        accountCopy.getToParty()+", "+
+                        accountCopy.getStateCode()+", "+
+                        accountCopy.getdP()+", "+
+                        accountCopy.getMode());
+                if(isDomestic) {
+                    RateEntry rateEntry =
+                            rateMasterService.findByClientNameAndCourierAndStateCodeAndPodTypeAndMode(
+                                    accountCopy.getClientName(),
+                                    accountCopy.getToParty(),
+                                    accountCopy.getStateCode(),
+                                    accountCopy.getdP(),
+                                    accountCopy.getMode()
+                            );
+                    Logger.getLogger(NewAccountCopyForm.class.getName()).info("RateEntry : " + rateEntry);
+                    Double rateText = new RateUtils().charges(Double.valueOf(weight.getValue()), rateEntry.getFrom1(), rateEntry.getTo1(), rateEntry.getRate(), rateEntry.getAddWt(), (double) rateEntry.getAddRt());
+                    rate.setValue(rateText.toString());
+                } else {
+                    RateIntEntry rateIntEntry = rateIntMasterService.findByClientNameAndStateCodeAndPodTypeAndMode(
+                      accountCopy.getClientName(),
+                      accountCopy.getStateCode(),
+                      accountCopy.getdP(),
+                      accountCopy.getMode()
+                    );
+                    Logger.getLogger(NewAccountCopyForm.class.getName()).info("RateIntEntry : " + rateIntEntry);
+                    Double rateText = new RateUtils().charges(Double.valueOf(weight.getValue()), rateIntEntry.getFrom1(), rateIntEntry.getTo1(), rateIntEntry.getRate(), rateIntEntry.getAddWt(), (double) rateIntEntry.getAddRt());
+                    rate.setValue(rateText.toString());
+                }
+                rate.focus();
+            } catch (ValidationException ex) {
+                Notification.show("Account Copy could not be saved, " +
+                        "please check error messages for each field.");
+            }
+        });
         rate.addKeyDownListener(Key.ENTER, e -> save.focus());
 
         docNo.focus();
 
         binder.readBean(accountCopy);
-
     }
 
-/*
-    DataProvider<Client, String>
-    createClientDataProvider(ClientService service)
-    {
-        return DataProvider.fromFilteringCallbacks(query -> {
-            // getFilter returns Optional<String>
-            String filter = query.getFilter().orElse("");
-            return service.fetch(query.getOffset(),
-                    query.getLimit(), filter).stream();
-        }, query -> {
-            String filter = query.getFilter().orElse("");
-            return service.getCount(filter);
-        });
+    private void updateClientName(ComboBox<String> clientComboBox, RateMasterService rateMasterService, RateIntMasterService rateIntMasterService){
+        if(isDomestic){
+            clientComboBox.setItems(rateMasterService.findDistinctClientName());
+        } else {
+            clientComboBox.setItems(rateIntMasterService.findDistinctClientName());
+        }
     }
-*/
+    private void updateDestination(ComboBox<String> destinationComboBox, PlaceGenerationService placeGenerationService, NetworkService networkService){
+        if(isDomestic){
+            destinationComboBox.setItems(placeGenerationService.findDistinctCityName());
+        } else {
+            destinationComboBox.setItems(networkService.findDistinctCountry());
+        }
+    }
 }

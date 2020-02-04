@@ -49,6 +49,12 @@ public class MainView extends VerticalLayout {
     CourierService courierService;
 
     @Autowired
+    PlaceGenerationService placeGenerationService;
+
+    @Autowired
+    NetworkService networkService;
+
+    @Autowired
     DateUtils dateUtils;
 
     public MainView(@Autowired MessageBean bean) {
@@ -108,14 +114,23 @@ public class MainView extends VerticalLayout {
             component.add(new NewAccountCopyForm(
                     accountCopyService,
                     clientService,
-                    destinationService,
                     rateMasterService ,
+                    rateIntMasterService,
+                    placeGenerationService,
+                    networkService,
                     dateUtils,
                     new AccountCopy()));
         } );
         accountCopyMenuItem.getSubMenu().addItem("Edit Account Copy", e -> {
             component.removeAll();
-            component.add(new AccountCopyEditor(accountCopyService, clientService, destinationService, rateMasterService,  dateUtils));
+            component.add(new AccountCopyEditor(
+                    accountCopyService,
+                    clientService,
+                    rateMasterService,
+                    rateIntMasterService,
+                    placeGenerationService,
+                    networkService,
+                    dateUtils));
         } );
         billingDetails.getSubMenu().addItem("Direct Edition", e -> {
             component.removeAll();

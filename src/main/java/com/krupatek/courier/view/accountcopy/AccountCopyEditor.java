@@ -2,10 +2,7 @@ package com.krupatek.courier.view.accountcopy;
 
 import com.krupatek.courier.model.AccountCopy;
 import com.krupatek.courier.model.AccountCopyFilter;
-import com.krupatek.courier.service.AccountCopyService;
-import com.krupatek.courier.service.ClientService;
-import com.krupatek.courier.service.DestinationService;
-import com.krupatek.courier.service.RateMasterService;
+import com.krupatek.courier.service.*;
 import com.krupatek.courier.utils.DateUtils;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
@@ -34,8 +31,10 @@ public class AccountCopyEditor extends Div {
     public AccountCopyEditor(
             AccountCopyService accountCopyService,
             ClientService clientService,
-            DestinationService destinationService,
             RateMasterService rateMasterService,
+            RateIntMasterService rateIntMasterService,
+            PlaceGenerationService placeGenerationService,
+            NetworkService networkService,
             DateUtils dateUtils) {
         super();
         VerticalLayout verticalLayout = new VerticalLayout();
@@ -137,8 +136,10 @@ public class AccountCopyEditor extends Div {
             NewAccountCopyForm accountCopyForm =  new NewAccountCopyForm(
                     accountCopyService,
                     clientService,
-                    destinationService,
                     rateMasterService,
+                    rateIntMasterService,
+                    placeGenerationService,
+                    networkService,
                     dateUtils,
                     listener.getItem());
             add(accountCopyForm);
@@ -148,8 +149,10 @@ public class AccountCopyEditor extends Div {
         addNewBtn.addClickListener(e -> add(new NewAccountCopyForm(
                 accountCopyService,
                 clientService,
-                destinationService,
                 rateMasterService,
+                rateIntMasterService,
+                placeGenerationService,
+                networkService,
                 dateUtils,
                 new AccountCopy())));
         verticalLayout.add(title ,accountCopyGrid, addNewBtn);
