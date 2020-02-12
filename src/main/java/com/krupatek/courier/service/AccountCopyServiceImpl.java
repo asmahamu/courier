@@ -58,4 +58,9 @@ public class AccountCopyServiceImpl implements AccountCopyService {
     public long countByDocNoStartsWithAndClientNameStartsWith(String docNo, String clientName) {
         return accountCopyRepository.countByDocNoStartsWithAndClientNameStartsWith(docNo, clientName);
     }
+
+    @Override
+    public List<AccountCopy> findAllByBillNo(String billNo) {
+        return accountCopyRepository.findAllByBillNo(billNo);
+    }
 }

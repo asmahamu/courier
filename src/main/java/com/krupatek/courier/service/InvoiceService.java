@@ -1,5 +1,6 @@
 package com.krupatek.courier.service;
 
+import com.krupatek.courier.model.AccountCopy;
 import com.krupatek.courier.model.BillGeneration;
 import com.krupatek.courier.model.Client;
 import com.krupatek.courier.model.Company;
@@ -18,8 +19,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -29,7 +30,7 @@ public class InvoiceService {
     private static final String logo_path = "/jasper/images/stackextend-logo.png";
     private final String invoice_template_path = "/jasper/invoice.jrxml";
 
-    public void generateInvoiceFor(Company company, Client client, BillGeneration billGeneration, Locale locale) throws IOException {
+    public void generateInvoiceFor(Company company, Client client, BillGeneration billGeneration, List<AccountCopy> accountCopies, Locale locale) throws IOException {
 
         File pdfFile = File.createTempFile("my-invoice", ".pdf");
 
@@ -42,7 +43,7 @@ public class InvoiceService {
             final Map<String, Object> parameters = parameters(company, client, billGeneration, locale);
 
             // Create an empty datasource.
-            final JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(Collections.singletonList("Invoice"));
+            final JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(accountCopies);
 
             // Render the PDF file
             JasperReportsUtils.renderAsPdf(report, parameters, dataSource, pos);
@@ -72,6 +73,8 @@ public class InvoiceService {
         parameters.put("company",  company);
         parameters.put("client",  client);
         parameters.put("billGeneration",  billGeneration);
+//        parameters.put("accountCopies",  accountCopies);
+//        parameters.put("accountCopy",  accountCopies.get(0));
         parameters.put("REPORT_LOCALE", locale);
 
         return parameters;

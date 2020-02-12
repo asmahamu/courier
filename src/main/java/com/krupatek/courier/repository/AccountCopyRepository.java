@@ -18,4 +18,5 @@ public interface AccountCopyRepository extends JpaRepository<AccountCopy, String
     Page<AccountCopy> findByDocNoStartsWithAndClientNameStartsWith(String docNo, String clientName, Pageable page);
     long countByDocNoStartsWith(String docNo);
     long countByDocNoStartsWithAndClientNameStartsWith(String docNo, String clientName);
+    List<AccountCopy> findAllByBillNo(String billNo);
 }

@@ -1,9 +1,11 @@
 package com.krupatek.courier;
 
+import com.krupatek.courier.model.AccountCopy;
 import com.krupatek.courier.model.BillGeneration;
 import com.krupatek.courier.model.Client;
 import com.krupatek.courier.model.Company;
 import com.krupatek.courier.repository.CompanyRepository;
+import com.krupatek.courier.service.AccountCopyService;
 import com.krupatek.courier.service.BillingService;
 import com.krupatek.courier.service.ClientService;
 import com.krupatek.courier.service.InvoiceService;
@@ -16,6 +18,7 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -39,6 +42,9 @@ public class Application extends SpringBootServletInitializer {
     @Autowired
     BillingService billingService;
 
+    @Autowired
+    AccountCopyService accountCopyService;
+
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
@@ -48,12 +54,13 @@ public class Application extends SpringBootServletInitializer {
         String invoiceNo = "GST/19-20/788";
 
         Optional<BillGeneration> billGeneration = billingService.findOne(invoiceNo);
+        List<AccountCopy> accountCopies = accountCopyService.findAllByBillNo(invoiceNo+" ");
 
         if(billGeneration.isPresent()){
             Client client = clientService.findAllByClientName(billGeneration.get().getClientName()).get(0);
             Company company = companyRepository.findAll().get(0);
             try {
-                invoiceService.generateInvoiceFor(company, client, billGeneration.get(), Locale.getDefault());
+                invoiceService.generateInvoiceFor(company, client, billGeneration.get(), accountCopies, Locale.getDefault());
             } catch (IOException e) {
                 log.info(e.getMessage());
                 e.printStackTrace();

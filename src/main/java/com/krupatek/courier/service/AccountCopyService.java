@@ -25,4 +25,6 @@ public interface AccountCopyService {
     long countByDocNoStartsWith(String docNo);
 
     long countByDocNoStartsWithAndClientNameStartsWith(String docNo, String clientName);
+
+    List<AccountCopy> findAllByBillNo(String billNo);
 }
