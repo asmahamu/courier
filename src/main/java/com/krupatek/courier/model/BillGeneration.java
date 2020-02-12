@@ -55,6 +55,18 @@ public class BillGeneration {
     @Column(name = "bill_date")
     private String billDate ;
 
+    @Column(name = "cgst")
+    private Float cgst;
+
+    @Column(name = "sgst")
+    private Float sgst;
+
+    @Column(name = "igst")
+    private Float igst;
+
+    @Column(name = "fuel_surcharge")
+    private Float fuelSurcharge;
+
     public String getBillNo() {
         return billNo;
     }
@@ -181,5 +193,37 @@ public class BillGeneration {
 
     public void setBillDate(String billDate) {
         this.billDate = billDate;
+    }
+
+    public Float getCgst() {
+        return cgst;
+    }
+
+    public void setCgst(Float cgst) {
+        this.cgst = cgst;
+    }
+
+    public Float getSgst() {
+        return sgst;
+    }
+
+    public void setSgst(Float sgst) {
+        this.sgst = sgst;
+    }
+
+    public Float getIgst() {
+        return igst;
+    }
+
+    public void setIgst(Float igst) {
+        this.igst = igst;
+    }
+
+    public Float getFuelSurcharge() {
+        return fuelSurcharge;
+    }
+
+    public void setFuelSurcharge(Float fuelSurcharge) {
+        this.fuelSurcharge = fuelSurcharge;
     }
 }

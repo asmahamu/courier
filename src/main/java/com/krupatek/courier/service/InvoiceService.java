@@ -73,8 +73,6 @@ public class InvoiceService {
         parameters.put("company",  company);
         parameters.put("client",  client);
         parameters.put("billGeneration",  billGeneration);
-//        parameters.put("accountCopies",  accountCopies);
-//        parameters.put("accountCopy",  accountCopies.get(0));
         parameters.put("REPORT_LOCALE", locale);
 
         return parameters;

@@ -88,6 +88,33 @@
 	<field name="area" class="java.lang.String"/>
 	<field name="weight" class="java.lang.Double"/>
 	<field name="dP" class="java.lang.String"/>
+	<variable name="FUEL_SURCHAGE" class="java.lang.Float">
+		<variableExpression><![CDATA[$P{billGeneration}.getFuelSurcharge()]]></variableExpression>
+	</variable>
+	<variable name="CGST" class="java.lang.Float">
+		<variableExpression><![CDATA[$P{billGeneration}.getCgst()]]></variableExpression>
+	</variable>
+	<variable name="SGST" class="java.lang.Float">
+		<variableExpression><![CDATA[$P{billGeneration}.getSgst()]]></variableExpression>
+	</variable>
+	<variable name="IGST" class="java.lang.Float">
+		<variableExpression><![CDATA[$P{billGeneration}.getIgst()]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_AFTER_FUEL_SURCHARGE" class="java.lang.Float">
+		<variableExpression><![CDATA[$P{billGeneration}.getBillAmount()*$V{FUEL_SURCHAGE}/100]]></variableExpression>
+	</variable>
+	<variable name="SUBTOTAL" class="java.lang.Float">
+		<variableExpression><![CDATA[$V{TOTAL_AFTER_FUEL_SURCHARGE}+$P{billGeneration}.getBillAmount()]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_CGST" class="java.lang.Float">
+		<variableExpression><![CDATA[$V{SUBTOTAL}*$V{CGST}/100]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_SGST" class="java.lang.Float">
+		<variableExpression><![CDATA[$V{SUBTOTAL}*$V{SGST}/100]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_IGST" class="java.lang.Float">
+		<variableExpression><![CDATA[$V{SUBTOTAL}*$V{IGST}/100]]></variableExpression>
+	</variable>
 	<title>
 		<band height="253" splitType="Stretch">
 			<line>
@@ -539,6 +566,141 @@
 				</textElement>
 				<text><![CDATA[THANKYOU FOR YOUR BUSINESS]]></text>
 			</staticText>
+			<staticText>
+				<reportElement x="380" y="0" width="100" height="20" uuid="bee88b48-e0cb-4b0a-aed7-9584631b639f">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<text><![CDATA[Gross Total : ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="480" y="0" width="76" height="20" uuid="6935ab9a-db8c-4580-a345-1c455f7a22b1">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{billGeneration}.getBillAmount()]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="0" width="556" height="1" uuid="31a8326e-0b34-49d3-b951-93d9abdbb420">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+			</line>
+			<textField>
+				<reportElement x="360" y="20" width="120" height="20" uuid="bb397219-3dca-4cd6-881e-8121df913f10">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["Fuel S'Charge @ "+$V{FUEL_SURCHAGE}+"% : "]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="480" y="20" width="76" height="20" uuid="93d14bc8-4965-460a-b39a-61fe18d506c9">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{TOTAL_AFTER_FUEL_SURCHARGE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="380" y="40" width="100" height="20" uuid="d2369c4e-e447-4333-9cfe-7544d3a43d94">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<text><![CDATA[Subtotal : ]]></text>
+			</staticText>
+			<textField>
+				<reportElement key="" x="480" y="40" width="76" height="20" uuid="212a5ff8-053b-4263-b84f-8d962dca7cd8">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{SUBTOTAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="380" y="60" width="100" height="20" uuid="f54f2680-6d86-4d96-9653-dabc5be87595">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["CGST @ "+$V{CGST}+"% : "]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="380" y="80" width="100" height="20" uuid="32d46645-5425-4e6a-a811-e4671d415222">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["SGST @ "+$V{SGST}+"% : "]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="480" y="60" width="80" height="20" uuid="f00f3b48-7f22-4e17-977a-d12ea0e988b9">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{TOTAL_CGST}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="480" y="80" width="80" height="20" uuid="ee90de5a-904b-4ac3-86fc-c085bed1eab0">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{TOTAL_SGST}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="380" y="100" width="100" height="20" uuid="f8f3c1b8-2cc8-4b98-b8b0-7956fcedd491">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["IGST @ "+$V{IGST}+"% : "]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="480" y="100" width="80" height="20" uuid="d74ec1a7-c899-4ace-a034-77813d30deaf">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{TOTAL_IGST}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="380" y="120" width="100" height="20" uuid="ff634c0d-e38e-41fc-8067-91cbf2fd52e0">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<text><![CDATA[Invoice Amount : ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="480" y="120" width="80" height="20" uuid="d357d119-12ac-4abd-a025-da91ced65101">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{SUBTOTAL}+$V{TOTAL_CGST}+$V{TOTAL_SGST}+$V{TOTAL_IGST}]]></textFieldExpression>
+			</textField>
 		</band>
 	</lastPageFooter>
 </jasperReport>
