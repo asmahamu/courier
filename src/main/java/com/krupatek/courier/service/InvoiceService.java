@@ -4,6 +4,7 @@ import com.krupatek.courier.model.AccountCopy;
 import com.krupatek.courier.model.BillGeneration;
 import com.krupatek.courier.model.Client;
 import com.krupatek.courier.model.Company;
+import com.krupatek.courier.utils.NumberUtils;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperReport;
@@ -12,6 +13,7 @@ import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.jasperreports.JasperReportsUtils;
 
@@ -26,6 +28,9 @@ import java.util.Map;
 
 @Service
 public class InvoiceService {
+    @Autowired
+    NumberUtils numberUtils;
+
     Logger log = LogManager.getLogger(InvoiceService.class);
     private static final String logo_path = "/jasper/images/stackextend-logo.png";
     private final String invoice_template_path = "/jasper/invoice.jrxml";
@@ -73,6 +78,7 @@ public class InvoiceService {
         parameters.put("company",  company);
         parameters.put("client",  client);
         parameters.put("billGeneration",  billGeneration);
+        parameters.put("numberUtils",numberUtils);
         parameters.put("REPORT_LOCALE", locale);
 
         return parameters;
