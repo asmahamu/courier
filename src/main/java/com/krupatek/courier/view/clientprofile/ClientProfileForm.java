@@ -185,7 +185,6 @@ public class ClientProfileForm extends Div {
         HorizontalLayout actions = new HorizontalLayout();
         actions.setAlignItems(HorizontalLayout.Alignment.END);
         actions.add(save, reset, cancel);
-        save.getStyle().set("marginRight", "10px");
         formLayout.add(actions);
         horizontalLayout.add(formLayout);
         dialog.add(horizontalLayout);

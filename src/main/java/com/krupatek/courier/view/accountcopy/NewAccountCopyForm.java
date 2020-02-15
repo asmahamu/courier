@@ -51,11 +51,12 @@ public class NewAccountCopyForm extends Div {
         horizontalLayout.setPadding(true);
         horizontalLayout.setMargin(false);
         FormLayout formLayout = new FormLayout();
+        formLayout.setMaxWidth("60em");
         formLayout.setResponsiveSteps(
-                new FormLayout.ResponsiveStep("25em", 1),
-                new FormLayout.ResponsiveStep("25em", 2),
-                new FormLayout.ResponsiveStep("25em", 3),
-                new FormLayout.ResponsiveStep("25em", 4));
+                new FormLayout.ResponsiveStep("15em", 1),
+                new FormLayout.ResponsiveStep("15em", 2),
+                new FormLayout.ResponsiveStep("15em", 3),
+                new FormLayout.ResponsiveStep("15em", 4));
 
         Label title = new Label();
         title.setSizeFull();
@@ -131,8 +132,8 @@ public class NewAccountCopyForm extends Div {
         pincode.setValueChangeMode(ValueChangeMode.EAGER);
         binder.forField(pincode).asRequired("Every Account copy must have pincode").
                 bind(
-                AccountCopy::getPlaceCode,
-                AccountCopy::setPlaceCode);
+                AccountCopy::getArea,
+                AccountCopy::setArea);
 
         // Receiver Name
         TextField receiverName = new TextField();
@@ -211,9 +212,7 @@ public class NewAccountCopyForm extends Div {
         HorizontalLayout actions = new HorizontalLayout();
         actions.setAlignItems(HorizontalLayout.Alignment.END);
         actions.add(save, reset, cancel);
-        save.getStyle().set("marginRight", "10px");
-        formLayout.add(new Label(""), 3);
-        formLayout.add(actions, 1);
+        formLayout.add(actions, 2);
         horizontalLayout.add(formLayout);
         dialog.add(horizontalLayout);
 
