@@ -32,18 +32,17 @@ public class ClientProfileForm extends Div {
         horizontalLayout.setPadding(true);
         horizontalLayout.setMargin(false);
         FormLayout formLayout = new FormLayout();
+        formLayout.setMaxWidth("50em");
         formLayout.setResponsiveSteps(
                 new FormLayout.ResponsiveStep("25em", 1),
-                new FormLayout.ResponsiveStep("25em", 2),
-                new FormLayout.ResponsiveStep("25em", 3),
-                new FormLayout.ResponsiveStep("25em", 4));
+                new FormLayout.ResponsiveStep("25em", 2));
 
         Binder<Client> binder = new Binder<>();
 
         Label title = new Label();
         title.setSizeFull();
         title.setText("Client Details");
-        formLayout.add(title, 4);
+        formLayout.add(title, 2);
 
 
         // Client Code
@@ -51,8 +50,7 @@ public class ClientProfileForm extends Div {
         TextField clientCode = new TextField();
         clientCode.setLabel("Client Code : ");
         clientCode.setValueChangeMode(ValueChangeMode.EAGER);
-        formLayout.add(clientCode, 2);
-        formLayout.add(new Label(""), 2);
+        formLayout.add(clientCode, 1);
         binder.bind(clientCode,
                 c -> c.getClientCode().toString(),
                 (c, t) -> c.setClientCode(Integer.valueOf(t)));
@@ -68,7 +66,7 @@ public class ClientProfileForm extends Div {
         clientsComboBox.setLabel("Client Name : ");
         clientsComboBox.setItems(clientNameList);
         clientsComboBox.setClearButtonVisible(true);
-        formLayout.add(clientsComboBox, 2);
+        formLayout.add(clientsComboBox, 1);
 
 //        clientsComboBox.addCustomValueSetListener(
 //                event -> {
@@ -92,8 +90,6 @@ public class ClientProfileForm extends Div {
             }
         });
 
-        formLayout.add(new Label(""), 2);
-
         // Client Address Name
 
         TextField clientAddress = new TextField();
@@ -101,7 +97,6 @@ public class ClientProfileForm extends Div {
         clientAddress.setValueChangeMode(ValueChangeMode.EAGER);
         formLayout.add(clientAddress, 2);
 
-        formLayout.add(new Label(""), 2);
         binder.bind(clientAddress,
                 Client::getClientAddress1,
                 Client::setClientAddress1);
@@ -122,7 +117,6 @@ public class ClientProfileForm extends Div {
 
         formLayout.add(city, phoneNumber);
 
-        formLayout.add(new Label(""), 2);
         binder.bind(phoneNumber,
                 Client::getPhone,
                 Client::setPhone);
@@ -147,8 +141,6 @@ public class ClientProfileForm extends Div {
                 Client::setGstNo);
 
 
-        formLayout.add(new Label(""), 2);
-
         // Fuel Charge
         TextField fuelSurchage = new TextField();
         fuelSurchage.setLabel("Fuel Surcharge : ");
@@ -162,7 +154,6 @@ public class ClientProfileForm extends Div {
 
         formLayout.add(fuelSurchargeSelect, 1);
         formLayout.add(fuelSurchage, 1);
-        formLayout.add(new Label(""), 2);
 
 
 /*
