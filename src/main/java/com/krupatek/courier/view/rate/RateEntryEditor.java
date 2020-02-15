@@ -61,7 +61,7 @@ public class RateEntryEditor extends Div {
 
         Grid<RateEntry> rateEntryGrid = new Grid<>(RateEntry.class);
         rateEntryGrid.setWidth("1300px");
-        rateEntryGrid.setHeight("400px");
+        rateEntryGrid.setHeight("500px");
         rateEntryGrid.setColumns(
                 "rateMasterId",
                 "clientName",
