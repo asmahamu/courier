@@ -31,123 +31,121 @@ public class RateIntEntryForm extends Div {
         horizontalLayout.setPadding(true);
         horizontalLayout.setMargin(false);
         FormLayout formLayout = new FormLayout();
+        formLayout.setMaxWidth("30em");
         formLayout.setResponsiveSteps(
-                new FormLayout.ResponsiveStep("25em", 1),
-                new FormLayout.ResponsiveStep("25em", 2),
-                new FormLayout.ResponsiveStep("25em", 3),
-                new FormLayout.ResponsiveStep("25em", 4));
+                new FormLayout.ResponsiveStep("30em", 1));
 
-        formLayout.add(new Label(""), 1);
+        
         Label title = new Label();
         title.setSizeFull();
         title.setText("Rate Entry Details");
-        formLayout.add(title, 2);
-        formLayout.add(new Label(""), 1);
+        formLayout.add(title, 1);
+        
 
         // Client Name
 
-        formLayout.add(new Label(""), 1);
+        
         TextField clientName = new TextField();
         clientName.setLabel("Client Name : ");
         clientName.setValueChangeMode(ValueChangeMode.EAGER);
-        formLayout.add(clientName, 2);
+        formLayout.add(clientName, 1);
         binder.bind(clientName,
                 RateIntEntry::getClientName,
                 RateIntEntry::setClientName);
         clientName.setReadOnly(true);
-        formLayout.add(new Label(""), 1);
+        
 
 
         // State code
-        formLayout.add(new Label(""), 1);
+        
         TextField stateCode = new TextField();
         stateCode.setLabel("State Code : ");
         stateCode.setValueChangeMode(ValueChangeMode.EAGER);
-        formLayout.add(stateCode, 2);
+        formLayout.add(stateCode, 1);
         binder.bind(stateCode,
                 RateIntEntry::getStateCode,
                 RateIntEntry::setStateCode);
         stateCode.setReadOnly(true);
-        formLayout.add(new Label(""), 1);
+        
 
         // POD Type
-        formLayout.add(new Label(""), 1);
+        
         TextField podType = new TextField();
         podType.setLabel("POD Type : ");
         podType.setValueChangeMode(ValueChangeMode.EAGER);
-        formLayout.add(podType, 2);
+        formLayout.add(podType, 1);
         binder.bind(podType,
                 RateIntEntry::getPodType,
                 RateIntEntry::setPodType);
         podType.setReadOnly(true);
-        formLayout.add(new Label(""), 1);
+        
 
         // Mode
-        formLayout.add(new Label(""), 1);
+        
         TextField mode = new TextField();
         mode.setLabel("Mode : ");
         mode.setValueChangeMode(ValueChangeMode.EAGER);
-        formLayout.add(mode, 2);
+        formLayout.add(mode, 1);
         binder.bind(mode,
                 RateIntEntry::getMode,
                 RateIntEntry::setMode);
         mode.setReadOnly(true);
-        formLayout.add(new Label(""), 1);
+        
 
         // From
-        formLayout.add(new Label(""), 1);
+        
         TextField from = new TextField();
         from.setLabel("From : ");
         from.setValueChangeMode(ValueChangeMode.EAGER);
-        formLayout.add(from, 2);
+        formLayout.add(from, 1);
         binder.bind(from,
                 c -> c.getFrom1().toString(),
                 (c, t) -> c.setFrom1(Double.valueOf(t)));
-        formLayout.add(new Label(""), 1);
+        
 
         // to
-        formLayout.add(new Label(""), 1);
+        
         TextField to = new TextField();
         to.setLabel("From : ");
         to.setValueChangeMode(ValueChangeMode.EAGER);
-        formLayout.add(to, 2);
+        formLayout.add(to, 1);
         binder.bind(to,
                 c -> c.getTo1().toString(),
                 (c, t) -> c.setTo1(Double.valueOf(t)));
-        formLayout.add(new Label(""), 1);
+        
 
         // Rate
-        formLayout.add(new Label(""), 1);
+        
         TextField rate = new TextField();
         rate.setLabel("Rate : ");
         rate.setValueChangeMode(ValueChangeMode.EAGER);
-        formLayout.add(rate, 2);
+        formLayout.add(rate, 1);
         binder.bind(rate,
                 c -> c.getRate().toString(),
                 (c, t) -> c.setRate(Integer.valueOf(t)));
-        formLayout.add(new Label(""), 1);
+        
 
         // Add Rate
-        formLayout.add(new Label(""), 1);
+        
         TextField addRate = new TextField();
         addRate.setLabel("Add Rate : ");
         addRate.setValueChangeMode(ValueChangeMode.EAGER);
-        formLayout.add(addRate, 2);
+        formLayout.add(addRate, 1);
         binder.bind(addRate,
                 c -> c.getAddRt().toString(),
                 (c, t) -> c.setAddRt(Integer.valueOf(t)));
-        formLayout.add(new Label(""), 1);
+        
 
         // Add Weight
-        formLayout.add(new Label(""), 1);
+        
         TextField addWeight = new TextField();
         addWeight.setLabel("Add Weight : ");
         addWeight.setValueChangeMode(ValueChangeMode.EAGER);
-        formLayout.add(addWeight, 2);
+        formLayout.add(addWeight, 1);
         binder.bind(addWeight,
                 c -> c.getAddWt().toString(),
                 (c, t) -> c.setAddWt(Double.valueOf(t)));
-        formLayout.add(new Label(""), 1);
+        
         Button save = new Button("Save",
                 event -> {
                     try {
@@ -171,9 +169,9 @@ public class RateIntEntryForm extends Div {
         actions.setAlignItems(HorizontalLayout.Alignment.END);
         actions.add(save, reset, cancel);
         save.getStyle().set("marginRight", "10px");
-        formLayout.add(new Label(""), 1);
-        formLayout.add(actions, 2);
-        formLayout.add(new Label(""), 1);
+        
+        formLayout.add(actions, 1);
+        
         horizontalLayout.add(formLayout);
         dialog.add(horizontalLayout);
         dialog.open();
