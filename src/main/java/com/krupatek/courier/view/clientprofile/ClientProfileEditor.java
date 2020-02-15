@@ -43,12 +43,12 @@ public class ClientProfileEditor extends Div {
         clientGrid.setHeight("500px");
         clientGrid.setColumns("clientCode", "clientName", "city", "phone", "branch_name", "gstNo", "gstEnabled", "fsc");
 
-        clientGrid.getColumnByKey("clientCode").setWidth("150px").setFlexGrow(0);
+        clientGrid.getColumnByKey("clientCode").setWidth("100px").setFlexGrow(0);
         clientGrid.getColumnByKey("clientName").setWidth("300px").setFlexGrow(0);
         clientGrid.getColumnByKey("city").setWidth("150px").setFlexGrow(0);
         clientGrid.getColumnByKey("phone").setWidth("100px").setFlexGrow(0);
         clientGrid.getColumnByKey("branch_name").setWidth("100px").setFlexGrow(0);
-        clientGrid.getColumnByKey("gstNo").setWidth("100px").setFlexGrow(0);
+        clientGrid.getColumnByKey("gstNo").setWidth("300px").setFlexGrow(0);
         clientGrid.getColumnByKey("gstEnabled").setWidth("100px").setFlexGrow(0);
         clientGrid.getColumnByKey("fsc").setWidth("100px").setFlexGrow(0);
 

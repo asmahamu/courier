@@ -67,6 +67,7 @@ public class ClientProfileForm extends Div {
         clientsComboBox.setItems(clientNameList);
         clientsComboBox.setClearButtonVisible(true);
         formLayout.add(clientsComboBox, 1);
+        binder.bind(clientsComboBox, Client::getClientName, Client::setClientName);
 
 //        clientsComboBox.addCustomValueSetListener(
 //                event -> {
