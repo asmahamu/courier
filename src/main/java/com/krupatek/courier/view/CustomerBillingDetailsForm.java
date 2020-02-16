@@ -4,7 +4,7 @@ import com.krupatek.courier.model.AccountCopy;
 import com.krupatek.courier.model.Client;
 import com.krupatek.courier.service.*;
 import com.krupatek.courier.utils.DateUtils;
-import com.krupatek.courier.view.accountcopy.NewAccountCopyForm;
+import com.krupatek.courier.view.accountcopy.AccountCopyForm;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.button.Button;
@@ -16,6 +16,7 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
@@ -161,6 +162,11 @@ public class CustomerBillingDetailsForm extends Div {
         accountCopyGrid.setColumnReorderingAllowed(false);
         verticalLayout.add(title, cashCreditSelect, dateHorizontalLayout, accountCopyGrid);
 
+        TextField sumTextField = new TextField();
+        sumTextField.setLabel("Total : ");
+        sumTextField.setReadOnly(true);
+        verticalLayout.add(sumTextField);
+
         add(verticalLayout);
 
         // Last Month
@@ -170,26 +176,26 @@ public class CustomerBillingDetailsForm extends Div {
             dateFilter.setStartDate(lastMonth.withDayOfMonth(1));
             dateFilter.setEndDate(lastMonth.withDayOfMonth(lastMonth.lengthOfMonth()));
             binder.readBean(dateFilter);
-            load(accountCopyGrid, accountCopyService, dateFilter);
+            load(accountCopyGrid, accountCopyService, dateFilter ,sumTextField);
         });
 
         currentMonthButton.addClickListener( c -> {
             dateFilter.setStartDate(start);
             dateFilter.setEndDate(end);
             binder.readBean(dateFilter);
-            load(accountCopyGrid, accountCopyService, dateFilter);
+            load(accountCopyGrid, accountCopyService, dateFilter, sumTextField);
         });
 
-        refreshButton.addClickListener( c -> load(accountCopyGrid, accountCopyService, dateFilter));
-        showButton.addClickListener( c -> load(accountCopyGrid, accountCopyService, dateFilter));
+        refreshButton.addClickListener( c -> load(accountCopyGrid, accountCopyService, dateFilter, sumTextField));
+        showButton.addClickListener( c -> load(accountCopyGrid, accountCopyService, dateFilter, sumTextField));
 
         cashCreditSelect.addValueChangeListener(event -> {
             currentSelectedItem = event.getValue();
-            load(accountCopyGrid, accountCopyService, dateFilter);
+            load(accountCopyGrid, accountCopyService, dateFilter, sumTextField);
         });
 
         accountCopyGrid.addItemClickListener(listener -> {
-            NewAccountCopyForm accountCopyForm =  new NewAccountCopyForm(
+            AccountCopyForm accountCopyForm =  new AccountCopyForm(
                     accountCopyService,
                     clientService,
                     rateMasterService,
@@ -204,12 +210,20 @@ public class CustomerBillingDetailsForm extends Div {
         binder.readBean(dateFilter);
     }
 
-    private void load(Grid<AccountCopy> accountCopyGrid, AccountCopyService accountCopyService, DateFilter dateFilter){
+    private void load(
+            Grid<AccountCopy> accountCopyGrid,
+            AccountCopyService accountCopyService,
+            DateFilter dateFilter,
+            TextField sumTextField){
+        List<AccountCopy> allByClientNameAndPodDateBetween = accountCopyService.findAllByClientNameAndPodDateBetween(
+                currentSelectedItem,
+                fromLocaleDate(dateFilter.getStartDate()),
+                fromLocaleDate(dateFilter.getEndDate()));
         accountCopyGrid.setItems(
-                accountCopyService.findAllByClientNameAndPodDateBetween(
-                        currentSelectedItem,
-                        fromLocaleDate(dateFilter.getStartDate()),
-                        fromLocaleDate(dateFilter.getEndDate())));
+                allByClientNameAndPodDateBetween);
+        long sum = allByClientNameAndPodDateBetween.parallelStream().map(AccountCopy::getRate).reduce(0, Math::addExact);
+        sumTextField.setValue(Long.toString(sum));
+
     }
 
     private void showError(String error){

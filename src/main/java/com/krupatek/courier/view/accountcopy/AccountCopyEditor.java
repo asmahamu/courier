@@ -133,7 +133,7 @@ public class AccountCopyEditor extends Div {
         });
 
         accountCopyGrid.addItemClickListener(listener -> {
-            NewAccountCopyForm accountCopyForm =  new NewAccountCopyForm(
+            AccountCopyForm accountCopyForm =  new AccountCopyForm(
                     accountCopyService,
                     clientService,
                     rateMasterService,
@@ -146,7 +146,7 @@ public class AccountCopyEditor extends Div {
         });
 
         Button addNewBtn = new Button("New Account Copy", VaadinIcon.PLUS.create());
-        addNewBtn.addClickListener(e -> add(new NewAccountCopyForm(
+        addNewBtn.addClickListener(e -> add(new AccountCopyForm(
                 accountCopyService,
                 clientService,
                 rateMasterService,

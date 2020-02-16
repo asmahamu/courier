@@ -7,7 +7,7 @@ import com.krupatek.courier.utils.DateUtils;
 import com.krupatek.courier.view.CustomerBillingDetailsForm;
 import com.krupatek.courier.view.SystemSettingsForm;
 import com.krupatek.courier.view.accountcopy.AccountCopyEditor;
-import com.krupatek.courier.view.accountcopy.NewAccountCopyForm;
+import com.krupatek.courier.view.accountcopy.AccountCopyForm;
 import com.krupatek.courier.view.clientprofile.ClientProfileEditor;
 import com.krupatek.courier.view.rate.RateEntryEditor;
 import com.krupatek.courier.view.rate.RateIntEntryEditor;
@@ -111,7 +111,7 @@ public class MainView extends VerticalLayout {
         MenuItem accountCopyMenuItem = billingDetails.getSubMenu().addItem("Account Copy");
         accountCopyMenuItem.getSubMenu().addItem("Create Account Copy", e -> {
             component.removeAll();
-            component.add(new NewAccountCopyForm(
+            component.add(new AccountCopyForm(
                     accountCopyService,
                     clientService,
                     rateMasterService ,

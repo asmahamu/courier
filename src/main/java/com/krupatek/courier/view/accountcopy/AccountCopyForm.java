@@ -24,18 +24,16 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 @SpringComponent
 @UIScope
-public class NewAccountCopyForm extends Div {
+public class AccountCopyForm extends Div {
 
     private boolean isDomestic = true; // False means International.
 
-    public NewAccountCopyForm(
+    public AccountCopyForm(
             AccountCopyService accountCopyService,
             ClientService clientService,
             RateMasterService rateMasterService,
@@ -45,6 +43,8 @@ public class NewAccountCopyForm extends Div {
             DateUtils dateUtils,
             AccountCopy accountCopy) {
         super();
+
+        boolean isNewAccountCopy = accountCopy.getDocNo() == null || accountCopy.getDocNo().isEmpty();
 
         Dialog dialog = new Dialog();
         HorizontalLayout horizontalLayout = new HorizontalLayout();
@@ -95,20 +95,21 @@ public class NewAccountCopyForm extends Div {
 
         // Client Name
 
-        List<Client> clientList = clientService.findAll();
+        if(!isNewAccountCopy){
+            isDomestic =  !accountCopy.getType().equals("Inter");
+        }
 
-        List<String> clientNameList = clientList.parallelStream().map(Client::getClientName).collect(Collectors.toList());
         ComboBox<String> clientsComboBox = new ComboBox<>();
         clientsComboBox.setLabel("Client Name : ");
-        clientsComboBox.setItems(clientNameList);
         clientsComboBox.setClearButtonVisible(true);
+        updateClientName(clientsComboBox, rateMasterService, rateIntMasterService);
         binder.bind(clientsComboBox, AccountCopy::getClientName, AccountCopy::setClientName);
 
         // Destination
         ComboBox<String> destinationComboBox = new ComboBox<>();
         destinationComboBox.setLabel("Destination : ");
-        destinationComboBox.setItems(placeGenerationService.findDistinctCityName());
         destinationComboBox.setClearButtonVisible(true);
+        updateDestination(destinationComboBox, placeGenerationService, networkService);
         binder.bind(destinationComboBox, AccountCopy::getDestination,  (e, r) -> {
             e.setDestination(r);
             e.setPlaceCode(r);
@@ -130,8 +131,7 @@ public class NewAccountCopyForm extends Div {
         TextField pincode = new TextField();
         pincode.setLabel("Pincode : ");
         pincode.setValueChangeMode(ValueChangeMode.EAGER);
-        binder.forField(pincode).asRequired("Every Account copy must have pincode").
-                bind(
+        binder.bind(pincode,
                 AccountCopy::getArea,
                 AccountCopy::setArea);
 
@@ -157,14 +157,17 @@ public class NewAccountCopyForm extends Div {
         // Booking Type
         Select<String> bookingTypeSelect = new Select<>();
         bookingTypeSelect.setLabel("Booking Type : ");
-        bookingTypeSelect.setItems("Dom", "Int");
-        bookingTypeSelect.setValue("Dom");
-        bookingTypeSelect.addValueChangeListener(e -> {
-            isDomestic = !e.getValue().equals("Int");
-           updateClientName(clientsComboBox, rateMasterService, rateIntMasterService);
-           updateDestination(destinationComboBox, placeGenerationService, networkService);
-        });
-
+        bookingTypeSelect.setItems("Dom", "Inter");
+        binder.bind(bookingTypeSelect, AccountCopy::getType, AccountCopy::setType);
+        if(isNewAccountCopy) {
+            bookingTypeSelect.addValueChangeListener(e -> {
+                isDomestic = !e.getValue().equals("Inter");
+               updateClientName(clientsComboBox, rateMasterService, rateIntMasterService);
+               updateDestination(destinationComboBox, placeGenerationService, networkService);
+            });
+        } else {
+            bookingTypeSelect.setReadOnly(true);
+        }
         // Mode
         Select<String> modeSelect = new Select<>();
         modeSelect.setLabel("Mode : ");
@@ -234,7 +237,7 @@ public class NewAccountCopyForm extends Div {
         weight.addKeyDownListener(Key.ENTER, e -> {
             try {
                 binder.writeBean(accountCopy);
-                Logger.getLogger(NewAccountCopyForm.class.getName()).info("AccountCopy : "+
+                Logger.getLogger(AccountCopyForm.class.getName()).info("AccountCopy : "+
                         accountCopy.getClientName()+", "+
                         accountCopy.getToParty()+", "+
                         accountCopy.getStateCode()+", "+
@@ -249,9 +252,9 @@ public class NewAccountCopyForm extends Div {
                                     accountCopy.getdP(),
                                     accountCopy.getMode()
                             );
-                    Logger.getLogger(NewAccountCopyForm.class.getName()).info("RateEntry : " + rateEntry);
+                    Logger.getLogger(AccountCopyForm.class.getName()).info("RateEntry : " + rateEntry);
                     Double rateText = new RateUtils().charges(Double.valueOf(weight.getValue()), rateEntry.getFrom1(), rateEntry.getTo1(), rateEntry.getRate(), rateEntry.getAddWt(), (double) rateEntry.getAddRt());
-                    rate.setValue(rateText.toString());
+                    rate.setValue(Integer.toString(rateText.intValue()));
                 } else {
                     RateIntEntry rateIntEntry = rateIntMasterService.findByClientNameAndStateCodeAndPodTypeAndMode(
                       accountCopy.getClientName(),
@@ -259,9 +262,9 @@ public class NewAccountCopyForm extends Div {
                       accountCopy.getdP(),
                       accountCopy.getMode()
                     );
-                    Logger.getLogger(NewAccountCopyForm.class.getName()).info("RateIntEntry : " + rateIntEntry);
+                    Logger.getLogger(AccountCopyForm.class.getName()).info("RateIntEntry : " + rateIntEntry);
                     Double rateText = new RateUtils().charges(Double.valueOf(weight.getValue()), rateIntEntry.getFrom1(), rateIntEntry.getTo1(), rateIntEntry.getRate(), rateIntEntry.getAddWt(), (double) rateIntEntry.getAddRt());
-                    rate.setValue(rateText.toString());
+                    rate.setValue(Integer.toString(rateText.intValue()));
                 }
                 rate.focus();
             } catch (ValidationException ex) {
