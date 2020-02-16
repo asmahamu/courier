@@ -2,8 +2,11 @@ package com.krupatek.courier.view;
 
 import com.krupatek.courier.model.AccountCopy;
 import com.krupatek.courier.model.Client;
-import com.krupatek.courier.service.AccountCopyService;
-import com.krupatek.courier.service.ClientService;
+import com.krupatek.courier.service.*;
+import com.krupatek.courier.utils.DateUtils;
+import com.krupatek.courier.view.accountcopy.NewAccountCopyForm;
+import com.vaadin.flow.component.AbstractField;
+import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.grid.Grid;
@@ -13,6 +16,7 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
+import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 
@@ -26,12 +30,15 @@ import java.util.List;
 @UIScope
 public class CustomerBillingDetailsForm extends Div {
     private String currentSelectedItem;
-    private LocalDate startDate;
-    private LocalDate endDate;
 
     public CustomerBillingDetailsForm(
             AccountCopyService accountCopyService,
-            ClientService clientService) {
+            ClientService clientService,
+            RateMasterService rateMasterService,
+            RateIntMasterService rateIntMasterService,
+            PlaceGenerationService placeGenerationService,
+            NetworkService networkService,
+            DateUtils dateUtils) {
         super();
         VerticalLayout verticalLayout = new VerticalLayout();
         verticalLayout.setSizeFull();
@@ -58,48 +65,66 @@ public class CustomerBillingDetailsForm extends Div {
         HorizontalLayout dateHorizontalLayout = new HorizontalLayout();
         dateHorizontalLayout.setWidthFull();
 
+        LocalDate currentDate = LocalDate.now();
+        LocalDate start = currentDate.withDayOfMonth(1);
+        LocalDate end = currentDate.withDayOfMonth(currentDate.lengthOfMonth());
+
+        // Last Month button
+        Button lastMonthButton = new Button("Last Month");
+
+        // Current Month button
+        Button currentMonthButton = new Button("Current Month");
+
+
+        DateFilter dateFilter = new DateFilter(start, end);
+
+        Binder<DateFilter> binder = new Binder<>(DateFilter.class);
+
         // Start Date
-        DatePicker startDatePicker = new DatePicker();
+        DatePicker startDatePicker = new DatePicker(start);
         startDatePicker.setLabel("From Date : ");
+        binder.bind(startDatePicker, DateFilter::getStartDate, DateFilter::setStartDate);
 
         // End Date
-        DatePicker endDatePicker = new DatePicker();
+        DatePicker endDatePicker = new DatePicker(end);
         endDatePicker.setLabel("To Date : ");
+        binder.bind(endDatePicker, DateFilter::getEndDate, DateFilter::setEndDate);
 
 
-        startDatePicker.addValueChangeListener(event -> {
+        HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<DatePicker, LocalDate>> StartDateChangeListener = event -> {
             LocalDate selectedDate = event.getValue();
             LocalDate endDate = endDatePicker.getValue();
             if (selectedDate != null) {
-                startDate = selectedDate;
+                dateFilter.setStartDate(selectedDate);
                 endDatePicker.setMin(selectedDate.plusDays(1));
-                if (endDate == null) {
-                    endDatePicker.setOpened(true);
-                    showError("Select the ending date");
-                } else {
-                    showError(
-                            "Selected period:\nFrom " + selectedDate.toString()
-                                    + " to " + endDate.toString());
-                }
+//                if (endDate == null) {
+//                    endDatePicker.setOpened(true);
+//                    showError("Select the ending date");
+//                } else {
+//                    showError(
+//                            "Selected period:\nFrom " + selectedDate.toString()
+//                                    + " to " + endDate.toString());
+//                }
             } else {
                 endDatePicker.setMin(null);
                 showError("Select the starting date");
             }
-        });
+        };
+        startDatePicker.addValueChangeListener(StartDateChangeListener);
 
-        endDatePicker.addValueChangeListener(event -> {
+        HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<DatePicker, LocalDate>> endDateChangeListener = event -> {
             LocalDate selectedDate = event.getValue();
             LocalDate startDate = startDatePicker.getValue();
             if (selectedDate != null) {
-                endDate = selectedDate;
+                dateFilter.setEndDate(selectedDate);
                 startDatePicker.setMax(selectedDate.minusDays(1));
-                if (startDate != null) {
-                    showError(
-                            "Selected period:\nFrom " + startDate.toString()
-                                    + " to " + selectedDate.toString());
-                } else {
-                    showError("Select the starting date");
-                }
+//                if (startDate != null) {
+//                    showError(
+//                            "Selected period:\nFrom " + startDate.toString()
+//                                    + " to " + selectedDate.toString());
+//                } else {
+//                    showError("Select the starting date");
+//                }
             } else {
                 startDatePicker.setMax(null);
                 if (startDate != null) {
@@ -108,12 +133,14 @@ public class CustomerBillingDetailsForm extends Div {
                     showError("No date is selected");
                 }
             }
-        });
+        };
+        endDatePicker.addValueChangeListener(endDateChangeListener);
+
         // Refresh
         Button refreshButton = new Button("Refresh");
         Button showButton = new Button("Show");
 
-        dateHorizontalLayout.add(startDatePicker, endDatePicker, refreshButton, showButton);
+        dateHorizontalLayout.add(startDatePicker, endDatePicker, lastMonthButton, currentMonthButton, refreshButton, showButton);
         dateHorizontalLayout.setAlignItems(HorizontalLayout.Alignment.END);
 
         Grid<AccountCopy> accountCopyGrid = new Grid<>(AccountCopy.class);
@@ -136,17 +163,53 @@ public class CustomerBillingDetailsForm extends Div {
 
         add(verticalLayout);
 
-        refreshButton.addClickListener( c -> load(accountCopyGrid, accountCopyService));
-        showButton.addClickListener( c -> load(accountCopyGrid, accountCopyService));
+        // Last Month
+        lastMonthButton.addClickListener( c -> {
+            int month = currentDate.getMonthValue();
+            LocalDate lastMonth = currentDate.withMonth( (month - 1) % 11);
+            dateFilter.setStartDate(lastMonth.withDayOfMonth(1));
+            dateFilter.setEndDate(lastMonth.withDayOfMonth(lastMonth.lengthOfMonth()));
+            binder.readBean(dateFilter);
+            load(accountCopyGrid, accountCopyService, dateFilter);
+        });
+
+        currentMonthButton.addClickListener( c -> {
+            dateFilter.setStartDate(start);
+            dateFilter.setEndDate(end);
+            binder.readBean(dateFilter);
+            load(accountCopyGrid, accountCopyService, dateFilter);
+        });
+
+        refreshButton.addClickListener( c -> load(accountCopyGrid, accountCopyService, dateFilter));
+        showButton.addClickListener( c -> load(accountCopyGrid, accountCopyService, dateFilter));
 
         cashCreditSelect.addValueChangeListener(event -> {
             currentSelectedItem = event.getValue();
-            load(accountCopyGrid, accountCopyService);
+            load(accountCopyGrid, accountCopyService, dateFilter);
         });
+
+        accountCopyGrid.addItemClickListener(listener -> {
+            NewAccountCopyForm accountCopyForm =  new NewAccountCopyForm(
+                    accountCopyService,
+                    clientService,
+                    rateMasterService,
+                    rateIntMasterService,
+                    placeGenerationService,
+                    networkService,
+                    dateUtils,
+                    listener.getItem());
+            add(accountCopyForm);
+        });
+
+        binder.readBean(dateFilter);
     }
 
-    private void load(Grid<AccountCopy> accountCopyGrid, AccountCopyService accountCopyService){
-        accountCopyGrid.setItems(accountCopyService.findAllByClientNameAndPodDateBetween(currentSelectedItem, fromLocaleDate(startDate), fromLocaleDate(endDate)));
+    private void load(Grid<AccountCopy> accountCopyGrid, AccountCopyService accountCopyService, DateFilter dateFilter){
+        accountCopyGrid.setItems(
+                accountCopyService.findAllByClientNameAndPodDateBetween(
+                        currentSelectedItem,
+                        fromLocaleDate(dateFilter.getStartDate()),
+                        fromLocaleDate(dateFilter.getEndDate())));
     }
 
     private void showError(String error){
@@ -155,5 +218,31 @@ public class CustomerBillingDetailsForm extends Div {
 
     private Date fromLocaleDate(LocalDate localDate){
         return new Date(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli());
+    }
+}
+
+class DateFilter{
+    private LocalDate startDate;
+    private LocalDate endDate;
+
+    public DateFilter(LocalDate startDate, LocalDate endDate) {
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
     }
 }

@@ -134,7 +134,14 @@ public class MainView extends VerticalLayout {
         } );
         billingDetails.getSubMenu().addItem("Direct Edition", e -> {
             component.removeAll();
-            component.add(new CustomerBillingDetailsForm(accountCopyService, clientService));
+            component.add(new CustomerBillingDetailsForm(
+                    accountCopyService,
+                    clientService,
+                    rateMasterService,
+                    rateIntMasterService,
+                    placeGenerationService,
+                    networkService,
+                    dateUtils));
         } );
 
         add(menuBar);
