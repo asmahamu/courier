@@ -57,6 +57,9 @@ public class MainView extends VerticalLayout {
     @Autowired
     DateUtils dateUtils;
 
+    @Autowired
+    PODSummaryService podSummaryService;
+
     public MainView(@Autowired MessageBean bean) {
         MenuBar menuBar = new MenuBar();
         Div component = new Div();
@@ -132,7 +135,7 @@ public class MainView extends VerticalLayout {
                     networkService,
                     dateUtils));
         } );
-        billingDetails.getSubMenu().addItem("Direct Edition", e -> {
+        billingDetails.getSubMenu().addItem("POD Summary", e -> {
             component.removeAll();
             component.add(new CustomerBillingDetailsForm(
                     accountCopyService,
@@ -141,6 +144,7 @@ public class MainView extends VerticalLayout {
                     rateIntMasterService,
                     placeGenerationService,
                     networkService,
+                    podSummaryService,
                     dateUtils));
         } );
 

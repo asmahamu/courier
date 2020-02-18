@@ -10,22 +10,30 @@ import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 @SpringComponent
 @UIScope
@@ -39,6 +47,7 @@ public class CustomerBillingDetailsForm extends Div {
             RateIntMasterService rateIntMasterService,
             PlaceGenerationService placeGenerationService,
             NetworkService networkService,
+            PODSummaryService podSummaryService,
             DateUtils dateUtils) {
         super();
         VerticalLayout verticalLayout = new VerticalLayout();
@@ -141,6 +150,8 @@ public class CustomerBillingDetailsForm extends Div {
         Button refreshButton = new Button("Refresh");
         Button showButton = new Button("Show");
 
+
+
         dateHorizontalLayout.add(startDatePicker, endDatePicker, lastMonthButton, currentMonthButton, refreshButton, showButton);
         dateHorizontalLayout.setAlignItems(HorizontalLayout.Alignment.END);
 
@@ -162,11 +173,30 @@ public class CustomerBillingDetailsForm extends Div {
         accountCopyGrid.setColumnReorderingAllowed(false);
         verticalLayout.add(title, cashCreditSelect, dateHorizontalLayout, accountCopyGrid);
 
+        HorizontalLayout footerLayout = new HorizontalLayout();
+
         TextField sumTextField = new TextField();
         sumTextField.setLabel("Total : ");
         sumTextField.setReadOnly(true);
-        verticalLayout.add(sumTextField);
 
+        Anchor podSummaryDownloadLink = new Anchor(new StreamResource("pod-summary.pdf", () -> {
+            try {
+                Client client = clientService.findAllByClientName(currentSelectedItem).get(0);
+                List<AccountCopy> allByClientNameAndPodDateBetween = accountCopyService.findAllByClientNameAndPodDateBetween(
+                        currentSelectedItem,
+                        fromLocaleDate(dateFilter.getStartDate()),
+                        fromLocaleDate(dateFilter.getEndDate()));
+                File pdfFile = podSummaryService.generateInvoiceFor(client, allByClientNameAndPodDateBetween, Locale.getDefault());
+                return  new FileInputStream(pdfFile);
+            } catch (IOException e1) {
+                return new ByteArrayInputStream(new byte[]{});
+            }
+        }), "Download POD Summary");
+        podSummaryDownloadLink.getElement().setAttribute("download", true);
+
+        footerLayout.setAlignItems(HorizontalLayout.Alignment.CENTER);
+        footerLayout.add(sumTextField, podSummaryDownloadLink);
+        verticalLayout.add(footerLayout);
         add(verticalLayout);
 
         // Last Month
@@ -188,6 +218,50 @@ public class CustomerBillingDetailsForm extends Div {
 
         refreshButton.addClickListener( c -> load(accountCopyGrid, accountCopyService, dateFilter, sumTextField));
         showButton.addClickListener( c -> load(accountCopyGrid, accountCopyService, dateFilter, sumTextField));
+
+
+//        podSummary.addClickListener(e -> {
+//            Client client = clientService.findAllByClientName(currentSelectedItem).get(0);
+//            List<AccountCopy> allByClientNameAndPodDateBetween = accountCopyService.findAllByClientNameAndPodDateBetween(
+//                    currentSelectedItem,
+//                    fromLocaleDate(dateFilter.getStartDate()),
+//                    fromLocaleDate(dateFilter.getEndDate()));
+//            try {
+//
+//                File pdfFile = podSummaryService.generateInvoiceFor(client, allByClientNameAndPodDateBetween, Locale.getDefault());
+//                getElement().setAttribute("data", new StreamResource("pod-summary.pdf", () -> {
+//                    try {
+//                        return  new FileInputStream(pdfFile);
+//                    } catch (FileNotFoundException e1) {
+//                        return new ByteArrayInputStream(new byte[]{});
+//                    }
+//                }));
+
+// A button to open the printer-friendly page.
+//                Button print = new Button(new Icon(VaadinIcon.PRINT));
+//                opener.extend(print);
+
+
+//                VerticalLayout v = new VerticalLayout();
+//                v.setSizeFull();
+//
+//
+//                v.add(new EmbeddedPdfDocument(new StreamResource("book-of-vaadin.pdf", () -> {
+//                    try {
+//                        return  new FileInputStream(pdfFile);
+//                    } catch (FileNotFoundException e1) {
+//                        return new ByteArrayInputStream(new byte[]{});
+//                    }
+//                })));
+//
+//                Dialog dialog = new Dialog();
+//                dialog.add(v);
+//                dialog.open();
+
+//            } catch (IOException ex) {
+//                ex.printStackTrace();
+//            }
+//        });
 
         cashCreditSelect.addValueChangeListener(event -> {
             currentSelectedItem = event.getValue();

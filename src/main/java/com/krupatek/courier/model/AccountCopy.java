@@ -81,8 +81,9 @@ public class AccountCopy {
     @Column(name = "status")
     private String status;
 
-    @Column(name = "status_date")
-    private String statusDate;
+    @Column(name = "status_date", columnDefinition="DATETIME")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date statusDate = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());;
 
     @Column(name = "remark")
     private String remark;
@@ -288,11 +289,11 @@ public class AccountCopy {
         this.status = status;
     }
 
-    public String getStatusDate() {
+    public Date getStatusDate() {
         return statusDate;
     }
 
-    public void setStatusDate(String statusDate) {
+    public void setStatusDate(Date statusDate) {
         this.statusDate = statusDate;
     }
 

@@ -24,6 +24,7 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 
+import java.util.Date;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -158,6 +159,7 @@ public class AccountCopyForm extends Div {
         Select<String> bookingTypeSelect = new Select<>();
         bookingTypeSelect.setLabel("Booking Type : ");
         bookingTypeSelect.setItems("Dom", "Inter");
+        bookingTypeSelect.setValue("Dom");
         binder.bind(bookingTypeSelect, AccountCopy::getType, AccountCopy::setType);
         if(isNewAccountCopy) {
             bookingTypeSelect.addValueChangeListener(e -> {
@@ -195,11 +197,38 @@ public class AccountCopyForm extends Div {
 
         formLayout.add(bookingTypeSelect, modeSelect, weight, rate);
 
+        // Status
+        Select<String> statusTypeSelect = new Select<>();
+        statusTypeSelect.setLabel("Status : ");
+        statusTypeSelect.setItems("Delivered", "Sign", "Stamp");
+        statusTypeSelect.setValue("Delivered");
+        binder.bind(statusTypeSelect, AccountCopy::getStatus, AccountCopy::setStatus);
+
+
+        // Status Date
+        DatePicker statusDate = new DatePicker();
+        podDate.setLabel("Status Date : ");
+        binder.bind(statusDate,
+                d -> dateUtils.asLocalDate(accountCopy.getStatusDate() != null ? accountCopy.getStatusDate() : new Date()),
+                (a, d) ->  a.setStatusDate(dateUtils.asDate(d)));
+
+
+        // Remark
+        TextField remark = new TextField();
+        remark.setLabel("Remark : ");
+        remark.setValueChangeMode(ValueChangeMode.EAGER);
+        binder.bind(remark,
+                AccountCopy::getRemark,
+                AccountCopy::setRemark);
+
+        formLayout.add(statusTypeSelect, statusDate, remark);
+
         Button save = new Button("Save",
                 event -> {
                     try {
                         binder.writeBean(accountCopy);
                         accountCopyService.saveAndFlush(accountCopy);
+                        Notification.show("Account copy updated successfully.");
                         // A real application would also save the updated person
                         // using the application's backend
                     } catch (ValidationException e) {
