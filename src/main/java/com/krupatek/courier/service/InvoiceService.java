@@ -35,7 +35,7 @@ public class InvoiceService {
     private static final String logo_path = "/jasper/images/stackextend-logo.png";
     private final String invoice_template_path = "/jasper/invoice.jrxml";
 
-    public void generateInvoiceFor(Company company, Client client, BillGeneration billGeneration, List<AccountCopy> accountCopies, Locale locale) throws IOException {
+    public File generateInvoiceFor(Company company, Client client, BillGeneration billGeneration, List<AccountCopy> accountCopies, Locale locale) throws IOException {
 
         File pdfFile = File.createTempFile("my-invoice", ".pdf");
 
@@ -59,6 +59,7 @@ public class InvoiceService {
         {
             log.error(String.format("An error occured during PDF creation: %s", e));
         }
+        return pdfFile;
     }
     // Load invoice jrxml template
     private JasperReport loadTemplate() throws JRException {

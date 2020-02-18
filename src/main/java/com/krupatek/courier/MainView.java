@@ -4,6 +4,8 @@ import com.krupatek.courier.model.AccountCopy;
 import com.krupatek.courier.repository.CompanyRepository;
 import com.krupatek.courier.service.*;
 import com.krupatek.courier.utils.DateUtils;
+import com.krupatek.courier.view.ClientBillPrintingForm;
+import com.krupatek.courier.view.ClientBillRePrintingForm;
 import com.krupatek.courier.view.CustomerBillingDetailsForm;
 import com.krupatek.courier.view.SystemSettingsForm;
 import com.krupatek.courier.view.accountcopy.AccountCopyEditor;
@@ -59,6 +61,12 @@ public class MainView extends VerticalLayout {
 
     @Autowired
     PODSummaryService podSummaryService;
+
+    @Autowired
+    BillingService billingService;
+
+    @Autowired
+    InvoiceService invoiceService;
 
     public MainView(@Autowired MessageBean bean) {
         MenuBar menuBar = new MenuBar();
@@ -135,6 +143,19 @@ public class MainView extends VerticalLayout {
                     networkService,
                     dateUtils));
         } );
+        billingDetails.getSubMenu().addItem("Client Bill Printing", e -> {
+            component.removeAll();
+            component.add(new ClientBillPrintingForm());
+        });
+        billingDetails.getSubMenu().addItem("Client Bill Reprinting", e -> {
+            component.removeAll();
+            component.add(new ClientBillRePrintingForm(
+                    billingService,
+                    accountCopyService,
+                    invoiceService,
+                    clientService,
+                    companyRepository));
+        });
         billingDetails.getSubMenu().addItem("POD Summary", e -> {
             component.removeAll();
             component.add(new CustomerBillingDetailsForm(
