@@ -198,7 +198,7 @@ public class ClientBillPrintingForm extends Div {
 
         Grid<AccountCopy> accountCopyGrid = new Grid<>(AccountCopy.class);
         accountCopyGrid.setWidth("1300px");
-        accountCopyGrid.setHeight("400px");
+        accountCopyGrid.setHeight("350px");
         accountCopyGrid.setColumns("docNo", "podDate", "clientName", "destination", "weight", "otherCharges", "rate", "dP", "mode");
 
         accountCopyGrid.getColumnByKey("docNo").setWidth("150px").setFlexGrow(0);

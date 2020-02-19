@@ -8,7 +8,6 @@ import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.ConfigurableFilterDataProvider;
@@ -25,10 +24,6 @@ public class ClientProfileEditor extends Div {
     public  ClientProfileEditor(ClientService clientService){
         VerticalLayout verticalLayout = new VerticalLayout();
         verticalLayout.setSizeFull();
-
-        HorizontalLayout horizontalLayout = new HorizontalLayout();
-        horizontalLayout.setPadding(true);
-        horizontalLayout.setMargin(false);
 
         Label title = new Label();
         title.setSizeFull();
@@ -122,8 +117,6 @@ public class ClientProfileEditor extends Div {
 
         verticalLayout.add(title ,clientGrid, addNewBtn);
 
-        horizontalLayout.add(verticalLayout);
-        add(horizontalLayout);
-
+        add(verticalLayout);
     }
 }

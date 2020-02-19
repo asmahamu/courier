@@ -13,7 +13,6 @@ import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.ConfigurableFilterDataProvider;
@@ -40,10 +39,6 @@ public class ClientBillRePrintingForm extends Div {
         super();
         VerticalLayout verticalLayout = new VerticalLayout();
         verticalLayout.setSizeFull();
-
-        HorizontalLayout horizontalLayout = new HorizontalLayout();
-        horizontalLayout.setPadding(true);
-        horizontalLayout.setMargin(false);
 
         Label title = new Label();
         title.setSizeFull();
@@ -177,8 +172,6 @@ public class ClientBillRePrintingForm extends Div {
             }
         });
 
-        horizontalLayout.add(verticalLayout);
-        add(horizontalLayout);
-
+        add(verticalLayout);
     }
 }
