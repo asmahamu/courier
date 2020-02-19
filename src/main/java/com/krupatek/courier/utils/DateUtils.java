@@ -24,4 +24,19 @@ public class DateUtils {
 
     public LocalDateTime asLocalDateTime(Date date) {
         return Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
-    }}
+    }
+
+    public String currentFiscalYear(LocalDate localDate){
+        // Check fiscal year
+        int month = localDate.getMonthValue();
+        int year = localDate.getYear() % 100;
+        String billYearTag = "";
+
+        if(month > 3){
+            billYearTag = year+"-"+(year + 1);
+        } else {
+            billYearTag = (year - 1)+"-"+year;
+        }
+        return billYearTag;
+    }
+}

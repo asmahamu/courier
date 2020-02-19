@@ -15,4 +15,10 @@ public interface BillingService {
     Page<BillGeneration> findByBillNoStartsWithAndBillDateStartsWithAndClientNameStartsWith(int offset, int limit, String billNoFilter, String invoiceDateFilter, String clientNameFilter);
 
     long countByBillNoStartsWithAndBillDateStartsWithAndClientNameStartsWith(String billNoFilter, String invoiceDateFilter, String clientNameFilter);
+
+    String lastBillNo(String billNoLike);
+
+    String nextBillNo();
+
+    BillGeneration saveAndFlush(BillGeneration billGeneration);
 }

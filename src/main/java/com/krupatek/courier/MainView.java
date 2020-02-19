@@ -25,6 +25,8 @@ import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.material.Material;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.logging.Logger;
+
 @Route
 @Theme(value = Material.class, variant = Material.LIGHT)
 @PWA(name = "Project Base for Vaadin Flow with Spring", shortName = "Project Base")
@@ -145,7 +147,18 @@ public class MainView extends VerticalLayout {
         } );
         billingDetails.getSubMenu().addItem("Client Bill Printing", e -> {
             component.removeAll();
-            component.add(new ClientBillPrintingForm());
+            component.add(new ClientBillPrintingForm(
+                    accountCopyService,
+                    clientService,
+                    rateMasterService,
+                    rateIntMasterService,
+                    placeGenerationService,
+                    networkService,
+                    invoiceService,
+                    companyRepository,
+                    billingService,
+                    dateUtils));
+
         });
         billingDetails.getSubMenu().addItem("Client Bill Reprinting", e -> {
             component.removeAll();
@@ -157,6 +170,7 @@ public class MainView extends VerticalLayout {
                     companyRepository));
         });
         billingDetails.getSubMenu().addItem("POD Summary", e -> {
+            Logger.getLogger(MainView.class.getName()).info("Next bill no : "+billingService.nextBillNo());
             component.removeAll();
             component.add(new CustomerBillingDetailsForm(
                     accountCopyService,

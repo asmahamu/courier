@@ -11,6 +11,8 @@ import java.util.List;
 public interface AccountCopyService {
     List<AccountCopy> findAllByClientNameAndPodDateBetween(String clientName, Date startDate, Date endDate);
 
+    List<AccountCopy> findAllByClientNameAndPodDateBetweenAndType(String clientName, Date startDate, Date endDate, String type);
+
     AccountCopy saveAndFlush(AccountCopy accountCopy);
 
     List<AccountCopy> findAll();
@@ -27,4 +29,6 @@ public interface AccountCopyService {
     long countByDocNoStartsWithAndClientNameStartsWith(String docNo, String clientName);
 
     List<AccountCopy> findAllByBillNo(String billNo);
+
+    void tagBillNo(String currentSelectedItem, Date fromLocaleDate, Date fromLocaleDate1, String type, String billNo);
 }
