@@ -2,6 +2,7 @@ package com.krupatek.courier.view.clientprofile;
 
 import com.krupatek.courier.model.Client;
 import com.krupatek.courier.service.ClientService;
+import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -142,20 +143,15 @@ public class ClientProfileForm extends Div {
                 Client::setGstNo);
 
 
-        // Fuel Charge
-        TextField fuelSurchage = new TextField();
-        fuelSurchage.setLabel("Fuel Surcharge : ");
-        fuelSurchage.setValueChangeMode(ValueChangeMode.EAGER);
-
         // Fuel Surcharge
         Select<String> fuelSurchargeSelect = new Select<>();
         fuelSurchargeSelect.setLabel("Fuel Surcharge : ");
         fuelSurchargeSelect.setItems("Yes", "No");
         fuelSurchargeSelect.setValue("Yes");
+        binder.bind(fuelSurchargeSelect, Client::getFsc, Client::setFsc);
 
         formLayout.add(fuelSurchargeSelect, 1);
-        formLayout.add(fuelSurchage, 1);
-
+        formLayout.add(new Label());
 
 /*
         Button add = new Button("Add", event -> {
@@ -188,6 +184,18 @@ public class ClientProfileForm extends Div {
         formLayout.add(actions);
         horizontalLayout.add(formLayout);
         dialog.add(horizontalLayout);
+
+        clientCode.addKeyDownListener(Key.ENTER, event ->
+                clientsComboBox.focus());
+        clientAddress.addKeyDownListener(Key.ENTER, event ->
+                city.focus());
+        city.addKeyDownListener(Key.ENTER, event ->
+                phoneNumber.focus());
+        phoneNumber.addKeyDownListener(Key.ENTER, event ->
+                gstSelect.focus());
+        gstin.addKeyDownListener(Key.ENTER, event ->
+                fuelSurchargeSelect.focus());
+
         dialog.open();
 
         clientCode.focus();

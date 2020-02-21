@@ -2,7 +2,9 @@ package com.krupatek.courier.view;
 
 import com.krupatek.courier.model.Company;
 import com.krupatek.courier.repository.CompanyRepository;
+import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
@@ -17,20 +19,24 @@ public class SystemSettingsForm extends Div {
     public SystemSettingsForm(CompanyRepository companyRepository) {
         super();
 
+        Dialog dialog = new Dialog();
+        HorizontalLayout horizontalLayout = new HorizontalLayout();
+        horizontalLayout.setPadding(true);
+        horizontalLayout.setMargin(false);
+
         Binder<Company> binder = new Binder<>();
         Company company = companyRepository.findAll().get(0);
 
         FormLayout formLayout = new FormLayout();
         formLayout.setResponsiveSteps(
                 new FormLayout.ResponsiveStep("25em", 1),
-                new FormLayout.ResponsiveStep("25em", 2),
-                new FormLayout.ResponsiveStep("25em", 3),
-                new FormLayout.ResponsiveStep("25em", 4));
+                new FormLayout.ResponsiveStep("25em", 2));
+        formLayout.setMaxWidth("50em");
 
         Label title = new Label();
         title.setSizeFull();
         title.setText("Company Information");
-        formLayout.add(title, 4);
+        formLayout.add(title, 2);
 
 
         // Company Origin
@@ -43,7 +49,6 @@ public class SystemSettingsForm extends Div {
                 Company::getOrigin,
                 Company::setOrigin);
         origin.setValue(company.getOrigin());
-        formLayout.add(new Label(""), 2);
 
 
         // Company Prefix
@@ -56,8 +61,6 @@ public class SystemSettingsForm extends Div {
                 Company::setCompanyPrefix);
         formLayout.add(companyPrefix, 2);
 
-        formLayout.add(new Label(""), 2);
-
         // Company Name
 
         TextField companyName = new TextField();
@@ -68,8 +71,6 @@ public class SystemSettingsForm extends Div {
                 Company::setCompanyName);
         formLayout.add(companyName, 2);
 
-        formLayout.add(new Label(""), 2);
-
         // Company Address
 
         TextField companyAddress = new TextField();
@@ -79,8 +80,6 @@ public class SystemSettingsForm extends Div {
                 Company::getCompanyAddress1,
                 Company::setCompanyAddress1);
         formLayout.add(companyAddress, 2);
-
-        formLayout.add(new Label(""), 2);
 
         // City
 
@@ -101,8 +100,6 @@ public class SystemSettingsForm extends Div {
 
         formLayout.add(city, phoneNumber);
 
-        formLayout.add(new Label(""), 2);
-
         // GSTIN Number
         TextField gstin = new TextField();
         gstin.setLabel("GSTIN : ");
@@ -111,8 +108,6 @@ public class SystemSettingsForm extends Div {
                 Company::getGstin,
                 Company::setGstin);
         formLayout.add(gstin, 2);
-        formLayout.add(new Label(""), 2);
-
 
         // CGST %
         TextField cgst = new TextField();
@@ -139,19 +134,18 @@ public class SystemSettingsForm extends Div {
                 (c, t) -> c.setIgst(Double.valueOf(t)));
 
         // Fuel Charge
-        TextField fuelSurchage = new TextField();
-        fuelSurchage.setLabel("Fuel Surchage : ");
-        fuelSurchage.setValueChangeMode(ValueChangeMode.EAGER);
-        binder.bind(fuelSurchage,
+        TextField fuelSurcharge = new TextField();
+        fuelSurcharge.setLabel("Fuel Surcharge : ");
+        fuelSurcharge.setValueChangeMode(ValueChangeMode.EAGER);
+        binder.bind(fuelSurcharge,
                 c -> c.getFuelSurcharge().toString(),
                 (c, t) -> c.setFuelSurcharge(Integer.valueOf(t)));
-
 
         formLayout.add(
                 cgst,
                 sgst,
                 igst,
-                fuelSurchage);
+                fuelSurcharge);
 
 
         Button save = new Button("Save",
@@ -159,21 +153,49 @@ public class SystemSettingsForm extends Div {
                     try {
                         binder.writeBean(company);
                         companyRepository.saveAndFlush(company);
+                        Notification.show("Company settings saved successfully.");
                         // A real application would also save the updated person
                         // using the application's backend
                     } catch (ValidationException e) {
-                        Notification.show("Person could not be saved, " +
+                        Notification.show("Company settings could not be saved, " +
                                 "please check error messages for each field.");
                     }
                 });
         Button reset = new Button("Reset",
                 event -> binder.readBean(company));
 
+        Button cancel = new Button("Cancel", event -> dialog.close());
+
+        origin.addKeyDownListener(Key.ENTER, event ->
+                companyPrefix.focus());
+        companyPrefix.addKeyDownListener(Key.ENTER, event ->
+                companyName.focus());
+        companyName.addKeyDownListener(Key.ENTER, event ->
+                companyAddress.focus());
+        companyAddress.addKeyDownListener(Key.ENTER, event ->
+                city.focus());
+        city.addKeyDownListener(Key.ENTER, event ->
+                phoneNumber.focus());
+        phoneNumber.addKeyDownListener(Key.ENTER, event ->
+                gstin.focus());
+        gstin.addKeyDownListener(Key.ENTER, event ->
+                cgst.focus());
+        cgst.addKeyDownListener(Key.ENTER, event ->
+                sgst.focus());
+        sgst.addKeyDownListener(Key.ENTER, event ->
+                igst.focus());
+        igst.addKeyDownListener(Key.ENTER, event ->
+                fuelSurcharge.focus());
+        fuelSurcharge.addKeyDownListener(Key.ENTER, event ->
+                save.focus());
+
         HorizontalLayout actions = new HorizontalLayout();
-        actions.add(save, reset);
-        save.getStyle().set("marginRight", "10px");
-        formLayout.add(actions);
-        add(formLayout);
+        actions.add(save, reset, cancel);
+        formLayout.add(actions, 2);
+        horizontalLayout.add(formLayout);
+        dialog.add(horizontalLayout);
+        origin.focus();
+        dialog.open();
         binder.readBean(company);
     }
 }

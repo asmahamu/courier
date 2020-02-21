@@ -81,27 +81,14 @@ public class MainView extends VerticalLayout {
         Text selected = new Text("");
         Div message = new Div(new Text("Selected: "), selected);
 
-        MenuItem systemSettings = menuBar.addItem("System Settings");
         MenuItem masters = menuBar.addItem("Masters");
         MenuItem billingDetails = menuBar.addItem("Billing Details");
-        MenuItem reports = menuBar.addItem("Reports");
 
-        SubMenu systemSettingsSubMenu = systemSettings.getSubMenu();
+        SubMenu systemSettingsSubMenu = masters.getSubMenu();
         systemSettingsSubMenu.addItem("System Settings", e -> {
             component.removeAll();
             component.add(new SystemSettingsForm(companyRepository));
         }  );
-        MenuItem users = systemSettingsSubMenu.addItem("Users");
-        MenuItem billing = systemSettingsSubMenu.addItem("Billing");
-
-        SubMenu usersSubMenu = users.getSubMenu();
-        usersSubMenu.addItem("List", e -> selected.setText("List"));
-        usersSubMenu.addItem("Add", e -> selected.setText("Add"));
-
-        SubMenu billingSubMenu = billing.getSubMenu();
-        billingSubMenu.addItem("Invoices", e -> selected.setText("Invoices"));
-        billingSubMenu.addItem("Balance Events",
-                e -> selected.setText("Balance Events"));
 
         masters.getSubMenu().addItem("Client Profile",
                 e -> {
@@ -118,11 +105,6 @@ public class MainView extends VerticalLayout {
             component.removeAll();
             component.add(new RateIntEntryEditor(clientService, courierService, rateIntMasterService));
         });
-
-        masters.getSubMenu().addItem("Edit Profile",
-                e -> selected.setText("Edit Profile"));
-        masters.getSubMenu().addItem("Privacy Settings",
-                e -> selected.setText("Privacy Settings"));
 
         MenuItem accountCopyMenuItem = billingDetails.getSubMenu().addItem("Account Copy");
         accountCopyMenuItem.getSubMenu().addItem("Create Account Copy", e -> {
@@ -172,7 +154,7 @@ public class MainView extends VerticalLayout {
                     clientService,
                     companyRepository));
         });
-        billingDetails.getSubMenu().addItem("POD Summary", e -> {
+        billingDetails.getSubMenu().addItem("POD Summary / Daily Report", e -> {
             Logger.getLogger(MainView.class.getName()).info("Next bill no : "+billingService.nextBillNo());
             component.removeAll();
             component.add(new CustomerBillingDetailsForm(
