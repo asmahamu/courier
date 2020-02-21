@@ -95,7 +95,7 @@ public class AccountCopy {
     private String otherCharges;
 
     @Column(name = "type")
-    private String type;
+    private String type = "Dom";
 
     public String getDocNo() {
         return docNo;

@@ -122,10 +122,28 @@ public class AccountCopyForm extends Div {
                 network.ifPresent(value -> e.setStateCode(value.getZoneName()));
             }
         });
-        formLayout.add(clientsComboBox, destinationComboBox);
 
+        // Booking Type
+        Select<String> bookingTypeSelect = new Select<>();
+        bookingTypeSelect.setLabel("Booking Type : ");
+        bookingTypeSelect.setItems("Dom", "Inter");
+        bookingTypeSelect.setValue("Dom");
+        binder.bind(bookingTypeSelect, AccountCopy::getType, AccountCopy::setType);
+        if(isNewAccountCopy) {
+            bookingTypeSelect.addValueChangeListener(e -> {
+                isDomestic = !e.getValue().equals("Inter");
+                updateClientName(clientsComboBox, rateMasterService, rateIntMasterService);
+                updateDestination(destinationComboBox, placeGenerationService, networkService);
+            });
+        } else {
+            bookingTypeSelect.setReadOnly(true);
+        }
+
+        formLayout.add(bookingTypeSelect, clientsComboBox, destinationComboBox);
+
+        formLayout.setColspan(bookingTypeSelect, 1);
         formLayout.setColspan(clientsComboBox, 2);
-        formLayout.setColspan(destinationComboBox, 2);
+        formLayout.setColspan(destinationComboBox, 1);
 
 
         // PinCode
@@ -155,21 +173,6 @@ public class AccountCopyForm extends Div {
         formLayout.setColspan(receiverName, 2);
         formLayout.setColspan(courierSelect, 1);
 
-        // Booking Type
-        Select<String> bookingTypeSelect = new Select<>();
-        bookingTypeSelect.setLabel("Booking Type : ");
-        bookingTypeSelect.setItems("Dom", "Inter");
-        bookingTypeSelect.setValue("Dom");
-        binder.bind(bookingTypeSelect, AccountCopy::getType, AccountCopy::setType);
-        if(isNewAccountCopy) {
-            bookingTypeSelect.addValueChangeListener(e -> {
-                isDomestic = !e.getValue().equals("Inter");
-               updateClientName(clientsComboBox, rateMasterService, rateIntMasterService);
-               updateDestination(destinationComboBox, placeGenerationService, networkService);
-            });
-        } else {
-            bookingTypeSelect.setReadOnly(true);
-        }
         // Mode
         Select<String> modeSelect = new Select<>();
         modeSelect.setLabel("Mode : ");
@@ -195,7 +198,7 @@ public class AccountCopyForm extends Div {
                 AccountCopy::getRate,
                 AccountCopy::setRate);
 
-        formLayout.add(bookingTypeSelect, modeSelect, weight, rate);
+        formLayout.add(modeSelect, weight, rate);
 
         // Status
         Select<String> statusTypeSelect = new Select<>();
@@ -207,7 +210,7 @@ public class AccountCopyForm extends Div {
 
         // Status Date
         DatePicker statusDate = new DatePicker();
-        podDate.setLabel("Status Date : ");
+        statusDate.setLabel("Status Date : ");
         binder.bind(statusDate,
                 d -> dateUtils.asLocalDate(accountCopy.getStatusDate() != null ? accountCopy.getStatusDate() : new Date()),
                 (a, d) ->  a.setStatusDate(dateUtils.asDate(d)));
@@ -222,6 +225,7 @@ public class AccountCopyForm extends Div {
                 AccountCopy::setRemark);
 
         formLayout.add(statusTypeSelect, statusDate, remark);
+        formLayout.add(new Label(), 2);
 
         Button save = new Button("Save",
                 event -> {
