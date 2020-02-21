@@ -11,6 +11,8 @@ import java.util.List;
 public interface AccountCopyService {
     List<AccountCopy> findAllByClientNameAndPodDateBetween(String clientName, Date startDate, Date endDate);
 
+    List<AccountCopy> findAllByPodDateBetween(Date startDate, Date endDate);
+
     List<AccountCopy> findAllByClientNameAndPodDateBetweenAndType(String clientName, Date startDate, Date endDate, String type);
 
     AccountCopy saveAndFlush(AccountCopy accountCopy);

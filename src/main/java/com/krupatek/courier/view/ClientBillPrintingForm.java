@@ -456,15 +456,15 @@ public class ClientBillPrintingForm extends Div {
                 bookingTypeSelect.getValue());
         accountCopyGrid.setItems(
                 allByClientNameAndPodDateBetween);
-        long grossTotal = allByClientNameAndPodDateBetween.parallelStream().map(AccountCopy::getRate).reduce(0, Math::addExact);
-        grossTotalTF.setValue(Long.toString(grossTotal));
+        Integer grossTotal = allByClientNameAndPodDateBetween.parallelStream().map(AccountCopy::getRate).reduce(0, Math::addExact);
+        grossTotalTF.setValue(String.format("%.02f", grossTotal.floatValue()));
         long subTotal = (long) (grossTotal +
                 Integer.parseInt(fuelSurcharge.getValue()) * grossTotal / 100.0);
-        long netTotal = (long) (subTotal +
-                        Float.parseFloat(cgst.getValue())  * subTotal / 100.0 +
-                        Float.parseFloat(sgst.getValue()) * subTotal / 100.0 +
-                        Float.parseFloat(igst.getValue()) * subTotal / 100.0);
-        netTotalTF.setValue(Long.toString(netTotal));
+        Double netTotal = subTotal +
+                Float.parseFloat(cgst.getValue()) * subTotal / 100.0 +
+                Float.parseFloat(sgst.getValue()) * subTotal / 100.0 +
+                Float.parseFloat(igst.getValue()) * subTotal / 100.0;
+        netTotalTF.setValue(String.format("%.02f", netTotal.floatValue()));
     }
 
     private void showError(String error){

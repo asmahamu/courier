@@ -2,6 +2,8 @@ package com.krupatek.courier.view;
 
 import com.krupatek.courier.model.AccountCopy;
 import com.krupatek.courier.model.Client;
+import com.krupatek.courier.model.Company;
+import com.krupatek.courier.repository.CompanyRepository;
 import com.krupatek.courier.service.*;
 import com.krupatek.courier.utils.DateUtils;
 import com.krupatek.courier.view.accountcopy.AccountCopyForm;
@@ -47,6 +49,8 @@ public class CustomerBillingDetailsForm extends Div {
             PlaceGenerationService placeGenerationService,
             NetworkService networkService,
             PODSummaryService podSummaryService,
+            DailyReportService dailyReportService,
+            CompanyRepository companyRepository,
             DateUtils dateUtils) {
         super();
         VerticalLayout verticalLayout = new VerticalLayout();
@@ -58,18 +62,19 @@ public class CustomerBillingDetailsForm extends Div {
 
 
         // Client selection
-        Select<String> cashCreditSelect = new Select<>();
-        cashCreditSelect.setLabel("Select Client Name : ");
-        cashCreditSelect.setWidthFull();
+        Select<String> clientSelect = new Select<>();
+        clientSelect.setLabel("Select Client Name : ");
+        clientSelect.setWidthFull();
 
 
         List<Client> clientList = clientService.findAll();
         List<String> clientNameList = new ArrayList<>();
+        clientNameList.add("ALL");
         clientList.forEach(c -> clientNameList.add(c.getClientName()));
         currentSelectedItem = clientNameList.get(0);
 
-        cashCreditSelect.setItems(clientNameList);
-        cashCreditSelect.setValue(currentSelectedItem);
+        clientSelect.setItems(clientNameList);
+        clientSelect.setValue(currentSelectedItem);
 
         HorizontalLayout dateHorizontalLayout = new HorizontalLayout();
         dateHorizontalLayout.setWidthFull();
@@ -170,7 +175,7 @@ public class CustomerBillingDetailsForm extends Div {
         accountCopyGrid.getColumnByKey("mode").setWidth("100px").setFlexGrow(0);
 
         accountCopyGrid.setColumnReorderingAllowed(false);
-        verticalLayout.add(title, cashCreditSelect, dateHorizontalLayout, accountCopyGrid);
+        verticalLayout.add(title, clientSelect, dateHorizontalLayout, accountCopyGrid);
 
         HorizontalLayout footerLayout = new HorizontalLayout();
 
@@ -193,8 +198,22 @@ public class CustomerBillingDetailsForm extends Div {
         }), "Download POD Summary");
         podSummaryDownloadLink.getElement().setAttribute("download", true);
 
+        Anchor dailyReportLink = new Anchor(new StreamResource("daily-report.pdf", () -> {
+            try {
+                Company company = companyRepository.findAll().get(0);
+                List<AccountCopy> allByClientNameAndPodDateBetween = accountCopyService.findAllByPodDateBetween(
+                        fromLocaleDate(dateFilter.getStartDate()),
+                        fromLocaleDate(dateFilter.getEndDate()));
+                File pdfFile = dailyReportService.generateInvoiceFor(company, allByClientNameAndPodDateBetween, sumTextField.getValue(),  Locale.getDefault());
+                return  new FileInputStream(pdfFile);
+            } catch (IOException e1) {
+                return new ByteArrayInputStream(new byte[]{});
+            }
+        }), "Download Daily Report");
+        dailyReportLink.getElement().setAttribute("download", true);
+
         footerLayout.setAlignItems(HorizontalLayout.Alignment.CENTER);
-        footerLayout.add(sumTextField, podSummaryDownloadLink);
+        footerLayout.add(sumTextField, podSummaryDownloadLink, dailyReportLink);
         verticalLayout.add(footerLayout);
         add(verticalLayout);
 
@@ -262,7 +281,7 @@ public class CustomerBillingDetailsForm extends Div {
 //            }
 //        });
 
-        cashCreditSelect.addValueChangeListener(event -> {
+        clientSelect.addValueChangeListener(event -> {
             currentSelectedItem = event.getValue();
             load(accountCopyGrid, accountCopyService, dateFilter, sumTextField);
         });
@@ -288,14 +307,21 @@ public class CustomerBillingDetailsForm extends Div {
             AccountCopyService accountCopyService,
             DateFilter dateFilter,
             TextField sumTextField){
-        List<AccountCopy> allByClientNameAndPodDateBetween = accountCopyService.findAllByClientNameAndPodDateBetween(
-                currentSelectedItem,
-                fromLocaleDate(dateFilter.getStartDate()),
-                fromLocaleDate(dateFilter.getEndDate()));
+        List<AccountCopy> allByClientNameAndPodDateBetween = new ArrayList<>();
+        if(currentSelectedItem.equalsIgnoreCase("ALL")){
+            allByClientNameAndPodDateBetween.addAll(accountCopyService.findAllByPodDateBetween(
+                    fromLocaleDate(dateFilter.getStartDate()),
+                    fromLocaleDate(dateFilter.getEndDate())));
+        } else {
+            allByClientNameAndPodDateBetween.addAll(accountCopyService.findAllByClientNameAndPodDateBetween(
+                    currentSelectedItem,
+                    fromLocaleDate(dateFilter.getStartDate()),
+                    fromLocaleDate(dateFilter.getEndDate())));
+        }
         accountCopyGrid.setItems(
                 allByClientNameAndPodDateBetween);
-        long sum = allByClientNameAndPodDateBetween.parallelStream().map(AccountCopy::getRate).reduce(0, Math::addExact);
-        sumTextField.setValue(Long.toString(sum));
+        Integer grossTotal = allByClientNameAndPodDateBetween.parallelStream().map(AccountCopy::getRate).reduce(0, Math::addExact);
+        sumTextField.setValue(String.format("%.02f", grossTotal.floatValue()));
 
     }
 

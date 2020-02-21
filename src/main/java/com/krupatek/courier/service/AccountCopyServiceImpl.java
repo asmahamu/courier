@@ -24,6 +24,11 @@ public class AccountCopyServiceImpl implements AccountCopyService {
     }
 
     @Override
+    public List<AccountCopy> findAllByPodDateBetween(Date startDate, Date endDate) {
+        return accountCopyRepository.findAllByPodDateBetween(startDate, endDate);
+    }
+
+    @Override
     public List<AccountCopy> findAllByClientNameAndPodDateBetweenAndType(String clientName, Date startDate, Date endDate, String type) {
         return accountCopyRepository.findAllByClientNameAndPodDateBetweenAndType(clientName, startDate, endDate, type);
     }

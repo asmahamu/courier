@@ -70,6 +70,9 @@ public class MainView extends VerticalLayout {
     @Autowired
     InvoiceService invoiceService;
 
+    @Autowired
+    DailyReportService dailyReportService;
+
     public MainView(@Autowired MessageBean bean) {
         MenuBar menuBar = new MenuBar();
         Div component = new Div();
@@ -180,6 +183,8 @@ public class MainView extends VerticalLayout {
                     placeGenerationService,
                     networkService,
                     podSummaryService,
+                    dailyReportService,
+                    companyRepository,
                     dateUtils));
         } );
 
