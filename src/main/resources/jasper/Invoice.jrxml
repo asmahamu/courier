@@ -136,21 +136,21 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font fontName="SansSerif" size="12"/>
+					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{company}.getCompanyName()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="Detail" x="175" y="18" width="205" height="18" uuid="3554ce31-ae8d-4791-b9eb-eafec2d5a59f"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font fontName="SansSerif"/>
+					<font fontName="SansSerif" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{company}.getCompanyAddress1()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="Detail" x="175" y="36" width="205" height="18" uuid="4e9c8bd4-ef32-4bff-8967-f126c915ffb5"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font fontName="SansSerif"/>
+					<font fontName="SansSerif" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{company}.getCompanyAddress2()+" "+$P{company}.getCity()]]></textFieldExpression>
 			</textField>
@@ -159,7 +159,7 @@
 					<property name="com.jaspersoft.studio.element.name" value="Phone"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font fontName="SansSerif"/>
+					<font fontName="SansSerif" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Phone : " + $P{company}.getPhone()]]></textFieldExpression>
 			</textField>
@@ -169,7 +169,7 @@
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font fontName="SansSerif"/>
+					<font fontName="SansSerif" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{client}.getClientName()]]></textFieldExpression>
 			</textField>
@@ -368,7 +368,7 @@
 	<columnHeader>
 		<band height="20">
 			<staticText>
-				<reportElement x="0" y="0" width="81" height="20" uuid="d89eba7d-e26f-470a-b44f-db1f04a4dae9"/>
+				<reportElement x="30" y="0" width="71" height="20" uuid="d89eba7d-e26f-470a-b44f-db1f04a4dae9"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -379,7 +379,7 @@
 				<text><![CDATA[C / No]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="80" y="0" width="80" height="20" uuid="ac5ce54c-3e98-48df-9cfa-1c566e971851">
+				<reportElement x="100" y="0" width="60" height="20" uuid="ac5ce54c-3e98-48df-9cfa-1c566e971851">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
@@ -449,12 +449,27 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[Rate]]></text>
 			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="30" height="20" uuid="0330b7a2-073e-4d9b-b2df-8a0561a49cd3">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Sr. No.]]></text>
+			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
 		<band height="20">
 			<textField>
-				<reportElement x="0" y="0" width="80" height="20" uuid="da13b285-4610-444a-885d-0821837f0b3b">
+				<reportElement x="30" y="0" width="70" height="20" uuid="da13b285-4610-444a-885d-0821837f0b3b">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
@@ -469,7 +484,7 @@
 				<textFieldExpression><![CDATA[$F{docNo}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="80" y="0" width="80" height="20" uuid="52706dcb-d204-47de-8370-0c61a4a9b548">
+				<reportElement x="100" y="0" width="60" height="20" uuid="52706dcb-d204-47de-8370-0c61a4a9b548">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="8">
@@ -549,39 +564,89 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[String.format("%.03f", $F{weight}.floatValue())]]></textFieldExpression>
 			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="30" height="20" uuid="ca879b73-a093-4267-bafe-0ea8ac1a92ab">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
+	<pageFooter>
+		<band height="20">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<textField>
+				<reportElement x="454" y="0" width="50" height="20" uuid="4d86f91e-eec7-40fb-90c7-d34beb77865b">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="504" y="0" width="50" height="20" uuid="8d921faf-e247-432a-b9a1-290e00a83440">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" of " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="0" width="556" height="1" uuid="17c2686f-eb23-4c30-8bae-92938cc883fc">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+			</line>
+		</band>
+	</pageFooter>
 	<lastPageFooter>
-		<band height="47">
-			<staticText>
-				<reportElement x="0" y="0" width="555" height="20" uuid="d802c801-7b19-4967-b6c7-d4a524fea176">
-					<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+		<band height="20">
+			<textField>
+				<reportElement x="454" y="0" width="50" height="20" uuid="32bd30b2-590d-4b9e-9746-31f47d634f2d">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<text><![CDATA[Declaration : We declare that this invoice shows the actual price of services described and that all particulars are true and correct.]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="0" y="20" width="555" height="20" uuid="0c154398-9765-4a18-9b89-f46d358fc9d2">
-					<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="504" y="0" width="50" height="20" uuid="6332cdce-10aa-41e5-915a-c161da3dc5d1">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<text><![CDATA[This is a computer generated invoice.]]></text>
-			</staticText>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" of " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="0" width="556" height="1" uuid="9300369c-0e73-4b22-8d92-962b3d085325">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+			</line>
 		</band>
 	</lastPageFooter>
 	<summary>
-		<band height="145">
+		<band height="384">
 			<staticText>
 				<reportElement x="380" y="0" width="100" height="20" uuid="62c64d89-0aab-41e5-befd-44e8a635cb69">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<text><![CDATA[Gross Total : ]]></text>
 			</staticText>
 			<textField>
@@ -590,7 +655,9 @@
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[String.format("%.02f", $P{billGeneration}.getBillAmount().floatValue())]]></textFieldExpression>
 			</textField>
 			<line>
@@ -607,7 +674,9 @@
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA["Fuel S'Charge @ "+$V{FUEL_SURCHAGE}+"% : "]]></textFieldExpression>
 			</textField>
 			<textField>
@@ -617,7 +686,9 @@
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[String.format("%.02f", $V{TOTAL_AFTER_FUEL_SURCHARGE})]]></textFieldExpression>
 			</textField>
 			<staticText>
@@ -625,7 +696,9 @@
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<text><![CDATA[Subtotal : ]]></text>
 			</staticText>
 			<textField>
@@ -634,7 +707,9 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[String.format("%.02f", $V{SUBTOTAL})]]></textFieldExpression>
 			</textField>
 			<textField>
@@ -643,7 +718,9 @@
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA["CGST @ "+$V{CGST}+"% : "]]></textFieldExpression>
 			</textField>
 			<textField>
@@ -651,7 +728,9 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA["SGST @ "+$V{SGST}+"% : "]]></textFieldExpression>
 			</textField>
 			<textField>
@@ -660,7 +739,9 @@
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[String.format("%.02f", $V{TOTAL_CGST})]]></textFieldExpression>
 			</textField>
 			<textField>
@@ -669,7 +750,9 @@
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[String.format("%.02f", $V{TOTAL_SGST})]]></textFieldExpression>
 			</textField>
 			<textField>
@@ -677,7 +760,9 @@
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA["IGST @ "+$V{IGST}+"% : "]]></textFieldExpression>
 			</textField>
 			<textField>
@@ -685,7 +770,9 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[String.format("%.02f", $V{TOTAL_IGST})]]></textFieldExpression>
 			</textField>
 			<staticText>
@@ -693,7 +780,9 @@
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<text><![CDATA[Invoice Amount : ]]></text>
 			</staticText>
 			<textField>
@@ -701,7 +790,9 @@
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[String.format("%.02f", $V{TOTAL})]]></textFieldExpression>
 			</textField>
 			<staticText>
@@ -711,7 +802,9 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<text><![CDATA[In Words : ]]></text>
 			</staticText>
 			<textField textAdjust="StretchHeight">
@@ -725,45 +818,86 @@
 				<textFieldExpression><![CDATA[$P{numberUtils}.convertNumberToWords($V{TOTAL})+" Only"]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="52" width="349" height="30" uuid="9e6063ee-ee4e-47a4-af20-a8759939a99c">
+				<reportElement x="1" y="187" width="349" height="30" uuid="9e6063ee-ee4e-47a4-af20-a8759939a99c">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
 				<box>
 					<pen lineWidth="1.0" lineStyle="Dashed"/>
-					<topPen lineWidth="1.0" lineStyle="Dashed" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Dashed" lineColor="#000000"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Dashed" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<text><![CDATA[1. Though Invoice is in the name of HORIZON COURIERS, the conssignment notes will be of TRACKON/FEDEX.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="82" width="349" height="30" uuid="b6d7ed2d-9b62-4028-97e7-1adcb4690f91">
+				<reportElement x="1" y="217" width="349" height="30" uuid="b6d7ed2d-9b62-4028-97e7-1adcb4690f91">
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
 				<box>
 					<pen lineWidth="1.0" lineStyle="Dashed"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Dashed" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Dashed" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<text><![CDATA[2. Kindly issue the payment by cheque or by NEFT/RTGS favouring HORIZON COURIERS]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="112" width="349" height="30" uuid="5688b813-de49-4c46-8ce1-856b5bb1f413">
+				<reportElement x="1" y="247" width="349" height="30" uuid="5688b813-de49-4c46-8ce1-856b5bb1f413">
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
 				<box>
 					<pen lineWidth="1.0" lineStyle="Dashed"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Dashed" lineColor="#000000"/>
-					<bottomPen lineWidth="1.0" lineStyle="Dashed" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Dashed" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<text><![CDATA[3. Dynamic fuel surcharge = ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="141" width="555" height="20" uuid="ff72a574-82ad-428f-a095-35fa08fbd1c9">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Declaration : We declare that this invoice shows the actual price of services described and that all particulars are true and correct.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="161" width="555" height="20" uuid="f0bfc589-59b7-425d-9aa8-769a6eeeb2ff">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[This is a computer generated invoice.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="425" y="188" width="130" height="20" uuid="1eca520b-9cd4-4d7d-a02a-b48f85ab1af4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[For HORIZON COURIERS]]></text>
 			</staticText>
 		</band>
 	</summary>
