@@ -205,6 +205,7 @@ public class AccountCopyForm extends Div {
                         binder.writeBean(accountCopy);
                         accountCopyService.saveAndFlush(accountCopy);
                         Notification.show("Account copy updated successfully.");
+                        docNo.focus();
                         // A real application would also save the updated person
                         // using the application's backend
                     } catch (ValidationException e) {
@@ -258,8 +259,14 @@ public class AccountCopyForm extends Div {
                                     accountCopy.getMode()
                             );
                     Logger.getLogger(AccountCopyForm.class.getName()).info("RateEntry : " + rateEntry);
-                    Double rateText = new RateUtils().charges(Double.valueOf(weight.getValue()), rateEntry.getFrom1(), rateEntry.getTo1(), rateEntry.getRate(), rateEntry.getAddWt(), (double) rateEntry.getAddRt());
-                    rate.setValue(Integer.toString(rateText.intValue()));
+                    if(rateEntry != null) {
+                        Double rateText = new RateUtils().charges(Double.valueOf(weight.getValue()), rateEntry.getFrom1(), rateEntry.getTo1(), rateEntry.getRate(), rateEntry.getAddWt(), (double) rateEntry.getAddRt());
+                        rate.setValue(Integer.toString(rateText.intValue()));
+                    } else {
+                        Notification.show("Rate not defined for client "+accountCopy.getClientName()+
+                                ", to party :  "+accountCopy.getToParty()+", state code : "+accountCopy.getStateCode()+", d/p : "+accountCopy.getdP()+", mode : "+accountCopy.getMode());
+                        rate.setValue("0");
+                    }
                 } else {
                     RateIntEntry rateIntEntry = rateIntMasterService.findByClientNameAndStateCodeAndPodTypeAndMode(
                       accountCopy.getClientName(),
