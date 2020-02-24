@@ -11,6 +11,7 @@ import com.krupatek.courier.view.SystemSettingsForm;
 import com.krupatek.courier.view.accountcopy.AccountCopyEditor;
 import com.krupatek.courier.view.accountcopy.AccountCopyForm;
 import com.krupatek.courier.view.clientprofile.ClientProfileEditor;
+import com.krupatek.courier.view.pod.PODEntryForm;
 import com.krupatek.courier.view.rate.RateEntryEditor;
 import com.krupatek.courier.view.rate.RateIntEntryEditor;
 import com.vaadin.flow.component.Text;
@@ -22,13 +23,12 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.theme.Theme;
+import com.vaadin.flow.theme.lumo.Lumo;
 import com.vaadin.flow.theme.material.Material;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.logging.Logger;
-
 @Route
-@Theme(value = Material.class, variant = Material.LIGHT)
+@Theme(value = Lumo.class, variant = Material.LIGHT)
 @PWA(name = "Project Base for Vaadin Flow with Spring", shortName = "Project Base")
 public class MainView extends VerticalLayout {
     @Autowired
@@ -155,7 +155,6 @@ public class MainView extends VerticalLayout {
                     companyRepository));
         });
         billingDetails.getSubMenu().addItem("POD Summary / Daily Report", e -> {
-            Logger.getLogger(MainView.class.getName()).info("Next bill no : "+billingService.nextBillNo());
             component.removeAll();
             component.add(new CustomerBillingDetailsForm(
                     accountCopyService,
@@ -169,6 +168,11 @@ public class MainView extends VerticalLayout {
                     companyRepository,
                     dateUtils));
         } );
+
+        billingDetails.getSubMenu().addItem("POD Entry Form", e -> {
+            component.removeAll();
+            component.add(new PODEntryForm(accountCopyService, dateUtils));
+        });
 
         add(menuBar);
         add(component);

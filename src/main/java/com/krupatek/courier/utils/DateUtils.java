@@ -2,6 +2,7 @@ package com.krupatek.courier.utils;
 
 import org.springframework.stereotype.Component;
 
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -24,6 +25,14 @@ public class DateUtils {
 
     public LocalDateTime asLocalDateTime(Date date) {
         return Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
+    }
+
+    public String ddmmyyFormat(Date date){
+        return new SimpleDateFormat("dd/MM/yy").format(date);
+    }
+
+    public String ddmmyyFormat(LocalDate localDate){
+        return new SimpleDateFormat("dd/MM/yy").format(asDate(localDate));
     }
 
     public String currentFiscalYear(LocalDate localDate){

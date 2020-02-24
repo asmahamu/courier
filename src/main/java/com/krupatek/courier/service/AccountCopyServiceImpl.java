@@ -80,4 +80,9 @@ public class AccountCopyServiceImpl implements AccountCopyService {
     public void tagBillNo(String currentSelectedItem, Date fromLocaleDate, Date fromLocaleDate1, String type, String billNo) {
         accountCopyRepository.tagBillNo(currentSelectedItem, fromLocaleDate, fromLocaleDate1, type, billNo);
     }
+
+    @Override
+    public AccountCopy findOneByDocNo(String docNo) {
+        return accountCopyRepository.findOneByDocNo(docNo);
+    }
 }

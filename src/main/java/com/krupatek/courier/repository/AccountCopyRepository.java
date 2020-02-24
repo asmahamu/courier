@@ -39,4 +39,5 @@ public interface AccountCopyRepository extends JpaRepository<AccountCopy, String
             @Param("billNo")
             String billNo);
 
+    AccountCopy findOneByDocNo(String docNo);
 }
