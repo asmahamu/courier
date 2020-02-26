@@ -111,6 +111,7 @@ public class ClientBillPrintingForm extends Div {
         DatePicker startDatePicker = new DatePicker(start);
         startDatePicker.setLabel("From Date : ");
         binder.bind(startDatePicker, DateFilter::getStartDate, DateFilter::setStartDate);
+//        startDatePicker.setLocale(Locale.ENGLISH);
 
         // End Date
         DatePicker endDatePicker = new DatePicker(end);

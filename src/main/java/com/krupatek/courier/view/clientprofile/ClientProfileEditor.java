@@ -34,16 +34,16 @@ public class ClientProfileEditor extends Div {
         clientName.setValueChangeMode(ValueChangeMode.EAGER);
         Grid<Client> clientGrid = new Grid<>(Client.class);
         clientGrid.setPageSize(PAGE_SIZE);
-        clientGrid.setWidth("1300px");
-        clientGrid.setHeight("500px");
+        clientGrid.setWidth("1200px");
+        clientGrid.setHeight("650px");
         clientGrid.setColumns("clientCode", "clientName", "city", "phone", "branch_name", "gstNo", "gstEnabled", "fsc");
 
-        clientGrid.getColumnByKey("clientCode").setWidth("100px").setFlexGrow(0);
-        clientGrid.getColumnByKey("clientName").setWidth("300px").setFlexGrow(0);
-        clientGrid.getColumnByKey("city").setWidth("150px").setFlexGrow(0);
-        clientGrid.getColumnByKey("phone").setWidth("100px").setFlexGrow(0);
-        clientGrid.getColumnByKey("branch_name").setWidth("100px").setFlexGrow(0);
-        clientGrid.getColumnByKey("gstNo").setWidth("300px").setFlexGrow(0);
+        clientGrid.getColumnByKey("clientCode").setWidth("50px").setFlexGrow(0);
+        clientGrid.getColumnByKey("clientName").setWidth("350px").setFlexGrow(0);
+        clientGrid.getColumnByKey("city").setWidth("200px").setFlexGrow(0);
+        clientGrid.getColumnByKey("phone").setWidth("150px").setFlexGrow(0);
+        clientGrid.getColumnByKey("branch_name").setWidth("75px").setFlexGrow(0);
+        clientGrid.getColumnByKey("gstNo").setWidth("150px").setFlexGrow(0);
         clientGrid.getColumnByKey("gstEnabled").setWidth("100px").setFlexGrow(0);
         clientGrid.getColumnByKey("fsc").setWidth("100px").setFlexGrow(0);
 

@@ -60,7 +60,7 @@ public class RateEntryEditor extends Div {
 
 
         Grid<RateEntry> rateEntryGrid = new Grid<>(RateEntry.class);
-        rateEntryGrid.setWidth("1300px");
+        rateEntryGrid.setWidth("1200px");
         rateEntryGrid.setHeight("500px");
         rateEntryGrid.setColumns(
                 "rateMasterId",
@@ -76,7 +76,7 @@ public class RateEntryEditor extends Div {
 
         rateEntryGrid.getColumnByKey("rateMasterId").setWidth("100px").setFlexGrow(0);
         rateEntryGrid.getColumnByKey("clientName").setWidth("250px").setFlexGrow(0);
-        rateEntryGrid.getColumnByKey("stateCode").setWidth("250px").setFlexGrow(0);
+        rateEntryGrid.getColumnByKey("stateCode").setWidth("200px").setFlexGrow(0);
         rateEntryGrid.getColumnByKey("podType").setWidth("100px").setFlexGrow(0);
         rateEntryGrid.getColumnByKey("mode").setWidth("100px").setFlexGrow(0);
         rateEntryGrid.getColumnByKey("from1").setWidth("100px").setFlexGrow(0);

@@ -53,8 +53,8 @@ public class AccountCopyEditor extends Div {
 
         Grid<AccountCopy> accountCopyGrid = new Grid<>(AccountCopy.class);
         accountCopyGrid.setPageSize(PAGE_SIZE);
-        accountCopyGrid.setWidth("1300px");
-        accountCopyGrid.setHeight("500px");
+        accountCopyGrid.setWidth("1200px");
+        accountCopyGrid.setHeight("650px");
         accountCopyGrid.setColumns("docNo", "podDate", "clientName", "destination", "weight", "otherCharges", "rate", "dP", "mode");
 
         accountCopyGrid.getColumnByKey("docNo").setWidth("150px").setFlexGrow(0);
@@ -62,10 +62,10 @@ public class AccountCopyEditor extends Div {
         accountCopyGrid.getColumnByKey("clientName").setWidth("300px").setFlexGrow(0);
         accountCopyGrid.getColumnByKey("destination").setWidth("150px").setFlexGrow(0);
         accountCopyGrid.getColumnByKey("weight").setWidth("100px").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("otherCharges").setWidth("100px").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("rate").setWidth("100px").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("dP").setWidth("100px").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("mode").setWidth("100px").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("otherCharges").setWidth("75px").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("rate").setWidth("75px").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("dP").setWidth("75px").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("mode").setWidth("75px").setFlexGrow(0);
 
         HeaderRow hr = accountCopyGrid.prependHeaderRow();
         hr.getCell(accountCopyGrid.getColumnByKey("docNo")).setComponent(docNo);
