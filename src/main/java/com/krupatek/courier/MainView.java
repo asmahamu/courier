@@ -152,19 +152,19 @@ public class MainView extends VerticalLayout {
                     clientService,
                     companyRepository));
         });
-        clientBillingCopyItem.getSubMenu().addItem("Client Bill Editing", e -> {
-            component.removeAll();
-            component.add(new ClientBillEditor(
-                    billingService,
-                    accountCopyService,
-                    clientService,
-                    rateMasterService,
-                    rateIntMasterService,
-                    placeGenerationService,
-                    networkService,
-                    companyRepository,
-                    dateUtils));
-        });
+//        clientBillingCopyItem.getSubMenu().addItem("Client Bill Editing", e -> {
+//            component.removeAll();
+//            component.add(new ClientBillEditor(
+//                    billingService,
+//                    accountCopyService,
+//                    clientService,
+//                    rateMasterService,
+//                    rateIntMasterService,
+//                    placeGenerationService,
+//                    networkService,
+//                    companyRepository,
+//                    dateUtils));
+//        });
         billingDetails.getSubMenu().addItem("POD Summary / Daily Report", e -> {
             component.removeAll();
             component.add(new CustomerBillingDetailsForm(
