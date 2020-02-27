@@ -4,10 +4,7 @@ import com.krupatek.courier.model.AccountCopy;
 import com.krupatek.courier.repository.CompanyRepository;
 import com.krupatek.courier.service.*;
 import com.krupatek.courier.utils.DateUtils;
-import com.krupatek.courier.view.ClientBillPrintingForm;
-import com.krupatek.courier.view.ClientBillRePrintingForm;
-import com.krupatek.courier.view.CustomerBillingDetailsForm;
-import com.krupatek.courier.view.SystemSettingsForm;
+import com.krupatek.courier.view.*;
 import com.krupatek.courier.view.accountcopy.AccountCopyEditor;
 import com.krupatek.courier.view.accountcopy.AccountCopyForm;
 import com.krupatek.courier.view.clientprofile.ClientProfileEditor;
@@ -130,7 +127,8 @@ public class MainView extends VerticalLayout {
                     networkService,
                     dateUtils));
         } );
-        billingDetails.getSubMenu().addItem("Client Bill Printing", e -> {
+        MenuItem clientBillingCopyItem = billingDetails.getSubMenu().addItem("Client Billing");
+        clientBillingCopyItem.getSubMenu().addItem("Client Bill Printing", e -> {
             component.removeAll();
             component.add(new ClientBillPrintingForm(
                     accountCopyService,
@@ -145,7 +143,7 @@ public class MainView extends VerticalLayout {
                     dateUtils));
 
         });
-        billingDetails.getSubMenu().addItem("Client Bill Reprinting", e -> {
+        clientBillingCopyItem.getSubMenu().addItem("Client Bill Reprinting", e -> {
             component.removeAll();
             component.add(new ClientBillRePrintingForm(
                     billingService,
@@ -153,6 +151,19 @@ public class MainView extends VerticalLayout {
                     invoiceService,
                     clientService,
                     companyRepository));
+        });
+        clientBillingCopyItem.getSubMenu().addItem("Client Bill Editing", e -> {
+            component.removeAll();
+            component.add(new ClientBillEditor(
+                    billingService,
+                    accountCopyService,
+                    clientService,
+                    rateMasterService,
+                    rateIntMasterService,
+                    placeGenerationService,
+                    networkService,
+                    companyRepository,
+                    dateUtils));
         });
         billingDetails.getSubMenu().addItem("POD Summary / Daily Report", e -> {
             component.removeAll();
