@@ -240,55 +240,62 @@ public class AccountCopyForm extends Div {
         courierSelect.addValueChangeListener(e -> bookingTypeSelect.focus());
         bookingTypeSelect.addValueChangeListener(e -> modeSelect.focus());
         modeSelect.addValueChangeListener(e -> weight.focus());
+        weight.addKeyDownListener(Key.TAB, e -> {
+            calculateRate(rateMasterService, rateIntMasterService, accountCopy, binder, weight, rate);
+        });
         weight.addKeyDownListener(Key.ENTER, e -> {
-            try {
-                binder.writeBean(accountCopy);
-                Logger.getLogger(AccountCopyForm.class.getName()).info("AccountCopy : "+
-                        accountCopy.getClientName()+", "+
-                        accountCopy.getToParty()+", "+
-                        accountCopy.getStateCode()+", "+
-                        accountCopy.getdP()+", "+
-                        accountCopy.getMode());
-                if(isDomestic) {
-                    RateEntry rateEntry =
-                            rateMasterService.findByClientNameAndCourierAndStateCodeAndPodTypeAndMode(
-                                    accountCopy.getClientName(),
-                                    accountCopy.getToParty(),
-                                    accountCopy.getStateCode(),
-                                    accountCopy.getdP(),
-                                    accountCopy.getMode()
-                            );
-                    Logger.getLogger(AccountCopyForm.class.getName()).info("RateEntry : " + rateEntry);
-                    if(rateEntry != null) {
-                        Double rateText = new RateUtils().charges(Double.valueOf(weight.getValue()), rateEntry.getFrom1(), rateEntry.getTo1(), rateEntry.getRate(), rateEntry.getAddWt(), (double) rateEntry.getAddRt());
-                        rate.setValue(Integer.toString(rateText.intValue()));
-                    } else {
-                        Notification.show("Rate not defined for client "+accountCopy.getClientName()+
-                                ", to party :  "+accountCopy.getToParty()+", state code : "+accountCopy.getStateCode()+", d/p : "+accountCopy.getdP()+", mode : "+accountCopy.getMode());
-                        rate.setValue("0");
-                    }
-                } else {
-                    RateIntEntry rateIntEntry = rateIntMasterService.findByClientNameAndStateCodeAndPodTypeAndMode(
-                      accountCopy.getClientName(),
-                      accountCopy.getStateCode(),
-                      accountCopy.getdP(),
-                      accountCopy.getMode()
-                    );
-                    Logger.getLogger(AccountCopyForm.class.getName()).info("RateIntEntry : " + rateIntEntry);
-                    Double rateText = new RateUtils().charges(Double.valueOf(weight.getValue()), rateIntEntry.getFrom1(), rateIntEntry.getTo1(), rateIntEntry.getRate(), rateIntEntry.getAddWt(), (double) rateIntEntry.getAddRt());
-                    rate.setValue(Integer.toString(rateText.intValue()));
-                }
-                rate.focus();
-            } catch (ValidationException ex) {
-                Notification.show("Account Copy could not be saved, " +
-                        "please check error messages for each field.");
-            }
+            calculateRate(rateMasterService, rateIntMasterService, accountCopy, binder, weight, rate);
         });
         rate.addKeyDownListener(Key.ENTER, e -> save.focus());
 
         docNo.focus();
 
         binder.readBean(accountCopy);
+    }
+
+    private void calculateRate(RateMasterService rateMasterService, RateIntMasterService rateIntMasterService, AccountCopy accountCopy, Binder<AccountCopy> binder, TextField weight, TextField rate) {
+        try {
+            binder.writeBean(accountCopy);
+            Logger.getLogger(AccountCopyForm.class.getName()).info("AccountCopy : "+
+                    accountCopy.getClientName()+", "+
+                    accountCopy.getToParty()+", "+
+                    accountCopy.getStateCode()+", "+
+                    accountCopy.getdP()+", "+
+                    accountCopy.getMode());
+            if(isDomestic) {
+                RateEntry rateEntry =
+                        rateMasterService.findByClientNameAndCourierAndStateCodeAndPodTypeAndMode(
+                                accountCopy.getClientName(),
+                                accountCopy.getToParty(),
+                                accountCopy.getStateCode(),
+                                accountCopy.getdP(),
+                                accountCopy.getMode()
+                        );
+                Logger.getLogger(AccountCopyForm.class.getName()).info("RateEntry : " + rateEntry);
+                if(rateEntry != null) {
+                    Double rateText = new RateUtils().charges(Double.valueOf(weight.getValue()), rateEntry.getFrom1(), rateEntry.getTo1(), rateEntry.getRate(), rateEntry.getAddWt(), (double) rateEntry.getAddRt());
+                    rate.setValue(Integer.toString(rateText.intValue()));
+                } else {
+                    Notification.show("Rate not defined for client "+accountCopy.getClientName()+
+                            ", to party :  "+accountCopy.getToParty()+", state code : "+accountCopy.getStateCode()+", d/p : "+accountCopy.getdP()+", mode : "+accountCopy.getMode());
+                    rate.setValue("0");
+                }
+            } else {
+                RateIntEntry rateIntEntry = rateIntMasterService.findByClientNameAndStateCodeAndPodTypeAndMode(
+                  accountCopy.getClientName(),
+                  accountCopy.getStateCode(),
+                  accountCopy.getdP(),
+                  accountCopy.getMode()
+                );
+                Logger.getLogger(AccountCopyForm.class.getName()).info("RateIntEntry : " + rateIntEntry);
+                Double rateText = new RateUtils().charges(Double.valueOf(weight.getValue()), rateIntEntry.getFrom1(), rateIntEntry.getTo1(), rateIntEntry.getRate(), rateIntEntry.getAddWt(), (double) rateIntEntry.getAddRt());
+                rate.setValue(Integer.toString(rateText.intValue()));
+            }
+            rate.focus();
+        } catch (ValidationException ex) {
+            Notification.show("Account Copy could not be saved, " +
+                    "please check error messages for each field.");
+        }
     }
 
     private void updateClientName(ComboBox<String> clientComboBox, RateMasterService rateMasterService, RateIntMasterService rateIntMasterService){
