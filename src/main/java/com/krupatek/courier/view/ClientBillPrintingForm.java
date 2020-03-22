@@ -235,9 +235,9 @@ public class ClientBillPrintingForm extends Div {
                 billGeneration.setEndDate(endDatePicker.getValue().format(formatter));
                 billGeneration.setBillDate(invoiceDatePicker.getValue().format(formatter));
                 billGeneration.setBillYear(invoiceDatePicker.getValue().getYear());
-                billGeneration.setBillAmount(Integer.parseInt(grossTotalTF.getValue()));
-                billGeneration.setNetAmount(Integer.parseInt(netTotalTF.getValue()));
-                billGeneration.setBalance(Integer.parseInt(netTotalTF.getValue()));
+                billGeneration.setBillAmount((int) Double.parseDouble(grossTotalTF.getValue()));
+                billGeneration.setNetAmount((int) Double.parseDouble(netTotalTF.getValue()));
+                billGeneration.setBalance((int) Double.parseDouble(netTotalTF.getValue()));
                 billGeneration.setType(bookingTypeSelect.getValue());
                 billGeneration.setClientName(currentSelectedItem);
                 billGeneration.setBillStatus("C");

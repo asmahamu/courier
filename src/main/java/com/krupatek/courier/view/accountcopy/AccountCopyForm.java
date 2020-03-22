@@ -69,7 +69,12 @@ public class AccountCopyForm extends Div {
         TextField docNo = new TextField();
         docNo.setLabel("Doc No. : ");
         docNo.setValueChangeMode(ValueChangeMode.EAGER);
-        binder.forField(docNo).asRequired("Every Account copy must have Doc no").bind(AccountCopy::getDocNo, AccountCopy::setDocNo);
+        binder.
+                forField(docNo).asRequired("Every Account copy must have Doc no").
+                withValidator(text ->
+                                !isNewAccountCopy || accountCopyService.findOneByDocNo(text) == null,
+                        "Account Copy already exists with this Doc No.").
+                bind(AccountCopy::getDocNo, AccountCopy::setDocNo);
 
         // Date
         DatePicker podDate = new DatePicker();
