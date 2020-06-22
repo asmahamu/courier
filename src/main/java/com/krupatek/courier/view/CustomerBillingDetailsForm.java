@@ -11,6 +11,7 @@ import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.grid.FooterRow;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
@@ -54,18 +55,18 @@ public class CustomerBillingDetailsForm extends Div {
             DateUtils dateUtils) {
         super();
         VerticalLayout verticalLayout = new VerticalLayout();
-        verticalLayout.setSizeFull();
+        verticalLayout.setMargin(false);
+        verticalLayout.setPadding(false);
 
         Label title = new Label();
         title.setSizeFull();
-        title.setText("Check List");
+        title.setText("POD Summary / Daily Report");
 
 
         // Client selection
         Select<String> clientSelect = new Select<>();
+        clientSelect.setWidth("30%");
         clientSelect.setLabel("Select Client Name : ");
-        clientSelect.setWidthFull();
-
 
         List<Client> clientList = clientService.findAll();
         List<String> clientNameList = new ArrayList<>();
@@ -77,7 +78,7 @@ public class CustomerBillingDetailsForm extends Div {
         clientSelect.setValue(currentSelectedItem);
 
         HorizontalLayout dateHorizontalLayout = new HorizontalLayout();
-        dateHorizontalLayout.setWidthFull();
+        dateHorizontalLayout.setWidth("100%");
 
         LocalDate currentDate = LocalDate.now();
         LocalDate start = currentDate.withDayOfMonth(1);
@@ -85,10 +86,11 @@ public class CustomerBillingDetailsForm extends Div {
 
         // Last Month button
         Button lastMonthButton = new Button("Last Month");
+        lastMonthButton.setWidth("10%");
 
         // Current Month button
         Button currentMonthButton = new Button("Current Month");
-
+        currentMonthButton.setWidth("10%");
 
         DateFilter dateFilter = new DateFilter(start, end);
 
@@ -97,11 +99,13 @@ public class CustomerBillingDetailsForm extends Div {
         // Start Date
         DatePicker startDatePicker = new DatePicker(start);
         startDatePicker.setLabel("From Date : ");
+        startDatePicker.setWidth("15%");
         binder.bind(startDatePicker, DateFilter::getStartDate, DateFilter::setStartDate);
 
         // End Date
         DatePicker endDatePicker = new DatePicker(end);
         endDatePicker.setLabel("To Date : ");
+        endDatePicker.setWidth("15%");
         binder.bind(endDatePicker, DateFilter::getEndDate, DateFilter::setEndDate);
 
 
@@ -152,36 +156,36 @@ public class CustomerBillingDetailsForm extends Div {
 
         // Refresh
         Button refreshButton = new Button("Refresh");
+        refreshButton.setWidth("10%");
         Button showButton = new Button("Show");
+        showButton.setWidth("10%");
 
-
-
-        dateHorizontalLayout.add(startDatePicker, endDatePicker, lastMonthButton, currentMonthButton, refreshButton, showButton);
+        dateHorizontalLayout.add(clientSelect, lastMonthButton, currentMonthButton, startDatePicker, endDatePicker, refreshButton, showButton);
         dateHorizontalLayout.setAlignItems(HorizontalLayout.Alignment.END);
 
         Grid<AccountCopy> accountCopyGrid = new Grid<>(AccountCopy.class);
-        accountCopyGrid.setWidth("1300px");
-        accountCopyGrid.setHeight("400px");
         accountCopyGrid.setColumns("docNo", "podDate", "clientName", "destination", "weight", "otherCharges", "rate", "dP", "mode");
 
-        accountCopyGrid.getColumnByKey("docNo").setWidth("150px").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("podDate").setWidth("200px").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("clientName").setWidth("300px").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("destination").setWidth("150px").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("weight").setWidth("100px").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("otherCharges").setWidth("100px").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("rate").setWidth("100px").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("dP").setWidth("100px").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("mode").setWidth("100px").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("docNo").setWidth("12%").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("podDate").setWidth("10%").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("clientName").setWidth("22%").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("destination").setWidth("12%").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("weight").setWidth("8%").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("otherCharges").setWidth("10%").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("rate").setWidth("10%").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("dP").setWidth("5%").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("mode").setWidth("9%").setFlexGrow(0);
 
         accountCopyGrid.setColumnReorderingAllowed(false);
-        verticalLayout.add(title, clientSelect, dateHorizontalLayout, accountCopyGrid);
 
-        HorizontalLayout footerLayout = new HorizontalLayout();
+        HorizontalLayout reportGenerationButtonLayout = new HorizontalLayout();
 
         TextField sumTextField = new TextField();
         sumTextField.setLabel("Total : ");
         sumTextField.setReadOnly(true);
+
+        FooterRow footerRow = accountCopyGrid.appendFooterRow();
+        footerRow.getCell(accountCopyGrid.getColumnByKey("rate")).setComponent(sumTextField);
 
         Anchor podSummaryDownloadLink = new Anchor(new StreamResource("pod-summary.pdf", () -> {
             try {
@@ -212,9 +216,9 @@ public class CustomerBillingDetailsForm extends Div {
         }), "Download Daily Report");
         dailyReportLink.getElement().setAttribute("download", true);
 
-        footerLayout.setAlignItems(HorizontalLayout.Alignment.CENTER);
-        footerLayout.add(sumTextField, podSummaryDownloadLink, dailyReportLink);
-        verticalLayout.add(footerLayout);
+        reportGenerationButtonLayout.setAlignItems(HorizontalLayout.Alignment.CENTER);
+        reportGenerationButtonLayout.add(podSummaryDownloadLink, dailyReportLink);
+        verticalLayout.add(title, dateHorizontalLayout, reportGenerationButtonLayout, accountCopyGrid);
         add(verticalLayout);
 
         // Last Month

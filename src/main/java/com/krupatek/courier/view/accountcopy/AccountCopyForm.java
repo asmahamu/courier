@@ -8,6 +8,7 @@ import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.dependency.JavaScript;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
@@ -24,13 +25,14 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 
+import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.util.Optional;
 import java.util.logging.Logger;
 
 @SpringComponent
 @UIScope
 public class AccountCopyForm extends Div {
-
     private boolean isDomestic = true; // False means International.
 
     public AccountCopyForm(

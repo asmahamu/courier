@@ -43,7 +43,7 @@ public class AccountCopy {
     private String destination;
 
     @Column(name = "weight")
-    private Double weight = 0.0;
+    private Double weight = 0.1;
 
     @Column(name = "rate")
     private Integer rate = 1;

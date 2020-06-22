@@ -73,6 +73,8 @@ public class MainView extends VerticalLayout {
     public MainView(@Autowired MessageBean bean) {
         MenuBar menuBar = new MenuBar();
         Div component = new Div();
+        component.setWidthFull();
+        component.setHeightFull();
 
         menuBar.setOpenOnHover(true);
         Text selected = new Text("");

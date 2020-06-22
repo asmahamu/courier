@@ -9,6 +9,6 @@ import java.util.Set;
 
 @Repository
 public interface NetworkRepository extends JpaRepository<Network, String> {
-    @Query(value = "SELECT distinct(country_name) FROM easynew.i_network;", nativeQuery = true)
+    @Query(value = "SELECT distinct(country_name) FROM easynew.i_network ORDER BY country_name;", nativeQuery = true)
     Set<String> findDistinctCountry();
 }

@@ -10,6 +10,6 @@ import java.util.Set;
 @Repository
 public interface PlaceGenerationRepository extends JpaRepository<PlaceGeneration, Integer> {
     PlaceGeneration findByCityName(String cityName);
-    @Query(value = "SELECT distinct(city_name) FROM easynew.place_generation;", nativeQuery = true)
+    @Query(value = "SELECT distinct(city_name) FROM easynew.place_generation ORDER BY city_name;", nativeQuery = true)
     Set<String> findDistinctCityName();
 }

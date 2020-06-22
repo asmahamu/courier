@@ -10,6 +10,7 @@ import java.util.List;
 
 @Repository
 public interface ClientRepository extends JpaRepository<Client, Integer> {
+    List<Client> findByOrderByClientName();
     List<Client> findAllByClientName(String clientName);
     List<Client> findByClientNameStartsWith(String clientName);
     Page<Client> findByClientNameStartsWith(String clientName, Pageable pageable);

@@ -12,6 +12,6 @@ import java.util.Set;
 public interface RateIntMasterRepository extends JpaRepository<RateIntEntry, Integer> {
     List<RateIntEntry> findAllByClientName(String clientName);
     RateIntEntry findByClientNameAndStateCodeAndPodTypeAndMode(String clientName, String stateCode, String podType, String mode);
-    @Query(value = "SELECT distinct(clientcode) FROM easynew.rate_int_master", nativeQuery = true)
+    @Query(value = "SELECT distinct(clientcode) FROM easynew.rate_int_master ORDER BY clientcode", nativeQuery = true)
     Set<String> findDistinctClientName();
 }
