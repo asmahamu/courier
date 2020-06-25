@@ -38,6 +38,8 @@ public class ClientBillRePrintingForm extends Div {
             CompanyRepository companyRepository) {
         super();
         VerticalLayout verticalLayout = new VerticalLayout();
+        verticalLayout.setMargin(false);
+        verticalLayout.setPadding(false);
         verticalLayout.setSizeFull();
 
         Label title = new Label();
@@ -58,15 +60,13 @@ public class ClientBillRePrintingForm extends Div {
 
         Grid<BillGeneration> clientBillGrid = new Grid<>(BillGeneration.class);
         clientBillGrid.setPageSize(PAGE_SIZE);
-        clientBillGrid.setWidth("1300px");
-        clientBillGrid.setHeight("500px");
         clientBillGrid.setColumns("billNo", "billDate", "clientName", "billAmount", "netAmount");
 
-        clientBillGrid.getColumnByKey("billNo").setWidth("200px").setFlexGrow(0);
-        clientBillGrid.getColumnByKey("billDate").setWidth("200px").setFlexGrow(0);
-        clientBillGrid.getColumnByKey("clientName").setWidth("300px").setFlexGrow(0);
-        clientBillGrid.getColumnByKey("billAmount").setWidth("200px").setFlexGrow(0);
-        clientBillGrid.getColumnByKey("netAmount").setWidth("200px").setFlexGrow(0);
+        clientBillGrid.getColumnByKey("billNo").setWidth("16.5%").setFlexGrow(0);
+        clientBillGrid.getColumnByKey("billDate").setWidth("16.5%").setFlexGrow(0);
+        clientBillGrid.getColumnByKey("clientName").setWidth("33%").setFlexGrow(0);
+        clientBillGrid.getColumnByKey("billAmount").setWidth("16.5%").setFlexGrow(0);
+        clientBillGrid.getColumnByKey("netAmount").setWidth("16.5%").setFlexGrow(0);
 
         HeaderRow hr = clientBillGrid.prependHeaderRow();
         hr.getCell(clientBillGrid.getColumnByKey("billNo")).setComponent(billNo);

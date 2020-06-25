@@ -23,7 +23,8 @@ public class ClientProfileEditor extends Div {
     private String clientNameFilter;
     public  ClientProfileEditor(ClientService clientService){
         VerticalLayout verticalLayout = new VerticalLayout();
-        verticalLayout.setSizeFull();
+        verticalLayout.setMargin(false);
+        verticalLayout.setPadding(false);
 
         Label title = new Label();
         title.setSizeFull();
@@ -34,18 +35,16 @@ public class ClientProfileEditor extends Div {
         clientName.setValueChangeMode(ValueChangeMode.EAGER);
         Grid<Client> clientGrid = new Grid<>(Client.class);
         clientGrid.setPageSize(PAGE_SIZE);
-        clientGrid.setWidth("1200px");
-        clientGrid.setHeight("650px");
         clientGrid.setColumns("clientCode", "clientName", "city", "phone", "branch_name", "gstNo", "gstEnabled", "fsc");
 
-        clientGrid.getColumnByKey("clientCode").setWidth("50px").setFlexGrow(0);
-        clientGrid.getColumnByKey("clientName").setWidth("350px").setFlexGrow(0);
-        clientGrid.getColumnByKey("city").setWidth("200px").setFlexGrow(0);
-        clientGrid.getColumnByKey("phone").setWidth("150px").setFlexGrow(0);
-        clientGrid.getColumnByKey("branch_name").setWidth("75px").setFlexGrow(0);
-        clientGrid.getColumnByKey("gstNo").setWidth("150px").setFlexGrow(0);
-        clientGrid.getColumnByKey("gstEnabled").setWidth("100px").setFlexGrow(0);
-        clientGrid.getColumnByKey("fsc").setWidth("100px").setFlexGrow(0);
+        clientGrid.getColumnByKey("clientCode").setWidth("10%").setFlexGrow(0);
+        clientGrid.getColumnByKey("clientName").setWidth("25%").setFlexGrow(0);
+        clientGrid.getColumnByKey("city").setWidth("12%").setFlexGrow(0);
+        clientGrid.getColumnByKey("phone").setWidth("8%").setFlexGrow(0);
+        clientGrid.getColumnByKey("branch_name").setWidth("10%").setFlexGrow(0);
+        clientGrid.getColumnByKey("gstNo").setWidth("15%").setFlexGrow(0);
+        clientGrid.getColumnByKey("gstEnabled").setWidth("10%").setFlexGrow(0);
+        clientGrid.getColumnByKey("fsc").setWidth("10%").setFlexGrow(0);
 
         HeaderRow hr = clientGrid.prependHeaderRow();
         hr.getCell(clientGrid.getColumnByKey("clientName")).setComponent(clientName);
@@ -112,7 +111,8 @@ public class ClientProfileEditor extends Div {
             add(clientProfileForm);
         });
 
-        Button addNewBtn = new Button("New Account Copy", VaadinIcon.PLUS.create());
+        Button addNewBtn = new Button("New Client", VaadinIcon.PLUS.create());
+        addNewBtn.setWidth("100%");
         addNewBtn.addClickListener(e -> add(new ClientProfileForm(clientService, new Client())));
 
         verticalLayout.add(title ,clientGrid, addNewBtn);

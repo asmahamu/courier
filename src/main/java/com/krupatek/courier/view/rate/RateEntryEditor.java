@@ -9,6 +9,7 @@ import com.krupatek.courier.service.RateMasterService;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
 
@@ -25,15 +26,20 @@ public class RateEntryEditor extends Div {
                            RateMasterService rateMasterService){
         VerticalLayout verticalLayout = new VerticalLayout();
         verticalLayout.setSizeFull();
+        verticalLayout.setMargin(false);
+        verticalLayout.setPadding(false);
 
         Label title = new Label();
         title.setSizeFull();
         title.setText("Rate Entry");
 
         // Client selection
+        HorizontalLayout horizontalLayout = new HorizontalLayout();
+        horizontalLayout.setWidth("100%");
+
         Select<String> clientSelect = new Select<>();
         clientSelect.setLabel("Select Client Name : ");
-        clientSelect.setWidthFull();
+        clientSelect.setWidth("50%");
 
 
         List<Client> clientList = clientService.findAll();
@@ -47,7 +53,7 @@ public class RateEntryEditor extends Div {
         // Courier selection
         Select<String> courierSelect = new Select<>();
         courierSelect.setLabel("Select Courier Name : ");
-        courierSelect.setWidthFull();
+        courierSelect.setWidth("50%");
 
 
         List<Courier> couriersList = courierService.findAll();
@@ -58,10 +64,9 @@ public class RateEntryEditor extends Div {
         courierSelect.setItems(courierNameList);
         courierSelect.setValue(currentSelectedCourier);
 
+        horizontalLayout.add(clientSelect, courierSelect);
 
         Grid<RateEntry> rateEntryGrid = new Grid<>(RateEntry.class);
-        rateEntryGrid.setWidth("1200px");
-        rateEntryGrid.setHeight("500px");
         rateEntryGrid.setColumns(
                 "rateMasterId",
                 "clientName",
@@ -74,16 +79,16 @@ public class RateEntryEditor extends Div {
                 "addWt",
                 "addRt");
 
-        rateEntryGrid.getColumnByKey("rateMasterId").setWidth("100px").setFlexGrow(0);
-        rateEntryGrid.getColumnByKey("clientName").setWidth("250px").setFlexGrow(0);
-        rateEntryGrid.getColumnByKey("stateCode").setWidth("200px").setFlexGrow(0);
-        rateEntryGrid.getColumnByKey("podType").setWidth("100px").setFlexGrow(0);
-        rateEntryGrid.getColumnByKey("mode").setWidth("100px").setFlexGrow(0);
-        rateEntryGrid.getColumnByKey("from1").setWidth("100px").setFlexGrow(0);
-        rateEntryGrid.getColumnByKey("to1").setWidth("100px").setFlexGrow(0);
-        rateEntryGrid.getColumnByKey("rate").setWidth("100px").setFlexGrow(0);
-        rateEntryGrid.getColumnByKey("addWt").setWidth("100px").setFlexGrow(0);
-        rateEntryGrid.getColumnByKey("addRt").setWidth("100px").setFlexGrow(0);
+        rateEntryGrid.getColumnByKey("rateMasterId").setWidth("10%").setFlexGrow(0);
+        rateEntryGrid.getColumnByKey("clientName").setWidth("20%").setFlexGrow(0);
+        rateEntryGrid.getColumnByKey("stateCode").setWidth("14%").setFlexGrow(0);
+        rateEntryGrid.getColumnByKey("podType").setWidth("8%").setFlexGrow(0);
+        rateEntryGrid.getColumnByKey("mode").setWidth("8%").setFlexGrow(0);
+        rateEntryGrid.getColumnByKey("from1").setWidth("8%").setFlexGrow(0);
+        rateEntryGrid.getColumnByKey("to1").setWidth("8%").setFlexGrow(0);
+        rateEntryGrid.getColumnByKey("rate").setWidth("8%").setFlexGrow(0);
+        rateEntryGrid.getColumnByKey("addWt").setWidth("8%").setFlexGrow(0);
+        rateEntryGrid.getColumnByKey("addRt").setWidth("8%").setFlexGrow(0);
 
         rateEntryGrid.setColumnReorderingAllowed(false);
 
@@ -100,7 +105,7 @@ public class RateEntryEditor extends Div {
             load(rateEntryGrid, rateMasterService);
         });
 
-        verticalLayout.add(title, clientSelect, courierSelect, rateEntryGrid);
+        verticalLayout.add(title, horizontalLayout, rateEntryGrid);
         add(verticalLayout);
         rateEntryGrid.addItemClickListener(listener -> {
             RateEntryForm rateEntryForm =  new RateEntryForm(

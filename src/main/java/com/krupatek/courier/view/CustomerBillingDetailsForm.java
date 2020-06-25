@@ -9,8 +9,10 @@ import com.krupatek.courier.utils.DateUtils;
 import com.krupatek.courier.view.accountcopy.AccountCopyForm;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.FooterRow;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Anchor;
@@ -21,6 +23,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.spring.annotation.SpringComponent;
@@ -163,29 +166,74 @@ public class CustomerBillingDetailsForm extends Div {
         dateHorizontalLayout.add(clientSelect, lastMonthButton, currentMonthButton, startDatePicker, endDatePicker, refreshButton, showButton);
         dateHorizontalLayout.setAlignItems(HorizontalLayout.Alignment.END);
 
-        Grid<AccountCopy> accountCopyGrid = new Grid<>(AccountCopy.class);
-        accountCopyGrid.setColumns("docNo", "podDate", "clientName", "destination", "weight", "otherCharges", "rate", "dP", "mode");
+        Grid<AccountCopy> accountCopyGrid = new Grid<>(AccountCopy.class, false);
+        accountCopyGrid.setWidthFull();
 
-        accountCopyGrid.getColumnByKey("docNo").setWidth("12%").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("podDate").setWidth("10%").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("clientName").setWidth("22%").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("destination").setWidth("12%").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("weight").setWidth("8%").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("otherCharges").setWidth("10%").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("rate").setWidth("10%").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("dP").setWidth("5%").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("mode").setWidth("9%").setFlexGrow(0);
+        accountCopyGrid.addColumn(AccountCopy::getDocNo).setKey("docNo");
+        accountCopyGrid.addColumn(accountCopy -> dateUtils.ddmmyyFormat(accountCopy.getPodDate())).setKey("podDate");
+        accountCopyGrid.addColumn(AccountCopy::getClientName).setKey("clientName");
+        accountCopyGrid.addColumn(AccountCopy::getDestination).setKey("destination");
+        accountCopyGrid.addColumn(AccountCopy::getWeight).setKey("weight");
+        accountCopyGrid.addColumn(AccountCopy::getOtherCharges).setKey("otherCharges");
+        accountCopyGrid.addColumn(AccountCopy::getRate).setKey("rate");
+        accountCopyGrid.addColumn(AccountCopy::getdP).setKey("dP");
+        accountCopyGrid.addColumn(AccountCopy::getMode).setKey("mode");
+
+        accountCopyGrid.getColumnByKey("docNo").setHeader(new Html("<b>Doc No</b>")).setWidth("10%").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("podDate").setHeader(new Html("<b>POD Date</b>")).setWidth("10%").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("clientName").setHeader(new Html("<b>Client Name</b>")).setWidth("25%").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("destination").setHeader(new Html("<b>Destination</b>")).setWidth("10%").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("weight").setHeader(new Html("<b>Weight</b>")).setWidth("8%").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("otherCharges").setHeader(new Html("<b>Other Charges</b>")).setWidth("11%").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("rate").setHeader(new Html("<b>Rate</b>")).setWidth("10%").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("dP").setHeader(new Html("<b>D/P</b>")).setWidth("8%").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("mode").setHeader(new Html("<b>Mode</b>")).setWidth("8%").setFlexGrow(0);
+
+        accountCopyGrid.getColumnByKey("docNo").setTextAlign(ColumnTextAlign.END);
+        accountCopyGrid.getColumnByKey("weight").setTextAlign(ColumnTextAlign.END);
+        accountCopyGrid.getColumnByKey("otherCharges").setTextAlign(ColumnTextAlign.END);
+        accountCopyGrid.getColumnByKey("rate").setTextAlign(ColumnTextAlign.END);
 
         accountCopyGrid.setColumnReorderingAllowed(false);
 
         HorizontalLayout reportGenerationButtonLayout = new HorizontalLayout();
 
-        TextField sumTextField = new TextField();
-        sumTextField.setLabel("Total : ");
-        sumTextField.setReadOnly(true);
+        // Set Total and Gross Total
+        Label totalDocNoLbl = new Label();
+        totalDocNoLbl.setWidth("5%");
+        totalDocNoLbl.addClassName("bold-label");
+        totalDocNoLbl.setText("Total : ");
 
-        FooterRow footerRow = accountCopyGrid.appendFooterRow();
-        footerRow.getCell(accountCopyGrid.getColumnByKey("rate")).setComponent(sumTextField);
+        TextField totalDocNoTF = new TextField();
+        totalDocNoTF.addThemeVariants(TextFieldVariant.LUMO_ALIGN_RIGHT);
+        totalDocNoTF.setWidth("5%");
+        totalDocNoTF.addClassName("bold-label");
+        totalDocNoTF.setReadOnly(true);
+
+        Label leftEmptyLabelGrossTotalFooterHLayout = new Label();
+        leftEmptyLabelGrossTotalFooterHLayout.setWidth("53%");
+
+        Label grossTotalLbl = new Label();
+        grossTotalLbl.setText("Gross Amount : ");
+        grossTotalLbl.setWidth("11%");
+
+        TextField grossTotalTF = new TextField();
+        grossTotalTF.addThemeVariants(TextFieldVariant.LUMO_ALIGN_RIGHT);
+        grossTotalTF.setWidth("10%");
+        grossTotalTF.setReadOnly(true);
+
+        Label rightEmptyLabelGrossTotalFooterHLayout = new Label();
+        rightEmptyLabelGrossTotalFooterHLayout.setWidth("16%");
+
+
+        HorizontalLayout grossTotalFooterHLayout = new HorizontalLayout();
+        grossTotalFooterHLayout.setMargin(false);
+        grossTotalFooterHLayout.setPadding(false);
+        grossTotalFooterHLayout.setSpacing(false);
+        grossTotalFooterHLayout.setWidth("100%");
+
+        grossTotalFooterHLayout.add(totalDocNoLbl, totalDocNoTF, leftEmptyLabelGrossTotalFooterHLayout, grossTotalLbl, grossTotalTF, rightEmptyLabelGrossTotalFooterHLayout);
+
 
         Anchor podSummaryDownloadLink = new Anchor(new StreamResource("pod-summary.pdf", () -> {
             try {
@@ -208,7 +256,7 @@ public class CustomerBillingDetailsForm extends Div {
                 List<AccountCopy> allByClientNameAndPodDateBetween = accountCopyService.findAllByPodDateBetween(
                         fromLocaleDate(dateFilter.getStartDate()),
                         fromLocaleDate(dateFilter.getEndDate()));
-                File pdfFile = dailyReportService.generateInvoiceFor(company, allByClientNameAndPodDateBetween, sumTextField.getValue(),  Locale.getDefault());
+                File pdfFile = dailyReportService.generateInvoiceFor(company, allByClientNameAndPodDateBetween, grossTotalTF.getValue(),  Locale.getDefault());
                 return  new FileInputStream(pdfFile);
             } catch (IOException e1) {
                 return new ByteArrayInputStream(new byte[]{});
@@ -218,7 +266,7 @@ public class CustomerBillingDetailsForm extends Div {
 
         reportGenerationButtonLayout.setAlignItems(HorizontalLayout.Alignment.CENTER);
         reportGenerationButtonLayout.add(podSummaryDownloadLink, dailyReportLink);
-        verticalLayout.add(title, dateHorizontalLayout, reportGenerationButtonLayout, accountCopyGrid);
+        verticalLayout.add(title, dateHorizontalLayout, reportGenerationButtonLayout, accountCopyGrid, grossTotalFooterHLayout);
         add(verticalLayout);
 
         // Last Month
@@ -228,18 +276,18 @@ public class CustomerBillingDetailsForm extends Div {
             dateFilter.setStartDate(lastMonth.withDayOfMonth(1));
             dateFilter.setEndDate(lastMonth.withDayOfMonth(lastMonth.lengthOfMonth()));
             binder.readBean(dateFilter);
-            load(accountCopyGrid, accountCopyService, dateFilter ,sumTextField);
+            load(accountCopyGrid, accountCopyService, dateFilter ,grossTotalTF, totalDocNoTF);
         });
 
         currentMonthButton.addClickListener( c -> {
             dateFilter.setStartDate(start);
             dateFilter.setEndDate(end);
             binder.readBean(dateFilter);
-            load(accountCopyGrid, accountCopyService, dateFilter, sumTextField);
+            load(accountCopyGrid, accountCopyService, dateFilter, grossTotalTF, totalDocNoTF);
         });
 
-        refreshButton.addClickListener( c -> load(accountCopyGrid, accountCopyService, dateFilter, sumTextField));
-        showButton.addClickListener( c -> load(accountCopyGrid, accountCopyService, dateFilter, sumTextField));
+        refreshButton.addClickListener( c -> load(accountCopyGrid, accountCopyService, dateFilter, grossTotalTF, totalDocNoTF));
+        showButton.addClickListener( c -> load(accountCopyGrid, accountCopyService, dateFilter, grossTotalTF, totalDocNoTF));
 
 
 //        podSummary.addClickListener(e -> {
@@ -287,7 +335,7 @@ public class CustomerBillingDetailsForm extends Div {
 
         clientSelect.addValueChangeListener(event -> {
             currentSelectedItem = event.getValue();
-            load(accountCopyGrid, accountCopyService, dateFilter, sumTextField);
+            load(accountCopyGrid, accountCopyService, dateFilter, grossTotalTF, totalDocNoTF);
         });
 
         accountCopyGrid.addItemClickListener(listener -> {
@@ -310,7 +358,8 @@ public class CustomerBillingDetailsForm extends Div {
             Grid<AccountCopy> accountCopyGrid,
             AccountCopyService accountCopyService,
             DateFilter dateFilter,
-            TextField sumTextField){
+            TextField grossTotalTF,
+            TextField totalDocNoTF){
         List<AccountCopy> allByClientNameAndPodDateBetween = new ArrayList<>();
         if(currentSelectedItem.equalsIgnoreCase("ALL")){
             allByClientNameAndPodDateBetween.addAll(accountCopyService.findAllByPodDateBetween(
@@ -325,8 +374,8 @@ public class CustomerBillingDetailsForm extends Div {
         accountCopyGrid.setItems(
                 allByClientNameAndPodDateBetween);
         Integer grossTotal = allByClientNameAndPodDateBetween.parallelStream().map(AccountCopy::getRate).reduce(0, Math::addExact);
-        sumTextField.setValue(String.format("%.02f", grossTotal.floatValue()));
-
+        grossTotalTF.setValue(String.format("%.02f", grossTotal.floatValue()));
+        totalDocNoTF.setValue(String.valueOf(allByClientNameAndPodDateBetween.size()));
     }
 
     private void showError(String error){

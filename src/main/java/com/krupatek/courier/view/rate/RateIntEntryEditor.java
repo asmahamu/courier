@@ -8,6 +8,7 @@ import com.krupatek.courier.service.RateIntMasterService;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
 
@@ -22,16 +23,22 @@ public class RateIntEntryEditor extends Div {
                               RateIntMasterService rateIntMasterService){
         VerticalLayout verticalLayout = new VerticalLayout();
         verticalLayout.setSizeFull();
+        verticalLayout.setMargin(false);
+        verticalLayout.setPadding(false);
 
         Label title = new Label();
         title.setSizeFull();
         title.setText("Rate Entry");
 
         // Client selection
+        HorizontalLayout horizontalLayout = new HorizontalLayout();
+        horizontalLayout.setWidth("100%");
+
         Select<String> clientSelect = new Select<>();
         clientSelect.setLabel("Select Client Name : ");
-        clientSelect.setWidthFull();
+        clientSelect.setWidth("50%");
 
+        horizontalLayout.add(clientSelect);
 
         List<Client> clientList = clientService.findAll();
         List<String> clientNameList = new ArrayList<>();
@@ -42,8 +49,6 @@ public class RateIntEntryEditor extends Div {
         clientSelect.setValue(currentSelectedClient);
 
         Grid<RateIntEntry> rateEntryGrid = new Grid<>(RateIntEntry.class);
-        rateEntryGrid.setWidth("1200px");
-        rateEntryGrid.setHeight("500px");
         rateEntryGrid.setColumns(
                 "rateIntMasterId",
                 "clientName",
@@ -56,16 +61,16 @@ public class RateIntEntryEditor extends Div {
                 "addWt",
                 "addRt");
 
-        rateEntryGrid.getColumnByKey("rateIntMasterId").setWidth("100px").setFlexGrow(0);
-        rateEntryGrid.getColumnByKey("clientName").setWidth("250px").setFlexGrow(0);
-        rateEntryGrid.getColumnByKey("stateCode").setWidth("200px").setFlexGrow(0);
-        rateEntryGrid.getColumnByKey("podType").setWidth("100px").setFlexGrow(0);
-        rateEntryGrid.getColumnByKey("mode").setWidth("100px").setFlexGrow(0);
-        rateEntryGrid.getColumnByKey("from1").setWidth("100px").setFlexGrow(0);
-        rateEntryGrid.getColumnByKey("to1").setWidth("100px").setFlexGrow(0);
-        rateEntryGrid.getColumnByKey("rate").setWidth("100px").setFlexGrow(0);
-        rateEntryGrid.getColumnByKey("addWt").setWidth("100px").setFlexGrow(0);
-        rateEntryGrid.getColumnByKey("addRt").setWidth("100px").setFlexGrow(0);
+        rateEntryGrid.getColumnByKey("rateIntMasterId").setWidth("10%").setFlexGrow(0);
+        rateEntryGrid.getColumnByKey("clientName").setWidth("20%").setFlexGrow(0);
+        rateEntryGrid.getColumnByKey("stateCode").setWidth("14%").setFlexGrow(0);
+        rateEntryGrid.getColumnByKey("podType").setWidth("8%").setFlexGrow(0);
+        rateEntryGrid.getColumnByKey("mode").setWidth("8%").setFlexGrow(0);
+        rateEntryGrid.getColumnByKey("from1").setWidth("8%").setFlexGrow(0);
+        rateEntryGrid.getColumnByKey("to1").setWidth("8%").setFlexGrow(0);
+        rateEntryGrid.getColumnByKey("rate").setWidth("8%").setFlexGrow(0);
+        rateEntryGrid.getColumnByKey("addWt").setWidth("8%").setFlexGrow(0);
+        rateEntryGrid.getColumnByKey("addRt").setWidth("8%").setFlexGrow(0);
 
         rateEntryGrid.setColumnReorderingAllowed(false);
 
@@ -77,7 +82,7 @@ public class RateIntEntryEditor extends Div {
             load(rateEntryGrid, rateIntMasterService);
         });
 
-        verticalLayout.add(title, clientSelect, rateEntryGrid);
+        verticalLayout.add(title, horizontalLayout, rateEntryGrid);
         add(verticalLayout);
         rateEntryGrid.addItemClickListener(listener -> {
             RateIntEntryForm rateIntEntryForm =  new RateIntEntryForm(

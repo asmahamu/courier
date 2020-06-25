@@ -4,7 +4,10 @@ import com.krupatek.courier.model.AccountCopy;
 import com.krupatek.courier.repository.CompanyRepository;
 import com.krupatek.courier.service.*;
 import com.krupatek.courier.utils.DateUtils;
-import com.krupatek.courier.view.*;
+import com.krupatek.courier.view.ClientBillPrintingForm;
+import com.krupatek.courier.view.ClientBillRePrintingForm;
+import com.krupatek.courier.view.CustomerBillingDetailsForm;
+import com.krupatek.courier.view.SystemSettingsForm;
 import com.krupatek.courier.view.accountcopy.AccountCopyEditor;
 import com.krupatek.courier.view.accountcopy.AccountCopyForm;
 import com.krupatek.courier.view.clientprofile.ClientProfileEditor;
@@ -14,6 +17,7 @@ import com.krupatek.courier.view.rate.RateIntEntryEditor;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.contextmenu.SubMenu;
+import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -26,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @Route
 @Theme(value = Lumo.class, variant = Material.LIGHT)
+@HtmlImport("frontend://styles/shared-styles.html")
 @PWA(name = "Project Base for Vaadin Flow with Spring", shortName = "Project Base")
 public class MainView extends VerticalLayout {
     @Autowired

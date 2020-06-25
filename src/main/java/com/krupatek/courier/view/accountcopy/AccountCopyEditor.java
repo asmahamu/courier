@@ -4,12 +4,15 @@ import com.krupatek.courier.model.AccountCopy;
 import com.krupatek.courier.model.AccountCopyFilter;
 import com.krupatek.courier.service.*;
 import com.krupatek.courier.utils.DateUtils;
+import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.ConfigurableFilterDataProvider;
@@ -24,7 +27,7 @@ import java.util.logging.Logger;
 @SpringComponent
 @UIScope
 public class AccountCopyEditor extends Div {
-    private  AccountCopyFilter filter;
+    private AccountCopyFilter filter;
     private final int PAGE_SIZE = 1000;
 
     public AccountCopyEditor(
@@ -38,6 +41,8 @@ public class AccountCopyEditor extends Div {
         super();
         VerticalLayout verticalLayout = new VerticalLayout();
         verticalLayout.setSizeFull();
+        verticalLayout.setMargin(false);
+        verticalLayout.setPadding(false);
 
         Label title = new Label();
         title.setSizeFull();
@@ -51,21 +56,33 @@ public class AccountCopyEditor extends Div {
         clientName.setPlaceholder("Filter by Client Name");
         clientName.setValueChangeMode(ValueChangeMode.EAGER);
 
-        Grid<AccountCopy> accountCopyGrid = new Grid<>(AccountCopy.class);
+        Grid<AccountCopy> accountCopyGrid = new Grid<>(AccountCopy.class, false);
         accountCopyGrid.setPageSize(PAGE_SIZE);
-        accountCopyGrid.setWidth("1200px");
-        accountCopyGrid.setHeight("650px");
-        accountCopyGrid.setColumns("docNo", "podDate", "clientName", "destination", "weight", "otherCharges", "rate", "dP", "mode");
 
-        accountCopyGrid.getColumnByKey("docNo").setWidth("150px").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("podDate").setWidth("200px").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("clientName").setWidth("300px").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("destination").setWidth("150px").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("weight").setWidth("100px").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("otherCharges").setWidth("75px").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("rate").setWidth("75px").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("dP").setWidth("75px").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("mode").setWidth("75px").setFlexGrow(0);
+        accountCopyGrid.addColumn(AccountCopy::getDocNo).setKey("docNo");
+        accountCopyGrid.addColumn(accountCopy -> dateUtils.ddmmyyFormat(accountCopy.getPodDate())).setKey("podDate");
+        accountCopyGrid.addColumn(AccountCopy::getClientName).setKey("clientName");
+        accountCopyGrid.addColumn(AccountCopy::getDestination).setKey("destination");
+        accountCopyGrid.addColumn(AccountCopy::getWeight).setKey("weight");
+        accountCopyGrid.addColumn(AccountCopy::getOtherCharges).setKey("otherCharges");
+        accountCopyGrid.addColumn(AccountCopy::getRate).setKey("rate");
+        accountCopyGrid.addColumn(AccountCopy::getdP).setKey("dP");
+        accountCopyGrid.addColumn(AccountCopy::getMode).setKey("mode");
+
+        accountCopyGrid.getColumnByKey("docNo").setHeader(new Html("<b>Doc No</b>")).setWidth("10%").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("podDate").setHeader(new Html("<b>POD Date</b>")).setWidth("10%").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("clientName").setHeader(new Html("<b>Client Name</b>")).setWidth("25%").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("destination").setHeader(new Html("<b>Destination</b>")).setWidth("10%").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("weight").setHeader(new Html("<b>Weight</b>")).setWidth("8%").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("otherCharges").setHeader(new Html("<b>Other Charges</b>")).setWidth("11%").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("rate").setHeader(new Html("<b>Rate</b>")).setWidth("10%").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("dP").setHeader(new Html("<b>D/P</b>")).setWidth("8%").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("mode").setHeader(new Html("<b>Mode</b>")).setWidth("8%").setFlexGrow(0);
+
+        accountCopyGrid.getColumnByKey("docNo").setTextAlign(ColumnTextAlign.END);
+        accountCopyGrid.getColumnByKey("weight").setTextAlign(ColumnTextAlign.END);
+        accountCopyGrid.getColumnByKey("otherCharges").setTextAlign(ColumnTextAlign.END);
+        accountCopyGrid.getColumnByKey("rate").setTextAlign(ColumnTextAlign.END);
 
         HeaderRow hr = accountCopyGrid.prependHeaderRow();
         hr.getCell(accountCopyGrid.getColumnByKey("docNo")).setComponent(docNo);
@@ -83,9 +100,9 @@ public class AccountCopyEditor extends Div {
                             // The number of items to load
                             int limit = query.getLimit();
 
-                            Logger.getLogger(AccountCopyEditor.class.getName()).info("Original offset : "+offset+", limit :"+limit);
+                            Logger.getLogger(AccountCopyEditor.class.getName()).info("Original offset : " + offset + ", limit :" + limit);
 
-                            offset = offset/PAGE_SIZE;
+                            offset = offset / PAGE_SIZE;
                             limit = Math.min(limit, PAGE_SIZE);
 
                             AccountCopyFilter accountCopyFilter = query.getFilter().orElse(new AccountCopyFilter());
@@ -93,11 +110,11 @@ public class AccountCopyEditor extends Div {
                             String clientNameFilter = accountCopyFilter.getClientNameFilter();
 
 
-                            Logger.getLogger(AccountCopyEditor.class.getName()).info("Corrected offset : "+offset+", limit :"+limit);
+                            Logger.getLogger(AccountCopyEditor.class.getName()).info("Corrected offset : " + offset + ", limit :" + limit);
 
                             Page<AccountCopy> accountCopies = accountCopyService
                                     .findByDocNoStartsWithAndClientNameStartsWith(offset, limit, docNoFilter, clientNameFilter);
-                            Logger.getLogger(AccountCopyEditor.class.getName()).info("Total pages : "+accountCopies.getTotalElements());
+                            Logger.getLogger(AccountCopyEditor.class.getName()).info("Total pages : " + accountCopies.getTotalElements());
                             return accountCopies.stream();
                         },
                         // Second callback fetches the number of items
@@ -128,7 +145,7 @@ public class AccountCopyEditor extends Div {
         });
 
         accountCopyGrid.addItemClickListener(listener -> {
-            AccountCopyForm accountCopyForm =  new AccountCopyForm(
+            AccountCopyForm accountCopyForm = new AccountCopyForm(
                     accountCopyService,
                     clientService,
                     rateMasterService,
@@ -141,6 +158,7 @@ public class AccountCopyEditor extends Div {
         });
 
         Button addNewBtn = new Button("New Account Copy", VaadinIcon.PLUS.create());
+        addNewBtn.setWidth("100%");
         addNewBtn.addClickListener(e -> add(new AccountCopyForm(
                 accountCopyService,
                 clientService,
@@ -150,7 +168,7 @@ public class AccountCopyEditor extends Div {
                 networkService,
                 dateUtils,
                 new AccountCopy())));
-        verticalLayout.add(title ,accountCopyGrid, addNewBtn);
+        verticalLayout.add(title, accountCopyGrid, addNewBtn);
 
         add(verticalLayout);
     }
