@@ -22,6 +22,9 @@ import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 import org.springframework.data.domain.Page;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.logging.Logger;
 
 @SpringComponent
@@ -51,6 +54,10 @@ public class AccountCopyEditor extends Div {
         TextField docNo = new TextField();
         docNo.setPlaceholder("Filter by Doc No");
         docNo.setValueChangeMode(ValueChangeMode.EAGER);
+
+        TextField podDate = new TextField();
+        podDate.setPlaceholder("Filter by Date");
+        podDate.setValueChangeMode(ValueChangeMode.EAGER);
 
         TextField clientName = new TextField();
         clientName.setPlaceholder("Filter by Client Name");
@@ -86,6 +93,7 @@ public class AccountCopyEditor extends Div {
 
         HeaderRow hr = accountCopyGrid.prependHeaderRow();
         hr.getCell(accountCopyGrid.getColumnByKey("docNo")).setComponent(docNo);
+        hr.getCell(accountCopyGrid.getColumnByKey("podDate")).setComponent(podDate);
         hr.getCell(accountCopyGrid.getColumnByKey("clientName")).setComponent(clientName);
 
         accountCopyGrid.setColumnReorderingAllowed(false);
@@ -108,12 +116,12 @@ public class AccountCopyEditor extends Div {
                             AccountCopyFilter accountCopyFilter = query.getFilter().orElse(new AccountCopyFilter());
                             String docNoFilter = accountCopyFilter.getDocNoFilter();
                             String clientNameFilter = accountCopyFilter.getClientNameFilter();
-
+                            Date dateFilter = accountCopyFilter.getDateFilter();
 
                             Logger.getLogger(AccountCopyEditor.class.getName()).info("Corrected offset : " + offset + ", limit :" + limit);
 
                             Page<AccountCopy> accountCopies = accountCopyService
-                                    .findByDocNoStartsWithAndClientNameStartsWith(offset, limit, docNoFilter, clientNameFilter);
+                                    .findByDocNoStartsWithAndClientNameStartsWithAndPodDate(offset, limit, docNoFilter, clientNameFilter, dateFilter);
                             Logger.getLogger(AccountCopyEditor.class.getName()).info("Total pages : " + accountCopies.getTotalElements());
                             return accountCopies.stream();
                         },
@@ -123,7 +131,8 @@ public class AccountCopyEditor extends Div {
                             AccountCopyFilter accountCopyFilter = query.getFilter().orElse(new AccountCopyFilter());
                             String docNoFilter = accountCopyFilter.getDocNoFilter();
                             String clientNameFilter = accountCopyFilter.getClientNameFilter();
-                            return Math.toIntExact(accountCopyService.countByDocNoStartsWithAndClientNameStartsWith(docNoFilter, clientNameFilter));
+                            Date dateFilter = accountCopyFilter.getDateFilter();
+                            return Math.toIntExact(accountCopyService.countByDocNoStartsWithAndClientNameStartsWithAndPodDate(docNoFilter, clientNameFilter, dateFilter));
                         });
 
         filter = new AccountCopyFilter();
@@ -141,6 +150,17 @@ public class AccountCopyEditor extends Div {
         clientName.addValueChangeListener(event -> {
             filter.setClientNameFilter(event.getValue());
             wrapper.setFilter(filter);
+//            wrapper.refreshAll();
+        });
+
+        podDate.addValueChangeListener(event -> {
+            try {
+                Date date = new SimpleDateFormat("dd/MM/yy").parse(event.getValue());
+                filter.setDateFilter(date);
+                wrapper.setFilter(filter);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
 //            wrapper.refreshAll();
         });
 

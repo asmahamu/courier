@@ -55,9 +55,9 @@ public class AccountCopyServiceImpl implements AccountCopyService {
     }
 
     @Override
-    public Page<AccountCopy> findByDocNoStartsWithAndClientNameStartsWith(int offset, int limit, String docNo, String clientName) {
+    public Page<AccountCopy> findByDocNoStartsWithAndClientNameStartsWithAndPodDate(int offset, int limit, String docNo, String clientName, Date podDate) {
         Pageable pageable = PageRequest.of(offset, limit);
-        return accountCopyRepository.findByDocNoStartsWithAndClientNameStartsWith(docNo, clientName, pageable);
+        return accountCopyRepository.findByDocNoStartsWithAndClientNameStartsWithAndPodDate(docNo, clientName, podDate, pageable);
     }
 
     @Override
@@ -66,8 +66,8 @@ public class AccountCopyServiceImpl implements AccountCopyService {
     }
 
     @Override
-    public long countByDocNoStartsWithAndClientNameStartsWith(String docNo, String clientName) {
-        return accountCopyRepository.countByDocNoStartsWithAndClientNameStartsWith(docNo, clientName);
+    public long countByDocNoStartsWithAndClientNameStartsWithAndPodDate(String docNo, String clientName, Date podDate) {
+        return accountCopyRepository.countByDocNoStartsWithAndClientNameStartsWithAndPodDate(docNo, clientName, podDate);
     }
 
     @Override

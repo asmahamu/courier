@@ -24,11 +24,11 @@ public interface AccountCopyService {
     Page<AccountCopy> findByDocNoStartsWith(int offset, int limit,
                                             String docNo);
 
-    Page<AccountCopy> findByDocNoStartsWithAndClientNameStartsWith(int offset, int limit, String docNo, String clientName);
+    Page<AccountCopy> findByDocNoStartsWithAndClientNameStartsWithAndPodDate(int offset, int limit, String docNo, String clientName, Date podDate);
 
     long countByDocNoStartsWith(String docNo);
 
-    long countByDocNoStartsWithAndClientNameStartsWith(String docNo, String clientName);
+    long countByDocNoStartsWithAndClientNameStartsWithAndPodDate(String docNo, String clientName, Date podDate);
 
     List<AccountCopy> findAllByBillNo(String billNo);
 
