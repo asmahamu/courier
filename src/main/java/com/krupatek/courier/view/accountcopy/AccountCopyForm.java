@@ -17,6 +17,7 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.data.converter.StringToDoubleConverter;
@@ -24,6 +25,7 @@ import com.vaadin.flow.data.converter.StringToIntegerConverter;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
+import org.hibernate.dialect.function.TemplateRenderer;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -62,7 +64,13 @@ public class AccountCopyForm extends Div {
 
         Label title = new Label();
         title.setSizeFull();
-        title.setText("Create New Account Copy");
+        title.setClassName("bold-label", true);
+
+        if(isNewAccountCopy){
+            title.setText("Create New Account Copy");
+        } else {
+            title.setText("Edit Account Copy");
+        }
         formLayout.add(title, 4);
 
         Binder<AccountCopy> binder = new Binder<>(AccountCopy.class);
@@ -71,12 +79,35 @@ public class AccountCopyForm extends Div {
         TextField docNo = new TextField();
         docNo.setLabel("Doc No. : ");
         docNo.setValueChangeMode(ValueChangeMode.EAGER);
-        binder.
-                forField(docNo).asRequired("Every Account copy must have Doc no").
-                withValidator(text ->
-                                !isNewAccountCopy || accountCopyService.findOneByDocNo(text) == null,
-                        "Account Copy already exists with this Doc No.").
-                bind(AccountCopy::getDocNo, AccountCopy::setDocNo);
+
+        if(!isNewAccountCopy) {
+            binder.
+                    forField(docNo).asRequired("Every Account copy must have Doc no").
+                    bind(AccountCopy::getDocNo, AccountCopy::setDocNo);
+            docNo.addValueChangeListener(e -> {
+                if (e.getValue() != null && e.getValue().length() > 4) {
+                    String newDocNo = e.getValue();
+                    AccountCopy newAccountCopy = accountCopyService.findOneByDocNo(newDocNo);
+                    if (newAccountCopy != null) {
+                        docNo.setInvalid(false);
+                        binder.readBean(newAccountCopy);
+                        docNo.focus();
+                    } else {
+                        docNo.setInvalid(true);
+                        docNo.setErrorMessage("Account Copy doesn't exists with this Doc No.");
+                    }
+                }
+            });
+        } else {
+            binder.
+                    forField(docNo).asRequired("Every Account copy must have Doc no").
+                    withValidator(text ->
+                                    accountCopyService.findOneByDocNo(text) == null,
+                            "Account Copy already exists with this Doc No.").
+                    bind(AccountCopy::getDocNo, AccountCopy::setDocNo);
+
+        }
+
 
         // Date
         DatePicker podDate = new DatePicker();
