@@ -111,15 +111,15 @@ public class ClientBillPrintingForm extends Div {
         Button currentMonthButton = new Button("Current Month");
         currentMonthButton.setWidth("12.5%");
 
-        // Show Button
-        Button showButton = new Button("Show");
-        showButton.setWidth("12.5%");
-
         // Refresh Button
         Button refreshButton = new Button("Refresh");
         refreshButton.setWidth("12.5%");
 
-        invoiceDateHorizontalLayout.add(bookingTypeSelect, clientSelect, invoiceDatePicker, lastMonthButton, currentMonthButton, showButton, refreshButton);
+        // Show Button
+        Button showButton = new Button("Show");
+        showButton.setWidth("12.5%");
+
+        invoiceDateHorizontalLayout.add(bookingTypeSelect, clientSelect, invoiceDatePicker, lastMonthButton, currentMonthButton, refreshButton, showButton);
 
 
         // Panel 2
@@ -317,13 +317,12 @@ public class ClientBillPrintingForm extends Div {
 
         accountCopyGrid.setColumnReorderingAllowed(false);
 
-        Anchor generateBillLink = getAnchor(accountCopyService, clientService, invoiceService, companyRepository, billingService, dateFilter, invoiceDatePicker, bookingTypeSelect, startDatePicker, endDatePicker, cgst, sgst, igst, fuelSurcharge, grossTotalTF, netTotalTF, "Preview Bill");
-        Anchor previewBillLink = getAnchor(accountCopyService, clientService, invoiceService, companyRepository, billingService, dateFilter, invoiceDatePicker, bookingTypeSelect, startDatePicker, endDatePicker, cgst, sgst, igst, fuelSurcharge, grossTotalTF, netTotalTF, "Generate Bill");
-        generateBillLink.getElement().setAttribute("download", true);
+        Anchor previewBillLink = getAnchor(accountCopyService, clientService, invoiceService, companyRepository, billingService, dateFilter, invoiceDatePicker, bookingTypeSelect, startDatePicker, endDatePicker, cgst, sgst, igst, fuelSurcharge, grossTotalTF, netTotalTF, true);
+        Anchor generateBillLink = getAnchor(accountCopyService, clientService, invoiceService, companyRepository, billingService, dateFilter, invoiceDatePicker, bookingTypeSelect, startDatePicker, endDatePicker, cgst, sgst, igst, fuelSurcharge, grossTotalTF, netTotalTF, false);
 
         generateBillLink.setWidth("12.5%");
         previewBillLink.setWidth("12.5%");
-        dateHorizontalLayout.add(generateBillLink, previewBillLink);
+        dateHorizontalLayout.add(previewBillLink, generateBillLink);
         dateHorizontalLayout.setVerticalComponentAlignment(FlexComponent.Alignment.CENTER, generateBillLink);
         dateHorizontalLayout.setVerticalComponentAlignment(FlexComponent.Alignment.CENTER, previewBillLink);
         verticalLayout.add(title, invoiceDateHorizontalLayout, dateHorizontalLayout, accountCopyGrid, grossTotalFooterHLayout, netTotalFooterHLayout);
@@ -456,29 +455,33 @@ public class ClientBillPrintingForm extends Div {
             TextField fuelSurcharge,
             TextField grossTotalTF,
             TextField netTotalTF,
-            String linkName) {
-        return new Anchor(new StreamResource("invoice.pdf", () -> {
-                try {
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy");
+            boolean onlyPreview) {
+        String linkName = onlyPreview ? "Preview Bill" : "Generate Bill";
+        String fileName = onlyPreview ? "Invoice-Preview.pdf" : "Invoice.pdf";
 
-                    BillGeneration billGeneration = new BillGeneration();
-                    billGeneration.setBillNo(billingService.nextBillNo());
-                    billGeneration.setStartDate(startDatePicker.getValue().format(formatter));
-                    billGeneration.setEndDate(endDatePicker.getValue().format(formatter));
-                    billGeneration.setBillDate(invoiceDatePicker.getValue().format(formatter));
-                    billGeneration.setBillYear(invoiceDatePicker.getValue().getYear());
-                    billGeneration.setBillAmount((int) Double.parseDouble(grossTotalTF.getValue()));
-                    billGeneration.setNetAmount((int) Double.parseDouble(netTotalTF.getValue()));
-                    billGeneration.setBalance((int) Double.parseDouble(netTotalTF.getValue()));
-                    billGeneration.setType(bookingTypeSelect.getValue());
-                    billGeneration.setClientName(currentSelectedItem);
-                    billGeneration.setBillStatus("C");
-                    billGeneration.setBillMonth(Integer.parseInt(""+invoiceDatePicker.getValue().getMonthValue()+invoiceDatePicker.getValue().getYear()));
-                    billGeneration.setCgst(Float.valueOf(cgst.getValue()));
-                    billGeneration.setSgst(Float.valueOf(sgst.getValue()));
-                    billGeneration.setIgst(Float.valueOf(igst.getValue()));
-                    billGeneration.setFuelSurcharge(Float.valueOf(fuelSurcharge.getValue()));
+        Anchor anchor = new Anchor(new StreamResource(fileName, () -> {
+            try {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy");
 
+                BillGeneration billGeneration = new BillGeneration();
+                billGeneration.setBillNo(billingService.nextBillNo());
+                billGeneration.setStartDate(startDatePicker.getValue().format(formatter));
+                billGeneration.setEndDate(endDatePicker.getValue().format(formatter));
+                billGeneration.setBillDate(invoiceDatePicker.getValue().format(formatter));
+                billGeneration.setBillYear(invoiceDatePicker.getValue().getYear());
+                billGeneration.setBillAmount((int) Double.parseDouble(grossTotalTF.getValue()));
+                billGeneration.setNetAmount((int) Double.parseDouble(netTotalTF.getValue()));
+                billGeneration.setBalance((int) Double.parseDouble(netTotalTF.getValue()));
+                billGeneration.setType(bookingTypeSelect.getValue());
+                billGeneration.setClientName(currentSelectedItem);
+                billGeneration.setBillStatus("C");
+                billGeneration.setBillMonth(Integer.parseInt("" + invoiceDatePicker.getValue().getMonthValue() + invoiceDatePicker.getValue().getYear()));
+                billGeneration.setCgst(Float.valueOf(cgst.getValue()));
+                billGeneration.setSgst(Float.valueOf(sgst.getValue()));
+                billGeneration.setIgst(Float.valueOf(igst.getValue()));
+                billGeneration.setFuelSurcharge(Float.valueOf(fuelSurcharge.getValue()));
+
+                if(onlyPreview) {
                     billingService.saveAndFlush(billGeneration);
 
                     accountCopyService.tagBillNo(
@@ -486,29 +489,32 @@ public class ClientBillPrintingForm extends Div {
                             fromLocaleDate(dateFilter.getStartDate()),
                             fromLocaleDate(dateFilter.getEndDate()),
                             bookingTypeSelect.getValue(),
-                            billGeneration.getBillNo()+" "
+                            billGeneration.getBillNo() + " "
                     );
-
-                    Client client = clientService.findAllByClientName(currentSelectedItem).get(0);
-                    List<AccountCopy> allByClientNameAndPodDateBetween = accountCopyService.findAllByClientNameAndPodDateBetweenAndType(
-                            currentSelectedItem,
-                            fromLocaleDate(dateFilter.getStartDate()),
-                            fromLocaleDate(dateFilter.getEndDate()),
-                            bookingTypeSelect.getValue());
-
-                    Company company = companyRepository.findAll().get(0);
-
-                    File pdfFile = invoiceService.generateInvoiceFor(
-                            company,
-                            client,
-                            billGeneration,
-                            allByClientNameAndPodDateBetween,
-                            Locale.getDefault());
-                    return  new FileInputStream(pdfFile);
-                } catch (IOException e1) {
-                    return new ByteArrayInputStream(new byte[]{});
                 }
-            }), linkName);
+
+                Client client = clientService.findAllByClientName(currentSelectedItem).get(0);
+                List<AccountCopy> allByClientNameAndPodDateBetween = accountCopyService.findAllByClientNameAndPodDateBetweenAndType(
+                        currentSelectedItem,
+                        fromLocaleDate(dateFilter.getStartDate()),
+                        fromLocaleDate(dateFilter.getEndDate()),
+                        bookingTypeSelect.getValue());
+
+                Company company = companyRepository.findAll().get(0);
+
+                File pdfFile = invoiceService.generateInvoiceFor(
+                        company,
+                        client,
+                        billGeneration,
+                        allByClientNameAndPodDateBetween,
+                        Locale.getDefault());
+                return new FileInputStream(pdfFile);
+            } catch (IOException e1) {
+                return new ByteArrayInputStream(new byte[]{});
+            }
+        }), linkName);
+        anchor.getElement().setAttribute("download", true);
+        return anchor;
     }
 
     private void updateTax(TextField cgst, TextField sgst, TextField igst, TextField fuelSurchage, Company company) {
