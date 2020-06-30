@@ -61,8 +61,19 @@ public class AccountCopyServiceImpl implements AccountCopyService {
     }
 
     @Override
+    public Page<AccountCopy> findByDocNoStartsWithAndClientNameStartsWith(int offset, int limit, String docNo, String clientName) {
+        Pageable pageable = PageRequest.of(offset, limit);
+        return accountCopyRepository.findByDocNoStartsWithAndClientNameStartsWith(docNo, clientName, pageable);
+    }
+
+    @Override
     public long countByDocNoStartsWith(String docNo) {
         return accountCopyRepository.countByDocNoStartsWith(docNo);
+    }
+
+    @Override
+    public long countByDocNoStartsWithAndClientNameStartsWith(String docNo, String clientName) {
+        return accountCopyRepository.countByDocNoStartsWithAndClientNameStartsWith(docNo, clientName);
     }
 
     @Override

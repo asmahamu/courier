@@ -78,7 +78,7 @@ public class AccountCopyForm extends Div {
         // Doc Number
         TextField docNo = new TextField();
         docNo.setLabel("Doc No. : ");
-        docNo.setValueChangeMode(ValueChangeMode.EAGER);
+        docNo.setValueChangeMode(ValueChangeMode.LAZY);
 
         if(!isNewAccountCopy) {
             binder.
@@ -186,7 +186,7 @@ public class AccountCopyForm extends Div {
         // PinCode
         TextField pincode = new TextField();
         pincode.setLabel("Pincode : ");
-        pincode.setValueChangeMode(ValueChangeMode.EAGER);
+        pincode.setValueChangeMode(ValueChangeMode.TIMEOUT);
         binder.bind(pincode,
                 AccountCopy::getArea,
                 AccountCopy::setArea);
@@ -194,7 +194,7 @@ public class AccountCopyForm extends Div {
         // Receiver Name
         TextField receiverName = new TextField();
         receiverName.setLabel("Receiver Name : ");
-        receiverName.setValueChangeMode(ValueChangeMode.EAGER);
+        receiverName.setValueChangeMode(ValueChangeMode.TIMEOUT);
         binder.forField(receiverName).asRequired("Every Account copy must receiver name").bind(AccountCopy::getReceiverName, AccountCopy::setReceiverName);
 
         // Courier Name
@@ -219,7 +219,7 @@ public class AccountCopyForm extends Div {
         // Weight
         TextField weight = new TextField();
         weight.setLabel("Weight : ");
-        weight.setValueChangeMode(ValueChangeMode.EAGER);
+        weight.setValueChangeMode(ValueChangeMode.TIMEOUT);
         binder.forField(weight).withConverter(
                 new StringToDoubleConverter("Not a number")).bind(
                 AccountCopy::getWeight,
@@ -229,7 +229,7 @@ public class AccountCopyForm extends Div {
         // Rate
         TextField rate = new TextField();
         rate.setLabel("Rate : ");
-        rate.setValueChangeMode(ValueChangeMode.EAGER);
+        rate.setValueChangeMode(ValueChangeMode.TIMEOUT);
         binder.forField(rate).withConverter(
                 new StringToIntegerConverter("Not a number")).bind(
                 AccountCopy::getRate,

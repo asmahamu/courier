@@ -12,7 +12,6 @@ import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.ConfigurableFilterDataProvider;
@@ -53,15 +52,15 @@ public class AccountCopyEditor extends Div {
 
         TextField docNo = new TextField();
         docNo.setPlaceholder("Filter by Doc No");
-        docNo.setValueChangeMode(ValueChangeMode.EAGER);
+        docNo.setValueChangeMode(ValueChangeMode.LAZY);
 
         TextField podDate = new TextField();
         podDate.setPlaceholder("Filter by Date");
-        podDate.setValueChangeMode(ValueChangeMode.EAGER);
+        podDate.setValueChangeMode(ValueChangeMode.LAZY);
 
         TextField clientName = new TextField();
         clientName.setPlaceholder("Filter by Client Name");
-        clientName.setValueChangeMode(ValueChangeMode.EAGER);
+        clientName.setValueChangeMode(ValueChangeMode.LAZY);
 
         Grid<AccountCopy> accountCopyGrid = new Grid<>(AccountCopy.class, false);
         accountCopyGrid.setPageSize(PAGE_SIZE);
@@ -119,9 +118,11 @@ public class AccountCopyEditor extends Div {
                             Date dateFilter = accountCopyFilter.getDateFilter();
 
                             Logger.getLogger(AccountCopyEditor.class.getName()).info("Corrected offset : " + offset + ", limit :" + limit);
-
-                            Page<AccountCopy> accountCopies = accountCopyService
-                                    .findByDocNoStartsWithAndClientNameStartsWithAndPodDate(offset, limit, docNoFilter, clientNameFilter, dateFilter);
+                            Page<AccountCopy> accountCopies = dateFilter != null ?
+                                    accountCopyService
+                                            .findByDocNoStartsWithAndClientNameStartsWithAndPodDate(offset, limit, docNoFilter, clientNameFilter, dateFilter) :
+                                    accountCopyService
+                                            .findByDocNoStartsWithAndClientNameStartsWith(offset, limit, docNoFilter, clientNameFilter);
                             Logger.getLogger(AccountCopyEditor.class.getName()).info("Total pages : " + accountCopies.getTotalElements());
                             return accountCopies.stream();
                         },
@@ -132,7 +133,10 @@ public class AccountCopyEditor extends Div {
                             String docNoFilter = accountCopyFilter.getDocNoFilter();
                             String clientNameFilter = accountCopyFilter.getClientNameFilter();
                             Date dateFilter = accountCopyFilter.getDateFilter();
-                            return Math.toIntExact(accountCopyService.countByDocNoStartsWithAndClientNameStartsWithAndPodDate(docNoFilter, clientNameFilter, dateFilter));
+                            return Math.toIntExact(
+                                    dateFilter != null ?
+                                            accountCopyService.countByDocNoStartsWithAndClientNameStartsWithAndPodDate(docNoFilter, clientNameFilter, dateFilter) :
+                                    accountCopyService.countByDocNoStartsWithAndClientNameStartsWith(docNoFilter, clientNameFilter));
                         });
 
         filter = new AccountCopyFilter();

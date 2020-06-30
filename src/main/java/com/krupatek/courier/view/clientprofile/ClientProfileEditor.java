@@ -32,7 +32,7 @@ public class ClientProfileEditor extends Div {
 
         TextField clientName = new TextField();
         clientName.setPlaceholder("Filter by Client Name");
-        clientName.setValueChangeMode(ValueChangeMode.EAGER);
+        clientName.setValueChangeMode(ValueChangeMode.LAZY);
         Grid<Client> clientGrid = new Grid<>(Client.class);
         clientGrid.setPageSize(PAGE_SIZE);
         clientGrid.setColumns("clientCode", "clientName", "city", "phone", "branch_name", "gstNo", "gstEnabled", "fsc");

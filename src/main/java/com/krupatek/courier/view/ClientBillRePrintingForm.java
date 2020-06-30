@@ -53,15 +53,15 @@ public class ClientBillRePrintingForm extends Div {
 
         TextField billNo = new TextField();
         billNo.setPlaceholder("Filter by Bill No");
-        billNo.setValueChangeMode(ValueChangeMode.EAGER);
+        billNo.setValueChangeMode(ValueChangeMode.LAZY);
 
         TextField billDate = new TextField();
         billDate.setPlaceholder("Filter by Invoice Date");
-        billDate.setValueChangeMode(ValueChangeMode.EAGER);
+        billDate.setValueChangeMode(ValueChangeMode.LAZY);
 
         TextField clientName = new TextField();
         clientName.setPlaceholder("Filter by Client Name");
-        clientName.setValueChangeMode(ValueChangeMode.EAGER);
+        clientName.setValueChangeMode(ValueChangeMode.LAZY);
 
         Grid<BillGeneration> clientBillGrid = new Grid<>(BillGeneration.class);
         clientBillGrid.setPageSize(PAGE_SIZE);

@@ -45,7 +45,7 @@ public class PODEntryForm extends Div {
         // Doc Number
         TextField docNo = new TextField();
         docNo.setLabel("Doc No. : ");
-        docNo.setValueChangeMode(ValueChangeMode.EAGER);
+        docNo.setValueChangeMode(ValueChangeMode.LAZY);
         docNo.addValueChangeListener(e -> {
            if(e.getValue() != null && e.getValue().length() > 4){
                 String newDocNo = e.getValue();

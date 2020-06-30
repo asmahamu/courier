@@ -1,13 +1,11 @@
 package com.krupatek.courier.model;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Date;
 
 public class AccountCopyFilter {
     private String docNoFilter = "";
     private String clientNameFilter = "";
-    private Date dateFilter = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
+    private Date dateFilter = null;
 
     public AccountCopyFilter(){
 
