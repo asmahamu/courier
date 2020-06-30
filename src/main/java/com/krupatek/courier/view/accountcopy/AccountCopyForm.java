@@ -6,7 +6,6 @@ import com.krupatek.courier.utils.DateUtils;
 import com.krupatek.courier.utils.RateUtils;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -74,6 +73,7 @@ public class AccountCopyForm extends Div {
         TextField docNo = new TextField();
         docNo.setLabel("Doc No. : ");
         docNo.setValueChangeMode(ValueChangeMode.LAZY);
+        docNo.setAutoselect(true);
         binder.
                 forField(docNo).asRequired("Every Account copy must have Doc no").
                 bind(AccountCopy::getDocNo, AccountCopy::setDocNo);
@@ -138,16 +138,14 @@ public class AccountCopyForm extends Div {
             isDomestic =  !accountCopy.getType().equals("Inter");
         }
 
-        ComboBox<String> clientsComboBox = new ComboBox<>();
+        Select<String> clientsComboBox = new Select<>();
         clientsComboBox.setLabel("Client Name : ");
-        clientsComboBox.setClearButtonVisible(true);
         updateClientName(clientsComboBox, rateMasterService, rateIntMasterService);
         binder.bind(clientsComboBox, AccountCopy::getClientName, AccountCopy::setClientName);
 
         // Destination
-        ComboBox<String> destinationComboBox = new ComboBox<>();
+        Select<String> destinationComboBox = new Select<>();
         destinationComboBox.setLabel("Destination : ");
-        destinationComboBox.setClearButtonVisible(true);
         updateDestination(destinationComboBox, placeGenerationService, networkService);
         binder.bind(destinationComboBox, AccountCopy::getDestination,  (e, r) -> {
             e.setDestination(r);
@@ -191,12 +189,14 @@ public class AccountCopyForm extends Div {
         binder.bind(pincode,
                 AccountCopy::getArea,
                 AccountCopy::setArea);
+        pincode.setAutoselect(true);
 
         // Receiver Name
         TextField receiverName = new TextField();
         receiverName.setLabel("Receiver Name : ");
         receiverName.setValueChangeMode(ValueChangeMode.TIMEOUT);
         binder.forField(receiverName).asRequired("Every Account copy must receiver name").bind(AccountCopy::getReceiverName, AccountCopy::setReceiverName);
+        receiverName.setAutoselect(true);
 
         // Courier Name
         Select<String> courierSelect = new Select<>();
@@ -225,7 +225,7 @@ public class AccountCopyForm extends Div {
                 new StringToDoubleConverter("Not a number")).bind(
                 AccountCopy::getWeight,
                 AccountCopy::setWeight);
-
+        weight.setAutoselect(true);
 
         // Rate
         TextField rate = new TextField();
@@ -235,6 +235,7 @@ public class AccountCopyForm extends Div {
                 new StringToIntegerConverter("Not a number")).bind(
                 AccountCopy::getRate,
                 AccountCopy::setRate);
+        rate.setAutoselect(true);
 
         formLayout.add(modeSelect, weight, rate);
 
@@ -266,26 +267,26 @@ public class AccountCopyForm extends Div {
 
         dialog.open();
 
-        docNo.addKeyDownListener(Key.ENTER, event ->
-                podDate.focus());
+//        docNo.addKeyDownListener(Key.ENTER, event ->
+//                podDate.focus());
 
-        podDate.addValueChangeListener(e -> cashCreditSelect.focus());
-        cashCreditSelect.addValueChangeListener(e -> selectDocumentOrParcelType.focus());
-        selectDocumentOrParcelType.addValueChangeListener(e -> clientsComboBox.focus());
-        clientsComboBox.addValueChangeListener(e -> destinationComboBox.focus());
-        destinationComboBox.addValueChangeListener(e -> pincode.focus());
-        pincode.addKeyDownListener(Key.ENTER, e -> receiverName.focus());
-        receiverName.addKeyDownListener(Key.ENTER, e -> courierSelect.focus());
-        courierSelect.addValueChangeListener(e -> bookingTypeSelect.focus());
-        bookingTypeSelect.addValueChangeListener(e -> modeSelect.focus());
-        modeSelect.addValueChangeListener(e -> weight.focus());
+//        podDate.addValueChangeListener(e -> cashCreditSelect.focus());
+//        cashCreditSelect.addValueChangeListener(e -> selectDocumentOrParcelType.focus());
+//        selectDocumentOrParcelType.addValueChangeListener(e -> bookingTypeSelect.focus());
+//        bookingTypeSelect.addValueChangeListener(e -> clientsComboBox.focus());
+//        clientsComboBox.addValueChangeListener(e -> destinationComboBox.focus());
+//        destinationComboBox.addValueChangeListener(e -> pincode.focus());
+//        pincode.addKeyDownListener(Key.ENTER, e -> receiverName.focus());
+//        receiverName.addKeyDownListener(Key.ENTER, e -> courierSelect.focus());
+//        courierSelect.addValueChangeListener(e -> modeSelect.focus());
+//        modeSelect.addValueChangeListener(e -> weight.focus());
         weight.addKeyDownListener(Key.TAB, e -> {
             calculateRate(rateMasterService, rateIntMasterService, accountCopy, binder, weight, rate);
         });
         weight.addKeyDownListener(Key.ENTER, e -> {
             calculateRate(rateMasterService, rateIntMasterService, accountCopy, binder, weight, rate);
         });
-        rate.addKeyDownListener(Key.ENTER, e -> save.focus());
+//        rate.addKeyDownListener(Key.ENTER, e -> save.focus());
 
         docNo.focus();
 
@@ -337,14 +338,14 @@ public class AccountCopyForm extends Div {
         }
     }
 
-    private void updateClientName(ComboBox<String> clientComboBox, RateMasterService rateMasterService, RateIntMasterService rateIntMasterService){
+    private void updateClientName(Select<String> clientComboBox, RateMasterService rateMasterService, RateIntMasterService rateIntMasterService){
         if(isDomestic){
             clientComboBox.setItems(rateMasterService.findDistinctClientName());
         } else {
             clientComboBox.setItems(rateIntMasterService.findDistinctClientName());
         }
     }
-    private void updateDestination(ComboBox<String> destinationComboBox, PlaceGenerationService placeGenerationService, NetworkService networkService){
+    private void updateDestination(Select<String> destinationComboBox, PlaceGenerationService placeGenerationService, NetworkService networkService){
         if(isDomestic){
             destinationComboBox.setItems(placeGenerationService.findDistinctCityName());
         } else {
