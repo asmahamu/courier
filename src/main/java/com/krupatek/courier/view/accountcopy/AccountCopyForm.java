@@ -8,7 +8,6 @@ import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
-import com.vaadin.flow.component.dependency.JavaScript;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
@@ -17,7 +16,6 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.data.converter.StringToDoubleConverter;
@@ -25,10 +23,7 @@ import com.vaadin.flow.data.converter.StringToIntegerConverter;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
-import org.hibernate.dialect.function.TemplateRenderer;
 
-import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -79,11 +74,11 @@ public class AccountCopyForm extends Div {
         TextField docNo = new TextField();
         docNo.setLabel("Doc No. : ");
         docNo.setValueChangeMode(ValueChangeMode.LAZY);
+        binder.
+                forField(docNo).asRequired("Every Account copy must have Doc no").
+                bind(AccountCopy::getDocNo, AccountCopy::setDocNo);
 
         if(!isNewAccountCopy) {
-            binder.
-                    forField(docNo).asRequired("Every Account copy must have Doc no").
-                    bind(AccountCopy::getDocNo, AccountCopy::setDocNo);
             docNo.addValueChangeListener(e -> {
                 if (e.getValue() != null && e.getValue().length() > 4) {
                     String newDocNo = e.getValue();
@@ -99,13 +94,19 @@ public class AccountCopyForm extends Div {
                 }
             });
         } else {
-            binder.
-                    forField(docNo).asRequired("Every Account copy must have Doc no").
-                    withValidator(text ->
-                                    accountCopyService.findOneByDocNo(text) == null,
-                            "Account Copy already exists with this Doc No.").
-                    bind(AccountCopy::getDocNo, AccountCopy::setDocNo);
-
+            docNo.addValueChangeListener(e -> {
+                if (e.getValue() != null && e.getValue().length() > 4) {
+                    String newDocNo = e.getValue();
+                    AccountCopy newAccountCopy = accountCopyService.findOneByDocNo(newDocNo);
+                    if (newAccountCopy != null) {
+                        docNo.setInvalid(true);
+                        docNo.setErrorMessage("Account Copy already exists with this Doc No.");
+                    } else {
+                        docNo.setInvalid(false);
+                        docNo.focus();
+                    }
+                }
+            });
         }
 
 
