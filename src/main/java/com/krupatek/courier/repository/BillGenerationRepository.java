@@ -8,9 +8,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.OrderBy;
+
 @Repository
 public interface BillGenerationRepository extends JpaRepository<BillGeneration, String> {
-    Page<BillGeneration> findByBillNoStartsWithAndBillDateStartsWithAndClientNameStartsWith(
+
+    Page<BillGeneration> findByAndBillNoStartsWithAndBillDateStartsWithAndClientNameStartsWith(
             String billNoFilter,
             String invoiceDateFilter,
             String clientNameFilter,

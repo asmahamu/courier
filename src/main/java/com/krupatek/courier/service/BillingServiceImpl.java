@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -34,8 +35,8 @@ public class BillingServiceImpl implements BillingService {
 
     @Override
     public Page<BillGeneration> findByBillNoStartsWithAndBillDateStartsWithAndClientNameStartsWith(int offset, int limit, String billNoFilter, String invoiceDateFilter, String clientNameFilter) {
-        Pageable pageable = PageRequest.of(offset, limit);
-        return billGenerationRepository.findByBillNoStartsWithAndBillDateStartsWithAndClientNameStartsWith(billNoFilter, invoiceDateFilter, clientNameFilter, pageable);
+        Pageable pageable = PageRequest.of(offset, limit, Sort.by(Sort.Direction.DESC, "billDate"));
+        return billGenerationRepository.findByAndBillNoStartsWithAndBillDateStartsWithAndClientNameStartsWith(billNoFilter, invoiceDateFilter, clientNameFilter, pageable);
     }
 
     @Override

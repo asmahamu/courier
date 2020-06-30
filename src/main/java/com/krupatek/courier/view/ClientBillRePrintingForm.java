@@ -7,12 +7,17 @@ import com.krupatek.courier.service.BillingService;
 import com.krupatek.courier.service.ClientService;
 import com.krupatek.courier.service.InvoiceService;
 import com.krupatek.courier.view.accountcopy.AccountCopyEditor;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.ConfigurableFilterDataProvider;
@@ -62,11 +67,11 @@ public class ClientBillRePrintingForm extends Div {
         clientBillGrid.setPageSize(PAGE_SIZE);
         clientBillGrid.setColumns("billNo", "billDate", "clientName", "billAmount", "netAmount");
 
-        clientBillGrid.getColumnByKey("billNo").setWidth("16.5%").setFlexGrow(0);
+        clientBillGrid.getColumnByKey("billNo").setTextAlign(ColumnTextAlign.END).setWidth("16.5%").setFlexGrow(0);
         clientBillGrid.getColumnByKey("billDate").setWidth("16.5%").setFlexGrow(0);
         clientBillGrid.getColumnByKey("clientName").setWidth("33%").setFlexGrow(0);
-        clientBillGrid.getColumnByKey("billAmount").setWidth("16.5%").setFlexGrow(0);
-        clientBillGrid.getColumnByKey("netAmount").setWidth("16.5%").setFlexGrow(0);
+        clientBillGrid.getColumnByKey("billAmount").setTextAlign(ColumnTextAlign.END).setWidth("16.5%").setFlexGrow(0);
+        clientBillGrid.getColumnByKey("netAmount").setTextAlign(ColumnTextAlign.END).setWidth("16.5%").setFlexGrow(0);
 
         HeaderRow hr = clientBillGrid.prependHeaderRow();
         hr.getCell(clientBillGrid.getColumnByKey("billNo")).setComponent(billNo);
@@ -146,9 +151,9 @@ public class ClientBillRePrintingForm extends Div {
 
             try {
                 File pdfFile = invoiceService.generateInvoiceFor(company, client, listener.getItem(), accountCopies, Locale.getDefault());
-                VerticalLayout v = new VerticalLayout();
-                v.setSizeFull();
 
+                VerticalLayout embeddedPdfVLayout = new VerticalLayout();
+                embeddedPdfVLayout.setSizeFull();
 
                 StreamResource resource = new StreamResource("invoice.pdf", () -> {
                     try {
@@ -157,15 +162,34 @@ public class ClientBillRePrintingForm extends Div {
                         return new ByteArrayInputStream(new byte[]{});
                     }
                 });
-                EmbeddedPdfDocument embeddedPdfDocument = new EmbeddedPdfDocument(resource);
-                v.add(embeddedPdfDocument);
+                String width = "1300px";
+                String height = "500px";
+
+                HorizontalLayout buttonPanelReportPreview = new HorizontalLayout();
+
+                Label leftEmptyLbl = new Label();
+                leftEmptyLbl.setWidth("85%");
 
                 Anchor podSummaryDownloadLink = new Anchor(resource, "Download Invoice");
+                podSummaryDownloadLink.setWidth("10%");
                 podSummaryDownloadLink.getElement().setAttribute("download", true);
-                v.add(podSummaryDownloadLink);
+                Button closeButton = new Button("", VaadinIcon.CLOSE.create());
+                closeButton.setWidth("5%");
+
+                buttonPanelReportPreview.add(leftEmptyLbl, podSummaryDownloadLink, closeButton);
+                buttonPanelReportPreview.setWidth(width);
+                buttonPanelReportPreview.setAlignItems(FlexComponent.Alignment.CENTER);
+
+                embeddedPdfVLayout.add(buttonPanelReportPreview);
+                embeddedPdfVLayout.add(new EmbeddedPdfDocument(resource, width, height));
+
 
                 Dialog dialog = new Dialog();
-                dialog.add(v);
+                dialog.add(embeddedPdfVLayout);
+                closeButton.addClickListener( event -> {
+                            dialog.close();
+                        }
+                );
                 dialog.open();
             } catch (IOException e) {
                 e.printStackTrace();
