@@ -39,4 +39,6 @@ public interface AccountCopyService {
     void tagBillNo(String currentSelectedItem, Date fromLocaleDate, Date fromLocaleDate1, String type, String billNo);
 
     AccountCopy findOneByDocNo(String docNo);
+
+    void delete(AccountCopy accountCopy);
 }

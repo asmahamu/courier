@@ -12,13 +12,15 @@ import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
-import com.vaadin.flow.component.grid.FooterRow;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
@@ -29,10 +31,7 @@ import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -43,6 +42,7 @@ import java.util.Locale;
 @SpringComponent
 @UIScope
 public class CustomerBillingDetailsForm extends Div {
+    private final String CLIENT_SELECT_ALL = "ALL";
     private String currentSelectedItem;
 
     public CustomerBillingDetailsForm(
@@ -68,7 +68,7 @@ public class CustomerBillingDetailsForm extends Div {
 
         // Client selection
         Select<String> clientSelect = new Select<>();
-        clientSelect.setWidth("30%");
+        clientSelect.setWidth("18%");
         clientSelect.setLabel("Select Client Name : ");
 
         List<Client> clientList = clientService.findAll();
@@ -89,7 +89,7 @@ public class CustomerBillingDetailsForm extends Div {
 
         // Last Month button
         Button lastMonthButton = new Button("Last Month");
-        lastMonthButton.setWidth("10%");
+        lastMonthButton.setWidth("8%");
 
         // Current Month button
         Button currentMonthButton = new Button("Current Month");
@@ -102,13 +102,13 @@ public class CustomerBillingDetailsForm extends Div {
         // Start Date
         DatePicker startDatePicker = new DatePicker(start);
         startDatePicker.setLabel("From Date : ");
-        startDatePicker.setWidth("15%");
+        startDatePicker.setWidth("10%");
         binder.bind(startDatePicker, DateFilter::getStartDate, DateFilter::setStartDate);
 
         // End Date
         DatePicker endDatePicker = new DatePicker(end);
         endDatePicker.setLabel("To Date : ");
-        endDatePicker.setWidth("15%");
+        endDatePicker.setWidth("10%");
         binder.bind(endDatePicker, DateFilter::getEndDate, DateFilter::setEndDate);
 
 
@@ -159,11 +159,18 @@ public class CustomerBillingDetailsForm extends Div {
 
         // Refresh
         Button refreshButton = new Button("Refresh");
-        refreshButton.setWidth("10%");
-        Button showButton = new Button("Show");
-        showButton.setWidth("10%");
+        refreshButton.setWidth("8%");
 
-        dateHorizontalLayout.add(clientSelect, lastMonthButton, currentMonthButton, startDatePicker, endDatePicker, refreshButton, showButton);
+        Button showButton = new Button("Show");
+        showButton.setWidth("8%");
+
+        Button podSummaryReport = new Button("POD Summary");
+        podSummaryReport.setWidth("12%");
+
+        Button dailyReport = new Button("Daily Report");
+        dailyReport.setWidth("8%");
+
+        dateHorizontalLayout.add(clientSelect, lastMonthButton, currentMonthButton, startDatePicker, endDatePicker, refreshButton, showButton, podSummaryReport, dailyReport);
         dateHorizontalLayout.setAlignItems(HorizontalLayout.Alignment.END);
 
         Grid<AccountCopy> accountCopyGrid = new Grid<>(AccountCopy.class, false);
@@ -234,38 +241,113 @@ public class CustomerBillingDetailsForm extends Div {
 
         grossTotalFooterHLayout.add(totalDocNoLbl, totalDocNoTF, leftEmptyLabelGrossTotalFooterHLayout, grossTotalLbl, grossTotalTF, rightEmptyLabelGrossTotalFooterHLayout);
 
+        podSummaryReport.addClickListener(event -> {
+            if(currentSelectedItem.equalsIgnoreCase(CLIENT_SELECT_ALL)){
+                showError("Please select client name and try again !");
+            } else {
+                VerticalLayout embeddedPdfVLayout = new VerticalLayout();
+                embeddedPdfVLayout.setSizeFull();
 
-        Anchor podSummaryDownloadLink = new Anchor(new StreamResource("pod-summary.pdf", () -> {
-            try {
                 Client client = clientService.findAllByClientName(currentSelectedItem).get(0);
                 List<AccountCopy> allByClientNameAndPodDateBetween = accountCopyService.findAllByClientNameAndPodDateBetween(
                         currentSelectedItem,
                         fromLocaleDate(dateFilter.getStartDate()),
                         fromLocaleDate(dateFilter.getEndDate()));
-                File pdfFile = podSummaryService.generateInvoiceFor(client, allByClientNameAndPodDateBetween, Locale.getDefault());
-                return  new FileInputStream(pdfFile);
-            } catch (IOException e1) {
-                return new ByteArrayInputStream(new byte[]{});
-            }
-        }), "Download POD Summary");
-        podSummaryDownloadLink.getElement().setAttribute("download", true);
+                try {
+                    File pdfFile = podSummaryService.generateInvoiceFor(client, allByClientNameAndPodDateBetween, Locale.getDefault());
+                    StreamResource resource = new StreamResource("POD-Summary.pdf", () -> {
+                        try {
+                            return new FileInputStream(pdfFile);
+                        } catch (FileNotFoundException e1) {
+                            return new ByteArrayInputStream(new byte[]{});
+                        }
+                    });
+                    String width = "1300px";
+                    String height = "500px";
 
-        Anchor dailyReportLink = new Anchor(new StreamResource("daily-report.pdf", () -> {
-            try {
+                    HorizontalLayout buttonPanelReportPreview = new HorizontalLayout();
+
+                    Label leftEmptyLbl = new Label();
+                    leftEmptyLbl.setWidth("81%");
+
+                    Anchor podSummaryDownloadLink = new Anchor(resource, "Download POD Summary");
+                    podSummaryDownloadLink.setWidth("14%");
+                    podSummaryDownloadLink.getElement().setAttribute("download", true);
+                    Button closeButton = new Button("", VaadinIcon.CLOSE.create());
+                    closeButton.setWidth("5%");
+
+                    buttonPanelReportPreview.add(leftEmptyLbl, podSummaryDownloadLink, closeButton);
+                    buttonPanelReportPreview.setWidth(width);
+                    buttonPanelReportPreview.setAlignItems(FlexComponent.Alignment.CENTER);
+
+                    embeddedPdfVLayout.add(buttonPanelReportPreview);
+                    embeddedPdfVLayout.add(new EmbeddedPdfDocument(resource, width, height));
+
+
+                    Dialog dialog = new Dialog();
+                    dialog.add(embeddedPdfVLayout);
+                    closeButton.addClickListener( e -> {
+                                dialog.close();
+                            }
+                    );
+                    dialog.open();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        dailyReport.addClickListener(e -> {
+            VerticalLayout embeddedPdfVLayout = new VerticalLayout();
+            embeddedPdfVLayout.setSizeFull();
+
                 Company company = companyRepository.findAll().get(0);
                 List<AccountCopy> allByClientNameAndPodDateBetween = accountCopyService.findAllByPodDateBetween(
                         fromLocaleDate(dateFilter.getStartDate()),
                         fromLocaleDate(dateFilter.getEndDate()));
+            try {
                 File pdfFile = dailyReportService.generateInvoiceFor(company, allByClientNameAndPodDateBetween, grossTotalTF.getValue(),  Locale.getDefault());
-                return  new FileInputStream(pdfFile);
-            } catch (IOException e1) {
-                return new ByteArrayInputStream(new byte[]{});
-            }
-        }), "Download Daily Report");
-        dailyReportLink.getElement().setAttribute("download", true);
+                StreamResource resource = new StreamResource("Daily-Report.pdf", () -> {
+                    try {
+                        return new FileInputStream(pdfFile);
+                    } catch (FileNotFoundException e1) {
+                        return new ByteArrayInputStream(new byte[]{});
+                    }
+                });
+                String width = "1300px";
+                String height = "500px";
 
-        reportGenerationButtonLayout.setAlignItems(HorizontalLayout.Alignment.CENTER);
-        reportGenerationButtonLayout.add(podSummaryDownloadLink, dailyReportLink);
+                HorizontalLayout buttonPanelReportPreview = new HorizontalLayout();
+
+                Label leftEmptyLbl = new Label();
+                leftEmptyLbl.setWidth("81%");
+
+                Anchor podSummaryDownloadLink = new Anchor(resource, "Download Daily Report");
+                podSummaryDownloadLink.setWidth("14%");
+                podSummaryDownloadLink.getElement().setAttribute("download", true);
+                Button closeButton = new Button("", VaadinIcon.CLOSE.create());
+                closeButton.setWidth("5%");
+
+                buttonPanelReportPreview.add(leftEmptyLbl, podSummaryDownloadLink, closeButton);
+                buttonPanelReportPreview.setWidth(width);
+                buttonPanelReportPreview.setAlignItems(FlexComponent.Alignment.CENTER);
+
+                embeddedPdfVLayout.add(buttonPanelReportPreview);
+                embeddedPdfVLayout.add(new EmbeddedPdfDocument(resource, width, height));
+
+
+                Dialog dialog = new Dialog();
+                dialog.add(embeddedPdfVLayout);
+                closeButton.addClickListener( event -> {
+                            dialog.close();
+                        }
+                );
+                dialog.open();
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
+        });
+
         verticalLayout.add(title, dateHorizontalLayout, reportGenerationButtonLayout, accountCopyGrid, grossTotalFooterHLayout);
         add(verticalLayout);
 

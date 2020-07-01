@@ -96,4 +96,9 @@ public class AccountCopyServiceImpl implements AccountCopyService {
     public AccountCopy findOneByDocNo(String docNo) {
         return accountCopyRepository.findOneByDocNo(docNo);
     }
+
+    @Override
+    public void delete(AccountCopy accountCopy) {
+        accountCopyRepository.delete(accountCopy);
+    }
 }

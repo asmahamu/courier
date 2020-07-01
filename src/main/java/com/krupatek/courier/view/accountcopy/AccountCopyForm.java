@@ -6,13 +6,16 @@ import com.krupatek.courier.utils.DateUtils;
 import com.krupatek.courier.utils.RateUtils;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H5;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
@@ -260,8 +263,61 @@ public class AccountCopyForm extends Div {
 
         HorizontalLayout actions = new HorizontalLayout();
         actions.setAlignItems(HorizontalLayout.Alignment.END);
-        actions.add(save, reset, cancel);
-        formLayout.add(actions, 2);
+
+        if(!isNewAccountCopy){
+            Button delete = new Button("Delete", event -> {
+                Dialog confirmDialog = new Dialog();
+                confirmDialog.setCloseOnEsc(false);
+                confirmDialog.setCloseOnOutsideClick(false);
+                confirmDialog.setWidth("400px");
+                confirmDialog.setHeight("150px");
+
+                VerticalLayout containerLayout = new VerticalLayout();
+
+                H5 confirmDelete = new H5("Confirm delete");
+                containerLayout.add(confirmDelete);
+                containerLayout.add(new Label("Are you sure you want to delete the item?"));
+
+                HorizontalLayout buttonLayout = new HorizontalLayout();
+                buttonLayout.setWidth("100%");
+
+                Button deleteBtn = new Button("Delete");
+                deleteBtn.addThemeVariants(ButtonVariant.LUMO_ERROR);
+                deleteBtn.setWidth("30%");
+
+                Label emptyLbl = new Label();
+                emptyLbl.setWidth("40%");
+
+                Button cancelBtn = new Button("Cancel");
+                cancelBtn.setWidth("30%");
+                buttonLayout.add(cancelBtn, emptyLbl, deleteBtn);
+
+                containerLayout.add(buttonLayout);
+
+                confirmDialog.add(containerLayout);
+
+                deleteBtn.addClickListener(deleteEvent -> {
+                    accountCopyService.delete(accountCopy);
+                    confirmDialog.close();
+                    dialog.close();
+                    Notification.show("Account copy deleted successfully.");
+                });
+
+                cancelBtn.addClickListener( cancelEvent -> {
+                   confirmDialog.close();
+                });
+
+                confirmDialog.open();
+            });
+            delete.addThemeVariants(ButtonVariant.LUMO_ERROR);
+
+            actions.add(save, reset, cancel, delete);
+            formLayout.add(actions, 3);
+        } else {
+            actions.add(save, reset, cancel);
+            formLayout.add(actions, 2);
+        }
+
         horizontalLayout.add(formLayout);
         dialog.add(horizontalLayout);
 
