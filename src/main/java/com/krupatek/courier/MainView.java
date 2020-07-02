@@ -14,12 +14,17 @@ import com.krupatek.courier.view.clientprofile.ClientProfileEditor;
 import com.krupatek.courier.view.pod.PODEntryForm;
 import com.krupatek.courier.view.rate.RateEntryEditor;
 import com.krupatek.courier.view.rate.RateIntEntryEditor;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.contextmenu.SubMenu;
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H6;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.menubar.MenuBar;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.PWA;
@@ -89,29 +94,36 @@ public class MainView extends VerticalLayout {
         MenuItem billingDetails = menuBar.addItem("Billing Details");
 
         SubMenu systemSettingsSubMenu = masters.getSubMenu();
-        systemSettingsSubMenu.addItem("System Settings", e -> {
+
+        Component systemSettingsMenu = getMenuItemComponent(VaadinIcon.COG_O, "System Settings");
+
+        systemSettingsSubMenu.addItem(systemSettingsMenu, e -> {
             component.removeAll();
             component.add(new SystemSettingsForm(companyRepository));
         }  );
 
-        masters.getSubMenu().addItem("Client Profile",
+        Component clientProfileMenu = getMenuItemComponent(VaadinIcon.CLIPBOARD_USER, "Client Profile");
+
+        masters.getSubMenu().addItem(clientProfileMenu,
                 e -> {
                     component.removeAll();
                     component.add(new ClientProfileEditor(clientService));
                 });
 
-        MenuItem rateMaster = masters.getSubMenu().addItem("Rate Master");
-        rateMaster.getSubMenu().addItem("Rate Entry", e -> {
+        Component rateMasterMenu = getMenuItemComponent(VaadinIcon.MONEY_EXCHANGE, "Rate Master");
+        MenuItem rateMaster = masters.getSubMenu().addItem(rateMasterMenu);
+        rateMaster.getSubMenu().addItem(getMenuItemComponent(null, "Rate Entry"), e -> {
             component.removeAll();
             component.add(new RateEntryEditor(clientService, courierService, rateMasterService));
         });
-        rateMaster.getSubMenu().addItem("Rate International Entry", e -> {
+        rateMaster.getSubMenu().addItem(getMenuItemComponent(null, "Rate International Entry"), e -> {
             component.removeAll();
             component.add(new RateIntEntryEditor(clientService, courierService, rateIntMasterService));
         });
 
-        MenuItem accountCopyMenuItem = billingDetails.getSubMenu().addItem("Account Copy");
-        accountCopyMenuItem.getSubMenu().addItem("Create Account Copy", e -> {
+        Component accountCopyMenu = getMenuItemComponent(VaadinIcon.FILE_ADD, "Account Copy");
+        MenuItem accountCopyMenuItem = billingDetails.getSubMenu().addItem(accountCopyMenu);
+        accountCopyMenuItem.getSubMenu().addItem(getMenuItemComponent(null, "Create Account Copy"), e -> {
             component.removeAll();
             component.add(new AccountCopyForm(
                     accountCopyService,
@@ -123,7 +135,7 @@ public class MainView extends VerticalLayout {
                     dateUtils,
                     new AccountCopy()));
         } );
-        accountCopyMenuItem.getSubMenu().addItem("Edit Account Copy", e -> {
+        accountCopyMenuItem.getSubMenu().addItem(getMenuItemComponent(null, "Edit Account Copy"), e -> {
             component.removeAll();
             component.add(new AccountCopyEditor(
                     accountCopyService,
@@ -134,8 +146,10 @@ public class MainView extends VerticalLayout {
                     networkService,
                     dateUtils));
         } );
-        MenuItem clientBillingCopyItem = billingDetails.getSubMenu().addItem("Client Billing");
-        clientBillingCopyItem.getSubMenu().addItem("Client Bill Printing", e -> {
+        Component clientBillingMenu = getMenuItemComponent(VaadinIcon.INVOICE, "Client Billing");
+
+        MenuItem clientBillingCopyItem = billingDetails.getSubMenu().addItem(clientBillingMenu);
+        clientBillingCopyItem.getSubMenu().addItem(getMenuItemComponent(null, "Client Bill Printing"), e -> {
             component.removeAll();
             component.add(new ClientBillPrintingForm(
                     accountCopyService,
@@ -150,7 +164,7 @@ public class MainView extends VerticalLayout {
                     dateUtils));
 
         });
-        clientBillingCopyItem.getSubMenu().addItem("Client Bill Reprinting", e -> {
+        clientBillingCopyItem.getSubMenu().addItem(getMenuItemComponent(null, "Client Bill Reprinting"), e -> {
             component.removeAll();
             component.add(new ClientBillRePrintingForm(
                     billingService,
@@ -172,7 +186,8 @@ public class MainView extends VerticalLayout {
 //                    companyRepository,
 //                    dateUtils));
 //        });
-        billingDetails.getSubMenu().addItem("POD Summary / Daily Report", e -> {
+        Component podSummaryMenu = getMenuItemComponent(VaadinIcon.LINE_BAR_CHART, "POD Summary / Daily Report");
+        billingDetails.getSubMenu().addItem(podSummaryMenu, e -> {
             component.removeAll();
             component.add(new CustomerBillingDetailsForm(
                     accountCopyService,
@@ -187,7 +202,8 @@ public class MainView extends VerticalLayout {
                     dateUtils));
         } );
 
-        billingDetails.getSubMenu().addItem("POD Entry Form", e -> {
+        Component podEntryForm = getMenuItemComponent(VaadinIcon.EDIT, "POD Entry Form");
+        billingDetails.getSubMenu().addItem(podEntryForm, e -> {
             component.removeAll();
             component.add(new PODEntryForm(accountCopyService, dateUtils));
         });
@@ -196,4 +212,20 @@ public class MainView extends VerticalLayout {
         add(component);
     }
 
+    private Component getMenuItemComponent(VaadinIcon icon , String action) {
+        HorizontalLayout componentContainer = new HorizontalLayout();
+        componentContainer.setHeight("30px");
+        componentContainer.setAlignItems(Alignment.CENTER);
+
+        if(icon != null) {
+            Icon componentIC = new Icon(icon);
+            componentIC.setSize("20px");
+            componentContainer.add(componentIC);
+        }
+        H6 componentAction = new H6(action);
+        componentAction.setHeight("30px");
+
+        componentContainer.add(componentAction);
+        return componentContainer;
+    }
 }
