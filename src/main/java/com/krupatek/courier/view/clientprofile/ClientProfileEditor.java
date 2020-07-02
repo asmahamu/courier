@@ -6,7 +6,8 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.H4;
+import com.vaadin.flow.component.html.H5;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -26,7 +27,7 @@ public class ClientProfileEditor extends Div {
         verticalLayout.setMargin(false);
         verticalLayout.setPadding(false);
 
-        Label title = new Label();
+        H4 title = new H4();
         title.setSizeFull();
         title.setText("Edit Client Profile");
 

@@ -11,6 +11,7 @@ import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.H5;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
@@ -59,7 +60,7 @@ public class AccountCopyForm extends Div {
                 new FormLayout.ResponsiveStep("15em", 3),
                 new FormLayout.ResponsiveStep("15em", 4));
 
-        Label title = new Label();
+        H4 title = new H4();
         title.setSizeFull();
         title.setClassName("bold-label", true);
 

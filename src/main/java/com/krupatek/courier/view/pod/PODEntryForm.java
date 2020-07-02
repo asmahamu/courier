@@ -9,6 +9,7 @@ import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -33,7 +34,7 @@ public class PODEntryForm extends Div {
 
         Binder<AccountCopy> binder = new Binder<>(AccountCopy.class);
 
-        Label title = new Label();
+        H4 title = new H4();
         title.setSizeFull();
         title.setText("POD Entry Form");
 

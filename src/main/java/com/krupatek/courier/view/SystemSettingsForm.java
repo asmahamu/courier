@@ -7,7 +7,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -33,7 +33,7 @@ public class SystemSettingsForm extends Div {
                 new FormLayout.ResponsiveStep("25em", 2));
         formLayout.setMaxWidth("50em");
 
-        Label title = new Label();
+        H4 title = new H4();
         title.setSizeFull();
         title.setText("Company Information");
         formLayout.add(title, 2);

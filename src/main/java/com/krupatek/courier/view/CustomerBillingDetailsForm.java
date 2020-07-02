@@ -17,6 +17,7 @@ import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
@@ -61,7 +62,7 @@ public class CustomerBillingDetailsForm extends Div {
         verticalLayout.setMargin(false);
         verticalLayout.setPadding(false);
 
-        Label title = new Label();
+        H4 title = new H4();
         title.setSizeFull();
         title.setText("POD Summary / Daily Report");
 
