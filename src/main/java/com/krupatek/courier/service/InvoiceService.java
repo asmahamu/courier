@@ -33,7 +33,7 @@ public class InvoiceService {
 
     Logger log = LogManager.getLogger(InvoiceService.class);
     private static final String logo_path = "/jasper/images/stackextend-logo.png";
-    private final String invoice_template_path = "/jasper/invoice.jrxml";
+    private final String invoice_template_path = "/jasper/Invoice.jrxml";
 
     public File generateInvoiceFor(Company company, Client client, BillGeneration billGeneration, List<AccountCopy> accountCopies, Locale locale) throws IOException {
 
