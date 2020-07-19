@@ -15,21 +15,14 @@ import java.time.LocalDate;
 
 @Tag("object")
 public class HorizonDatePicker extends Div implements Focusable<TextField>{
-    private LocalDate currentDate = LocalDate.now();
+
+    private LocalDate currentDate;
     private DateUtils dateUtils;
     private TextField dayTF, monthTF, yearTF;
     private DateChangeListener dateChangeListener;
 
-    public DateChangeListener getDateChangeListener() {
-        return dateChangeListener;
-    }
-
-    public void setDateChangeListener(DateChangeListener dateChangeListener) {
-        this.dateChangeListener = dateChangeListener;
-    }
-
     public HorizonDatePicker(String label, LocalDate date, DateUtils dateUtils, NumberUtils numberUtils){
-        currentDate = date;
+        this.currentDate = date;
         this.dateUtils = dateUtils;
         setMaxWidth("175px");
         VerticalLayout dateComponent = new VerticalLayout();
@@ -122,6 +115,22 @@ public class HorizonDatePicker extends Div implements Focusable<TextField>{
     public interface  DateChangeListener{
         void changedDate(LocalDate date);
     }
-// Add Builder
+
+    public LocalDate getCurrentDate() {
+        return currentDate;
+    }
+
+    public void setCurrentDate(LocalDate currentDate) {
+        this.currentDate = currentDate;
+    }
+    public DateChangeListener getDateChangeListener() {
+        return dateChangeListener;
+    }
+
+    public void setDateChangeListener(DateChangeListener dateChangeListener) {
+        this.dateChangeListener = dateChangeListener;
+        this.dateChangeListener.changedDate(currentDate);
+    }
+
 
 }

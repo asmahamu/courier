@@ -51,7 +51,7 @@ public class NumberUtils {
 
 
     public String convertNumberToWords(Float n) {
-        if(n == 0) return "Zero";
+        if (n == 0) return "Zero";
         input = numToString(n.intValue());
         String converted = "";
         int pos = 1;
@@ -145,4 +145,17 @@ public class NumberUtils {
         }
         return num;
     }
+
+    public boolean isDecimalNumber(String numberStr) {
+        if (numberStr == null) {
+            return false;
+        }
+        try {
+            Integer.parseInt(numberStr);
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
+        return true;
+    }
+
 }

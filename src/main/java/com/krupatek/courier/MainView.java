@@ -4,6 +4,7 @@ import com.krupatek.courier.model.AccountCopy;
 import com.krupatek.courier.repository.CompanyRepository;
 import com.krupatek.courier.service.*;
 import com.krupatek.courier.utils.DateUtils;
+import com.krupatek.courier.utils.NumberUtils;
 import com.krupatek.courier.view.ClientBillPrintingForm;
 import com.krupatek.courier.view.ClientBillRePrintingForm;
 import com.krupatek.courier.view.CustomerBillingDetailsForm;
@@ -67,6 +68,9 @@ public class MainView extends VerticalLayout {
 
     @Autowired
     DateUtils dateUtils;
+
+    @Autowired
+    NumberUtils numberUtils;
 
     @Autowired
     PODSummaryService podSummaryService;
@@ -205,7 +209,7 @@ public class MainView extends VerticalLayout {
         Component podEntryForm = getMenuItemComponent(VaadinIcon.EDIT, "POD Entry Form");
         billingDetails.getSubMenu().addItem(podEntryForm, e -> {
             component.removeAll();
-            component.add(new PODEntryForm(accountCopyService, dateUtils));
+            component.add(new PODEntryForm(accountCopyService, dateUtils, numberUtils));
         });
 
         add(menuBar);

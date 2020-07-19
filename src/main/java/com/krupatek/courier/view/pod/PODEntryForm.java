@@ -3,9 +3,10 @@ package com.krupatek.courier.view.pod;
 import com.krupatek.courier.model.AccountCopy;
 import com.krupatek.courier.service.AccountCopyService;
 import com.krupatek.courier.utils.DateUtils;
+import com.krupatek.courier.utils.NumberUtils;
+import com.krupatek.courier.view.HorizonDatePicker;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
@@ -25,7 +26,8 @@ import java.time.LocalDate;
 public class PODEntryForm extends Div {
     AccountCopy accountCopy = new AccountCopy();
 
-    public PODEntryForm(AccountCopyService accountCopyService, DateUtils dateUtils){
+
+    public PODEntryForm(AccountCopyService accountCopyService, DateUtils dateUtils, NumberUtils numberUtils){
         Dialog dialog = new Dialog();
 
         VerticalLayout verticalLayout = new VerticalLayout();
@@ -46,14 +48,20 @@ public class PODEntryForm extends Div {
         // Doc Number
         TextField docNo = new TextField();
         docNo.setLabel("Doc No. : ");
+        docNo.setAutoselect(true);
         docNo.setValueChangeMode(ValueChangeMode.LAZY);
         docNo.addValueChangeListener(e -> {
            if(e.getValue() != null && e.getValue().length() > 4){
                 String newDocNo = e.getValue();
                 accountCopy =  accountCopyService.findOneByDocNo(newDocNo);
-                if(accountCopy != null){
-                    binder.readBean(accountCopy);
-                }
+               if (accountCopy != null) {
+                   docNo.setInvalid(false);
+                   binder.readBean(accountCopy);
+                   docNo.focus();
+               } else {
+                   docNo.setInvalid(true);
+                   docNo.setErrorMessage("Account Copy doesn't exists with this Doc No.");
+               }
            }
         });
 
@@ -61,9 +69,10 @@ public class PODEntryForm extends Div {
 
         // Status Date
         LocalDate currentDate = LocalDate.now();
-        DatePicker statusDate = new DatePicker(currentDate);
-        statusDate.setLabel("Status Date : ");
-        binder.bind(statusDate, date -> currentDate, (model, date) -> model.setStatusDate(dateUtils.asDate(date))  );
+        HorizonDatePicker dateComponent = new HorizonDatePicker("Status Date : ", currentDate, dateUtils, numberUtils);
+
+        docNo.addKeyDownListener(Key.TAB, event ->
+                dateComponent.focus());
 
         // Status
         Select<String> statusTypeSelect = new Select<>();
@@ -77,15 +86,17 @@ public class PODEntryForm extends Div {
 
         // Receiver's Name
         TextField receiverName = new TextField();
+        receiverName.setAutoselect(true);
         receiverName.setLabel("Receiver's Name : ");
         receiverName.setValueChangeMode(ValueChangeMode.EAGER);
-        binder.bind(receiverName, receiverNm -> "", AccountCopy::setReceiverName);
+        binder.bind(receiverName, AccountCopy::getReceiverName, AccountCopy::setReceiverName);
 
         // Remark
         TextField remark = new TextField();
         remark.setLabel("Remark : ");
+        remark.setAutoselect(true);
         remark.setValueChangeMode(ValueChangeMode.EAGER);
-        binder.bind(remark, rem -> "", AccountCopy::setRemark);
+        binder.bind(remark, AccountCopy::getRemark, AccountCopy::setRemark);
 
         receiverName.addKeyDownListener(Key.ENTER, event ->
                 remark.focus());
@@ -95,8 +106,13 @@ public class PODEntryForm extends Div {
                 event -> {
                     try {
                         binder.writeBean(accountCopy);
+                        accountCopy.setStatusDate(dateUtils.asDate(dateComponent.getCurrentDate()));
                         accountCopyService.saveAndFlush(accountCopy);
-                        Notification.show("Account copy updated successfully.");
+
+                        binder.readBean(accountCopy);
+                        docNo.focus();
+
+                        Notification.show("Account copy updated successfully. ");
                         // A real application would also save the updated person
                         // using the application's backend
                     } catch (ValidationException e) {
@@ -113,7 +129,7 @@ public class PODEntryForm extends Div {
         actions.add(save, reset, cancel);
 
 
-        leftVerticalLayout.add(docNo, statusDate, statusTypeSelect, receiverName, remark, actions);
+        leftVerticalLayout.add(docNo, dateComponent, statusTypeSelect, receiverName, remark, actions);
 
 
         VerticalLayout rightVerticalLayout = new VerticalLayout();
@@ -201,14 +217,14 @@ public class PODEntryForm extends Div {
         // Receiver's Name
         TextField receiverNameLabel = new TextField();
         receiverNameLabel.setReadOnly(true);
-        binder.bind(receiverNameLabel, AccountCopy::getReceiverName, AccountCopy::setReceiverName);
+        binder.bind(receiverNameLabel, AccountCopy::getReceiverName, null);
 
         rightBottomFormLayout.add(new Label( "Receiver's Name : "), receiverNameLabel);
 
         // Remark
         TextField remarkLabel = new TextField();
         remarkLabel.setReadOnly(true);
-        binder.bind(remarkLabel, AccountCopy::getRemark, AccountCopy::setRemark);
+        binder.bind(remarkLabel, AccountCopy::getRemark, null);
 
         rightBottomFormLayout.add(new Label( "Remark : "), remarkLabel);
 
