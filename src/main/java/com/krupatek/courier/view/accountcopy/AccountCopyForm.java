@@ -3,11 +3,12 @@ package com.krupatek.courier.view.accountcopy;
 import com.krupatek.courier.model.*;
 import com.krupatek.courier.service.*;
 import com.krupatek.courier.utils.DateUtils;
+import com.krupatek.courier.utils.NumberUtils;
 import com.krupatek.courier.utils.RateUtils;
+import com.krupatek.courier.view.HorizonDatePicker;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
@@ -27,6 +28,7 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -43,6 +45,7 @@ public class AccountCopyForm extends Div {
             PlaceGenerationService placeGenerationService,
             NetworkService networkService,
             DateUtils dateUtils,
+            NumberUtils numberUtils,
             AccountCopy accountCopy) {
         super();
 
@@ -62,7 +65,6 @@ public class AccountCopyForm extends Div {
 
         H4 title = new H4();
         title.setSizeFull();
-        title.setClassName("bold-label", true);
 
         if(isNewAccountCopy){
             title.setText("Create New Account Copy");
@@ -75,6 +77,7 @@ public class AccountCopyForm extends Div {
 
         // Doc Number
         TextField docNo = new TextField();
+        docNo.setWidth("25%");
         docNo.setLabel("Doc No. : ");
         docNo.setValueChangeMode(ValueChangeMode.LAZY);
         docNo.setAutoselect(true);
@@ -115,21 +118,28 @@ public class AccountCopyForm extends Div {
 
 
         // Date
-        DatePicker podDate = new DatePicker();
-        podDate.setLabel("Date : ");
-        binder.bind(podDate,
-                    d -> dateUtils.asLocalDate(accountCopy.getPodDate()),
-                    (a, d) ->  a.setPodDate(dateUtils.asDate(d)));
+        LocalDate currentDate = dateUtils.asLocalDate(accountCopy.getPodDate());
+
+        HorizonDatePicker podDate = new HorizonDatePicker(currentDate, dateUtils, numberUtils);
+        podDate.setWidth("25%");
+
+//        DatePicker podDate = new DatePicker();
+//        podDate.setLabel("Date : ");
+//        binder.bind(podDate,
+//                    d -> dateUtils.asLocalDate(accountCopy.getPodDate()),
+//                    (a, d) ->  a.setPodDate(dateUtils.asDate(d)));
 
 
         // Cash / Credit
         Select<String> cashCreditSelect = new Select<>();
+        cashCreditSelect.setWidth("25%");
         cashCreditSelect.setLabel("Cash / Cr : ");
         cashCreditSelect.setItems("Cash", "Cr");
         binder.bind(cashCreditSelect, AccountCopy::getPodType, AccountCopy::setPodType);
 
         // Document / Parcel
         Select<String> selectDocumentOrParcelType = new Select<>();
+        selectDocumentOrParcelType.setWidth("25%");
         selectDocumentOrParcelType.setLabel("Document / Parcel : ");
         selectDocumentOrParcelType.setItems("D", "P");
         binder.bind(selectDocumentOrParcelType, AccountCopy::getdP, AccountCopy::setdP);
@@ -247,6 +257,7 @@ public class AccountCopyForm extends Div {
                 event -> {
                     try {
                         binder.writeBean(accountCopy);
+                        accountCopy.setPodDate(dateUtils.asDate(podDate.getCurrentDate()));
                         accountCopyService.saveAndFlush(accountCopy);
                         Notification.show("Account copy updated successfully.");
                         docNo.focus();
@@ -323,6 +334,9 @@ public class AccountCopyForm extends Div {
         dialog.add(horizontalLayout);
 
         dialog.open();
+
+        docNo.addKeyDownListener(Key.TAB, event ->
+                podDate.focus());
 
 //        docNo.addKeyDownListener(Key.ENTER, event ->
 //                podDate.focus());

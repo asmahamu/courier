@@ -29,10 +29,9 @@ public class PODEntryForm extends Div {
 
     public PODEntryForm(AccountCopyService accountCopyService, DateUtils dateUtils, NumberUtils numberUtils){
         Dialog dialog = new Dialog();
+        dialog.setWidth("800px");
 
         VerticalLayout verticalLayout = new VerticalLayout();
-        verticalLayout.setSizeFull();
-
 
         Binder<AccountCopy> binder = new Binder<>(AccountCopy.class);
 
@@ -40,9 +39,10 @@ public class PODEntryForm extends Div {
         title.setSizeFull();
         title.setText("POD Entry Form");
 
-        HorizontalLayout containerHorizonalLayout = new HorizontalLayout();
+        HorizontalLayout containerHorizontalLayout = new HorizontalLayout();
 
         VerticalLayout leftVerticalLayout = new VerticalLayout();
+        leftVerticalLayout.setWidth("50%");
         // Left part Doc, Status Date, Remark
 
         // Doc Number
@@ -69,7 +69,8 @@ public class PODEntryForm extends Div {
 
         // Status Date
         LocalDate currentDate = LocalDate.now();
-        HorizonDatePicker dateComponent = new HorizonDatePicker("Status Date : ", currentDate, dateUtils, numberUtils);
+
+        HorizonDatePicker dateComponent = new HorizonDatePicker(currentDate, dateUtils, numberUtils);
 
         docNo.addKeyDownListener(Key.TAB, event ->
                 dateComponent.focus());
@@ -124,6 +125,9 @@ public class PODEntryForm extends Div {
                 event -> binder.readBean(accountCopy));
 
         Button cancel = new Button("Cancel", event -> dialog.close());
+        cancel.addBlurListener( a -> {
+            docNo.focus();
+        });
         HorizontalLayout actions = new HorizontalLayout();
         actions.setAlignItems(HorizontalLayout.Alignment.END);
         actions.add(save, reset, cancel);
@@ -133,6 +137,7 @@ public class PODEntryForm extends Div {
 
 
         VerticalLayout rightVerticalLayout = new VerticalLayout();
+        rightVerticalLayout.setWidth("50%");
 
         FormLayout rightTopFormLayout = new FormLayout();
         rightTopFormLayout.setMaxWidth("40em");
@@ -193,10 +198,10 @@ public class PODEntryForm extends Div {
         statusDetailsLayout.setAlignItems(HorizontalLayout.Alignment.CENTER);
 
         FormLayout rightBottomFormLayout = new FormLayout();
-        rightBottomFormLayout.setMaxWidth("60em");
+        rightBottomFormLayout.setMaxWidth("40em");
         rightBottomFormLayout.setResponsiveSteps(
-                new FormLayout.ResponsiveStep("30em", 1),
-                new FormLayout.ResponsiveStep("30em", 2));
+                new FormLayout.ResponsiveStep("20em", 1),
+                new FormLayout.ResponsiveStep("20em", 2));
 
         // Status
         TextField statusLabel = new TextField();
@@ -231,8 +236,8 @@ public class PODEntryForm extends Div {
         rightVerticalLayout.add(documentDetailsLayout, rightTopFormLayout,
                 statusDetailsLayout, rightBottomFormLayout);
 
-        containerHorizonalLayout.add(leftVerticalLayout,rightVerticalLayout);
-        verticalLayout.add(title, containerHorizonalLayout);
+        containerHorizontalLayout.add(leftVerticalLayout,rightVerticalLayout);
+        verticalLayout.add(title, containerHorizontalLayout);
         dialog.add(verticalLayout);
 
         dialog.open();

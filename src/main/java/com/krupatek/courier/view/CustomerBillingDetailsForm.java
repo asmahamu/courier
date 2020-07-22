@@ -6,6 +6,7 @@ import com.krupatek.courier.model.Company;
 import com.krupatek.courier.repository.CompanyRepository;
 import com.krupatek.courier.service.*;
 import com.krupatek.courier.utils.DateUtils;
+import com.krupatek.courier.utils.NumberUtils;
 import com.krupatek.courier.view.accountcopy.AccountCopyForm;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.HasValue;
@@ -56,7 +57,8 @@ public class CustomerBillingDetailsForm extends Div {
             PODSummaryService podSummaryService,
             DailyReportService dailyReportService,
             CompanyRepository companyRepository,
-            DateUtils dateUtils) {
+            DateUtils dateUtils,
+            NumberUtils numberUtils) {
         super();
         VerticalLayout verticalLayout = new VerticalLayout();
         verticalLayout.setMargin(false);
@@ -430,6 +432,7 @@ public class CustomerBillingDetailsForm extends Div {
                     placeGenerationService,
                     networkService,
                     dateUtils,
+                    numberUtils,
                     listener.getItem());
             add(accountCopyForm);
         });

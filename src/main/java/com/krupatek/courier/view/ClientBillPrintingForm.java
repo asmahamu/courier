@@ -7,6 +7,7 @@ import com.krupatek.courier.model.Company;
 import com.krupatek.courier.repository.CompanyRepository;
 import com.krupatek.courier.service.*;
 import com.krupatek.courier.utils.DateUtils;
+import com.krupatek.courier.utils.NumberUtils;
 import com.krupatek.courier.view.accountcopy.AccountCopyForm;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.HasValue;
@@ -48,16 +49,17 @@ public class ClientBillPrintingForm extends Div {
     private boolean isFuelSurchargeEnabled = true;
 
     public ClientBillPrintingForm(
-                                  AccountCopyService accountCopyService,
-                                  ClientService clientService,
-                                  RateMasterService rateMasterService,
-                                  RateIntMasterService rateIntMasterService,
-                                  PlaceGenerationService placeGenerationService,
-                                  NetworkService networkService,
-                                  InvoiceService invoiceService,
-                                  CompanyRepository companyRepository,
-                                  BillingService billingService,
-                                  DateUtils dateUtils) {
+            AccountCopyService accountCopyService,
+            ClientService clientService,
+            RateMasterService rateMasterService,
+            RateIntMasterService rateIntMasterService,
+            PlaceGenerationService placeGenerationService,
+            NetworkService networkService,
+            InvoiceService invoiceService,
+            CompanyRepository companyRepository,
+            BillingService billingService,
+            DateUtils dateUtils,
+            NumberUtils numberUtils) {
         super();
         VerticalLayout verticalLayout = new VerticalLayout();
         verticalLayout.setMargin(false);
@@ -496,6 +498,7 @@ public class ClientBillPrintingForm extends Div {
                     placeGenerationService,
                     networkService,
                     dateUtils,
+                    numberUtils,
                     listener.getItem());
             add(accountCopyForm);
         });

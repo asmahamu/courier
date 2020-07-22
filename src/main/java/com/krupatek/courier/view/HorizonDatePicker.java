@@ -4,41 +4,35 @@ import com.krupatek.courier.utils.DateUtils;
 import com.krupatek.courier.utils.NumberUtils;
 import com.vaadin.flow.component.Focusable;
 import com.vaadin.flow.component.Tag;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 
 import java.time.LocalDate;
 
 @Tag("object")
-public class HorizonDatePicker extends Div implements Focusable<TextField>{
+public class HorizonDatePicker extends HorizontalLayout implements Focusable<TextField>{
 
     private LocalDate currentDate;
     private DateUtils dateUtils;
     private TextField dayTF, monthTF, yearTF;
     private DateChangeListener dateChangeListener;
 
-    public HorizonDatePicker(String label, LocalDate date, DateUtils dateUtils, NumberUtils numberUtils){
+    public HorizonDatePicker(LocalDate date, DateUtils dateUtils, NumberUtils numberUtils){
+        setWidth("100%");
+
         this.currentDate = date;
         this.dateUtils = dateUtils;
-        setMaxWidth("175px");
-        VerticalLayout dateComponent = new VerticalLayout();
-        dateComponent.setPadding(false);
-        dateComponent.setMargin(false);
-        dateComponent.setSpacing(false);
-        dateComponent.setWidth("100%");
 
-        Label selectDateLbl = new Label(label);
-        selectDateLbl.setWidth("100%");
+        Label dateSeperator1 = new Label("-");
+        dateSeperator1.setWidth("15%");
+        Label dateSeperator2 = new Label("-");
+        dateSeperator2.setWidth("15%");
 
-        HorizontalLayout dateSubHL = new HorizontalLayout();
-        dateSubHL.setWidth("100%");
         dayTF = new TextField("Day : ");
         dayTF.setValueChangeMode(ValueChangeMode.LAZY);
-        dayTF.setWidth("33%");
+        dayTF.setWidth("22%");
         dayTF.setAutoselect(true);
         dayTF.setValue(String.valueOf(currentDate.getDayOfMonth()));
         dayTF.addValueChangeListener(e -> {
@@ -59,7 +53,7 @@ public class HorizonDatePicker extends Div implements Focusable<TextField>{
 
 
         monthTF = new TextField("Month : ");
-        monthTF.setWidth("33%");
+        monthTF.setWidth("24%");
         monthTF.setAutoselect(true);
         monthTF.setValue(String.valueOf(currentDate.getMonthValue()));
         monthTF.setValueChangeMode(ValueChangeMode.LAZY);
@@ -80,7 +74,7 @@ public class HorizonDatePicker extends Div implements Focusable<TextField>{
         });
 
         yearTF = new TextField("Year : ");
-        yearTF.setWidth("33%");
+        yearTF.setWidth("24%");
         yearTF.setAutoselect(true);
         yearTF.setValue(String.format("%02d", (currentDate.getYear() - 2000)));
         yearTF.setValueChangeMode(ValueChangeMode.LAZY);
@@ -100,11 +94,7 @@ public class HorizonDatePicker extends Div implements Focusable<TextField>{
             }
         });
 
-        dateSubHL.add(dayTF, monthTF, yearTF);
-
-        dateComponent.add(selectDateLbl, dateSubHL);
-
-        add(dateComponent);
+        add(dayTF, dateSeperator1, monthTF, dateSeperator2, yearTF);
     }
 
     @Override

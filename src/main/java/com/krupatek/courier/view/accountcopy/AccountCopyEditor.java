@@ -4,6 +4,7 @@ import com.krupatek.courier.model.AccountCopy;
 import com.krupatek.courier.model.AccountCopyFilter;
 import com.krupatek.courier.service.*;
 import com.krupatek.courier.utils.DateUtils;
+import com.krupatek.courier.utils.NumberUtils;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
@@ -39,7 +40,8 @@ public class AccountCopyEditor extends Div {
             RateIntMasterService rateIntMasterService,
             PlaceGenerationService placeGenerationService,
             NetworkService networkService,
-            DateUtils dateUtils) {
+            DateUtils dateUtils,
+            NumberUtils numberUtils) {
         super();
         VerticalLayout verticalLayout = new VerticalLayout();
         verticalLayout.setSizeFull();
@@ -177,6 +179,7 @@ public class AccountCopyEditor extends Div {
                     placeGenerationService,
                     networkService,
                     dateUtils,
+                    numberUtils,
                     listener.getItem());
             add(accountCopyForm);
         });
@@ -191,6 +194,7 @@ public class AccountCopyEditor extends Div {
                 placeGenerationService,
                 networkService,
                 dateUtils,
+                numberUtils,
                 new AccountCopy())));
         verticalLayout.add(title, accountCopyGrid, addNewBtn);
 
