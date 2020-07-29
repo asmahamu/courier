@@ -4,11 +4,13 @@ import com.krupatek.courier.model.PlaceGeneration;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
+import java.util.SortedSet;
 
 @Service
 public interface PlaceGenerationService {
     PlaceGeneration findByCityName(String cityName);
     List<PlaceGeneration> findAll();
-    Set<String> findDistinctCityName();
+    SortedSet<String> findDistinctCityName();
+    List<PlaceGeneration> findAllByPlaceCode(String value);
+    void updateCityWithZone(String cityName, String placeCode);
 }

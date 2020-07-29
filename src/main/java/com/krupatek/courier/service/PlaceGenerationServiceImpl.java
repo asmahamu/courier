@@ -4,9 +4,10 @@ import com.krupatek.courier.model.PlaceGeneration;
 import com.krupatek.courier.repository.PlaceGenerationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Set;
+import java.util.SortedSet;
 
 @Service
 public class PlaceGenerationServiceImpl implements PlaceGenerationService {
@@ -25,7 +26,18 @@ public class PlaceGenerationServiceImpl implements PlaceGenerationService {
     }
 
     @Override
-    public Set<String> findDistinctCityName() {
-        return placeGenerationRepository.findDistinctCityName();
+    public SortedSet<String> findDistinctCityName() {
+        return placeGenerationRepository.findDistinctCityNameOrderByCityName();
+    }
+
+    @Override
+    public List<PlaceGeneration> findAllByPlaceCode(String placeCode) {
+        return placeGenerationRepository.findAllByPlaceCodeOrderByCityName(placeCode);
+    }
+
+    @Transactional
+    @Override
+    public void updateCityWithZone(String cityName, String placeCode) {
+        placeGenerationRepository.updateCityWithZone(cityName, placeCode);
     }
 }

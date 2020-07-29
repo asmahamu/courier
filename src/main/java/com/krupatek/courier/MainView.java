@@ -15,6 +15,7 @@ import com.krupatek.courier.view.clientprofile.ClientProfileEditor;
 import com.krupatek.courier.view.pod.PODEntryForm;
 import com.krupatek.courier.view.rate.RateEntryEditor;
 import com.krupatek.courier.view.rate.RateIntEntryEditor;
+import com.krupatek.courier.view.rate.ZoneGeneration;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.contextmenu.MenuItem;
@@ -84,6 +85,9 @@ public class MainView extends VerticalLayout {
     @Autowired
     DailyReportService dailyReportService;
 
+    @Autowired
+    ZonesService zonesService;
+
     public MainView(@Autowired MessageBean bean) {
         MenuBar menuBar = new MenuBar();
         Div component = new Div();
@@ -116,11 +120,19 @@ public class MainView extends VerticalLayout {
 
         Component rateMasterMenu = getMenuItemComponent(VaadinIcon.MONEY_EXCHANGE, "Rate Master");
         MenuItem rateMaster = masters.getSubMenu().addItem(rateMasterMenu);
+        rateMaster.getSubMenu().addItem(getMenuItemComponent(null, "Zone Generation"), e -> {
+            component.removeAll();
+            component.add(new ZoneGeneration(zonesService, placeGenerationService));
+        });
         rateMaster.getSubMenu().addItem(getMenuItemComponent(null, "Rate Entry"), e -> {
             component.removeAll();
             component.add(new RateEntryEditor(clientService, courierService, rateMasterService));
         });
-        rateMaster.getSubMenu().addItem(getMenuItemComponent(null, "Rate International Entry"), e -> {
+
+
+        Component intRateMasterMenu = getMenuItemComponent(VaadinIcon.DOLLAR, "International Rate Master");
+        MenuItem intRateMaster = masters.getSubMenu().addItem(intRateMasterMenu);
+        intRateMaster.getSubMenu().addItem(getMenuItemComponent(null, "Rate International Entry"), e -> {
             component.removeAll();
             component.add(new RateIntEntryEditor(clientService, courierService, rateIntMasterService));
         });
