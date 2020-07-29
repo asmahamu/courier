@@ -10,4 +10,6 @@ import java.util.Set;
 public interface NetworkService {
     Set<String> findDistinctCountry();
     Optional<Network> findOne(String cityName);
+    Set<String> findDistinctZonesForNetwork(String netName);
+    Set<String> findCountryByNetworkAndZone(String netName, String zoneName);
 }

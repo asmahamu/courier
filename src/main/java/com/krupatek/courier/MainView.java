@@ -13,6 +13,7 @@ import com.krupatek.courier.view.accountcopy.AccountCopyEditor;
 import com.krupatek.courier.view.accountcopy.AccountCopyForm;
 import com.krupatek.courier.view.clientprofile.ClientProfileEditor;
 import com.krupatek.courier.view.pod.PODEntryForm;
+import com.krupatek.courier.view.rate.InternationalZoneGeneration;
 import com.krupatek.courier.view.rate.RateEntryEditor;
 import com.krupatek.courier.view.rate.RateIntEntryEditor;
 import com.krupatek.courier.view.rate.ZoneGeneration;
@@ -88,6 +89,9 @@ public class MainView extends VerticalLayout {
     @Autowired
     ZonesService zonesService;
 
+    @Autowired
+    CountryService countryService;
+
     public MainView(@Autowired MessageBean bean) {
         MenuBar menuBar = new MenuBar();
         Div component = new Div();
@@ -132,6 +136,10 @@ public class MainView extends VerticalLayout {
 
         Component intRateMasterMenu = getMenuItemComponent(VaadinIcon.DOLLAR, "International Rate Master");
         MenuItem intRateMaster = masters.getSubMenu().addItem(intRateMasterMenu);
+        intRateMaster.getSubMenu().addItem(getMenuItemComponent(null, "Add Country To Zones"), e -> {
+            component.removeAll();
+            component.add(new InternationalZoneGeneration(courierService, networkService, countryService));
+        });
         intRateMaster.getSubMenu().addItem(getMenuItemComponent(null, "Rate International Entry"), e -> {
             component.removeAll();
             component.add(new RateIntEntryEditor(clientService, courierService, rateIntMasterService));
@@ -192,19 +200,6 @@ public class MainView extends VerticalLayout {
                     clientService,
                     companyRepository));
         });
-//        clientBillingCopyItem.getSubMenu().addItem("Client Bill Editing", e -> {
-//            component.removeAll();
-//            component.add(new ClientBillEditor(
-//                    billingService,
-//                    accountCopyService,
-//                    clientService,
-//                    rateMasterService,
-//                    rateIntMasterService,
-//                    placeGenerationService,
-//                    networkService,
-//                    companyRepository,
-//                    dateUtils));
-//        });
         Component podSummaryMenu = getMenuItemComponent(VaadinIcon.LINE_BAR_CHART, "POD Summary / Daily Report");
         billingDetails.getSubMenu().addItem(podSummaryMenu, e -> {
             component.removeAll();

@@ -23,4 +23,14 @@ public class NetworkServiceImpl implements NetworkService {
     public Optional<Network> findOne(String cityName) {
         return networkRepository.findById(cityName);
     }
+
+    @Override
+    public Set<String> findDistinctZonesForNetwork(String netName) {
+        return networkRepository.findDistinctZonesForNetwork(netName);
+    }
+
+    @Override
+    public Set<String> findCountryByNetworkAndZone(String netName, String zoneName) {
+        return networkRepository.findCountryByNetworkAndZone(netName, zoneName);
+    }
 }

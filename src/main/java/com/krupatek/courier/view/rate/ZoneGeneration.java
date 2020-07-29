@@ -32,30 +32,35 @@ public class ZoneGeneration extends Div {
         dialog.setWidth("600px");
         dialog.setHeight("600px");
 
-        VerticalLayout zoneGenerationContainer = new VerticalLayout();
-        zoneGenerationContainer.setWidth("100%");
-        zoneGenerationContainer.setHeight("100%");
-
         HorizontalLayout horizontalLayout = new HorizontalLayout();
         horizontalLayout.setWidth("100%");
         horizontalLayout.setHeight("100%");
         horizontalLayout.setPadding(true);
         horizontalLayout.setMargin(false);
 
+        VerticalLayout zoneGenerationContainer = new VerticalLayout();
+        zoneGenerationContainer.setWidth("100%");
+        zoneGenerationContainer.setHeight("100%");
+
+
         // Title
         H4 title = new H4("Zone Generation");
         title.setWidth("100%");
         zoneGenerationContainer.add(title);
 
-        // Zone Select
+        // Select Zone
+        HorizontalLayout selectContainerHZLayout = new HorizontalLayout();
+        selectContainerHZLayout.setAlignItems(FlexComponent.Alignment.BASELINE);
+        selectContainerHZLayout.setWidth("100%");
+
         ComboBox<String> zoneSelect = new ComboBox<>();
-        zoneSelect.setWidth("70%");
+        zoneSelect.setWidth("60%");
         zoneSelect.setLabel("Zone : ");
+        selectContainerHZLayout.add(zoneSelect);
 
         TreeSet<String> zonesSource = zonesService.findAll().parallelStream().map(Zones::getZoneCode).collect(Collectors.toCollection(TreeSet::new));
         zoneSelect.setItems(zonesSource);
         zoneSelect.setValue(zonesSource.first());
-        zoneGenerationContainer.add(zoneSelect);
 
         // Title
         H4 selectedListBoxTitle = new H4("Selected (Read Only)");
@@ -112,16 +117,13 @@ public class ZoneGeneration extends Div {
 
         listBoxContainer.add(selectedListBox, listBoxButtonContainer, allListBox);
 
-        HorizontalLayout buttonContainer = new HorizontalLayout();
-        buttonContainer.setWidth("100%");
-        buttonContainer.setHeight("10%");
-        Label emptyLabelTwo = new Label();
-        emptyLabelTwo.setWidth("60%");
         Button saveBtn = new Button("Save");
         saveBtn.setWidth("20%");
         Button cancelBtn = new Button("Cancel");
         cancelBtn.setWidth("20%");
-        buttonContainer.add(emptyLabelTwo, saveBtn, cancelBtn);
+        selectContainerHZLayout.add(saveBtn, cancelBtn);
+
+
         saveBtn.addClickListener(event -> {
             String zoneSelectValue = zoneSelect.getValue();
             List<String> oldCities = getCitiesForZone(zoneSelectValue, placeGenerationService);
@@ -145,9 +147,8 @@ public class ZoneGeneration extends Div {
         cancelBtn.addClickListener(
                 event -> dialog.close()
         );
-        buttonContainer.setAlignItems(FlexComponent.Alignment.END);
 
-        zoneGenerationContainer.add(buttonContainer, listBoxTitleContainer, listBoxContainer);
+        zoneGenerationContainer.add(selectContainerHZLayout, listBoxTitleContainer, listBoxContainer);
 
 
         // Add listener
