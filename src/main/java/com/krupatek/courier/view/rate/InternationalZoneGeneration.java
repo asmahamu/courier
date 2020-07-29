@@ -1,6 +1,7 @@
 package com.krupatek.courier.view.rate;
 
 import com.krupatek.courier.model.Courier;
+import com.krupatek.courier.model.Network;
 import com.krupatek.courier.service.CountryService;
 import com.krupatek.courier.service.CourierService;
 import com.krupatek.courier.service.NetworkService;
@@ -150,13 +151,21 @@ public class InternationalZoneGeneration extends Div {
             // Old Countries removed = Old - New
             List<String> oldCountriesRemoved = oldCountries.parallelStream().filter(city -> !selectedCountriesSource.contains(city)).collect(Collectors.toList());
 
-//            for(String city : newCitiesAdded){
-//                placeGenerationService.updateCityWithZone(city, zoneSelectValue);
-//            }
-//
-//            for(String city : oldCitiesRemoved){
-//                placeGenerationService.updateCityWithZone(city, "");
-//            }
+            for(String country : newCountriesAdded){
+                Network network = new Network();
+                network.setNetName(selectedNetwork);
+                network.setZoneName(selectedZone);
+                network.setCountryName(country);
+                networkService.save(network);
+            }
+
+            for(String country : oldCountriesRemoved){
+                Network network = new Network();
+                network.setNetName(selectedNetwork);
+                network.setZoneName(selectedZone);
+                network.setCountryName(country);
+                networkService.delete(network);
+            }
 
             Notification.show(selectedNetwork+", "+selectedZone +" has new values Added "+
                     Arrays.toString(newCountriesAdded.toArray())+", Removed : "+Arrays.toString(oldCountriesRemoved.toArray()));

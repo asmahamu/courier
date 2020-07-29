@@ -2,6 +2,7 @@ package com.krupatek.courier.service;
 
 import com.krupatek.courier.model.Network;
 import com.krupatek.courier.repository.NetworkRepository;
+import org.hibernate.criterion.Example;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,5 +33,15 @@ public class NetworkServiceImpl implements NetworkService {
     @Override
     public Set<String> findCountryByNetworkAndZone(String netName, String zoneName) {
         return networkRepository.findCountryByNetworkAndZone(netName, zoneName);
+    }
+
+    @Override
+    public Network save(Network network) {
+        return networkRepository.save(network);
+    }
+
+    @Override
+    public void delete(Network network) {
+        networkRepository.delete(network);
     }
 }

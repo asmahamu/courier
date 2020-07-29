@@ -3,9 +3,12 @@ package com.krupatek.courier.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 
 @Entity(name = "i_network")
+@IdClass(NetworkId.class)
 public class Network {
+
     @Id
     @Column(name = "country_name")
     private String countryName;
@@ -16,6 +19,7 @@ public class Network {
     @Column(name = "zone_name")
     private String zoneName;
 
+    @Id
     @Column(name = "net_name")
     private String netName;
 

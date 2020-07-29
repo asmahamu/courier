@@ -12,4 +12,6 @@ public interface NetworkService {
     Optional<Network> findOne(String cityName);
     Set<String> findDistinctZonesForNetwork(String netName);
     Set<String> findCountryByNetworkAndZone(String netName, String zoneName);
+    Network save(Network network);
+    void delete(Network network);
 }
