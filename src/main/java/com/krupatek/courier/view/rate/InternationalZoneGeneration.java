@@ -27,8 +27,7 @@ public class InternationalZoneGeneration extends Div {
     private String selectedNetwork = "FEDEX";
     private String selectedZone = "ZONE A";
     private boolean zoneSelected = false;
-    private TreeSet<String> selectedCountriesSource = new TreeSet<>();
-    private TreeSet<String> allCountriesSource = new TreeSet<>();
+    private final TreeSet<String> selectedCountriesSource = new TreeSet<>();
 
     public InternationalZoneGeneration(CourierService courierService, NetworkService networkService, CountryService countryService){
         super();
@@ -103,7 +102,6 @@ public class InternationalZoneGeneration extends Div {
 
         // Selected Countries
         MultiSelectListBox<String> selectedListBox = new MultiSelectListBox<>();
-        selectedListBox.setReadOnly(true);
         selectedListBox.setWidth("50%");
 
         updateSelectedList(networkService, selectedListBox);
@@ -112,7 +110,7 @@ public class InternationalZoneGeneration extends Div {
         MultiSelectListBox<String> allListBox = new MultiSelectListBox<>();
         allListBox.setWidth("50%");
 
-        allCountriesSource.addAll(getAllCountries(countryService));
+        TreeSet<String> allCountriesSource = new TreeSet<>(getAllCountries(countryService));
         allListBox.setItems(allCountriesSource);
 
         updateAllList(allListBox);
@@ -133,7 +131,12 @@ public class InternationalZoneGeneration extends Div {
                 selectedCountriesSource.removeAll(event.getRemovedSelection());
                 selectedListBox.clear();
                 selectedListBox.setItems(selectedCountriesSource);
-                selectedListBox.select(selectedCountriesSource);
+            }
+        });
+
+        selectedListBox.addSelectionListener(event -> {
+            if (!zoneSelected) {
+                allListBox.deselect(event.getAddedSelection());
             }
         });
         Button saveBtn = new Button("Save");
@@ -191,7 +194,6 @@ public class InternationalZoneGeneration extends Div {
         selectedListBox.clear();
         selectedCountriesSource.addAll(getSelectedCountries(selectedNetwork, selectedZone, networkService));
         selectedListBox.setItems(selectedCountriesSource);
-        selectedListBox.select(selectedCountriesSource);
     }
 
     private Set<String> getSelectedCountries(String selectedNetwork, String selectedZone, NetworkService networkService) {

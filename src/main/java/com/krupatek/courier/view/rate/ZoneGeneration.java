@@ -10,7 +10,6 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.listbox.MultiSelectListBox;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -81,24 +80,14 @@ public class ZoneGeneration extends Div {
         listBoxContainer.setHeight("60%");
 
         MultiSelectListBox<String> selectedListBox = new MultiSelectListBox<>();
-        selectedListBox.setReadOnly(true);
+        selectedListBox.setWidth("50%");
 
-        selectedListBox.setWidth("40%");
         TreeSet<String> selectedCitiesSource = placeGenerationService.findAllByPlaceCode(zonesSource.first()).parallelStream().map(PlaceGeneration::getCityName).filter(str -> !str.isEmpty()).collect(Collectors.toCollection(TreeSet::new));
         selectedListBox.setItems(selectedCitiesSource);
-        selectedListBox.setValue(selectedCitiesSource);
 
-        VerticalLayout listBoxButtonContainer = new VerticalLayout();
-
-        Button addBtn = new Button(VaadinIcon.ANGLE_DOUBLE_LEFT.create());
-        Button removeBtn = new Button(VaadinIcon.ANGLE_DOUBLE_RIGHT.create());
-        listBoxButtonContainer.add(addBtn, removeBtn);
-        listBoxButtonContainer.setAlignItems(FlexComponent.Alignment.CENTER);
-        listBoxButtonContainer.setWidth("20%");
 
         MultiSelectListBox<String> allListBox = new MultiSelectListBox<>();
-
-        allListBox.setWidth("40%");
+        allListBox.setWidth("50%");
         TreeSet<String> allCitiesSource = placeGenerationService.findDistinctCityName().parallelStream().filter(str -> !str.isEmpty()).collect(Collectors.toCollection(TreeSet::new));
 
         allListBox.setItems(allCitiesSource);
@@ -111,11 +100,15 @@ public class ZoneGeneration extends Div {
                 selectedCitiesSource.removeAll(event.getRemovedSelection());
                 selectedListBox.clear();
                 selectedListBox.setItems(selectedCitiesSource);
-                selectedListBox.select(selectedCitiesSource);
+            }
+        });
+        selectedListBox.addSelectionListener(event ->{
+            if(!zoneSelected){
+                allListBox.deselect(event.getAddedSelection());
             }
         });
 
-        listBoxContainer.add(selectedListBox, listBoxButtonContainer, allListBox);
+        listBoxContainer.add(selectedListBox, allListBox);
 
         Button saveBtn = new Button("Save");
         saveBtn.setWidth("20%");
