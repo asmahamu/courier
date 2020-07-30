@@ -2,6 +2,7 @@ package com.krupatek.courier.view.clientprofile;
 
 import com.krupatek.courier.model.Client;
 import com.krupatek.courier.service.ClientService;
+import com.krupatek.courier.utils.ViewUtils;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -39,6 +40,8 @@ public class ClientProfileForm extends Div {
                 new FormLayout.ResponsiveStep("25em", 2));
 
         Binder<Client> binder = new Binder<>();
+
+        formLayout.add(ViewUtils.addCloseButton(dialog), 2);
 
         Label title = new Label();
         title.setSizeFull();

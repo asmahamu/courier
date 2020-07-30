@@ -5,6 +5,7 @@ import com.krupatek.courier.model.Network;
 import com.krupatek.courier.service.CountryService;
 import com.krupatek.courier.service.CourierService;
 import com.krupatek.courier.service.NetworkService;
+import com.krupatek.courier.utils.ViewUtils;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -36,15 +37,10 @@ public class InternationalZoneGeneration extends Div {
         dialog.setWidth("600px");
         dialog.setHeight("600px");
 
-        HorizontalLayout horizontalLayout = new HorizontalLayout();
-        horizontalLayout.setWidth("100%");
-        horizontalLayout.setHeight("100%");
-        horizontalLayout.setPadding(true);
-        horizontalLayout.setMargin(false);
-
         VerticalLayout zoneGenerationContainer = new VerticalLayout();
         zoneGenerationContainer.setWidth("100%");
         zoneGenerationContainer.setHeight("100%");
+        zoneGenerationContainer.add(ViewUtils.addCloseButton(dialog));
 
         // Title
         H4 title = new H4("International Zone Generation");
@@ -83,13 +79,13 @@ public class InternationalZoneGeneration extends Div {
         // Title
         HorizontalLayout listBoxTitleContainer = new HorizontalLayout();
         listBoxTitleContainer.setWidth("100%");
-        listBoxTitleContainer.setHeight("10%");
+//        listBoxTitleContainer.setHeight("10%");
 
-        H4 selectedListBoxTitle = new H4("Selected (Read Only)");
+        H4 selectedListBoxTitle = new H4("Selected Countries");
         selectedListBoxTitle.setWidth("40%");
         Label emptyLabel = new Label();
         emptyLabel.setWidth("20%");
-        H4 allListBoxTitle = new H4("All (Select here)");
+        H4 allListBoxTitle = new H4("All Countries");
         allListBoxTitle.setWidth("40%");
 
         listBoxTitleContainer.add(selectedListBoxTitle, emptyLabel, allListBoxTitle);
@@ -98,7 +94,7 @@ public class InternationalZoneGeneration extends Div {
         // Lists
         HorizontalLayout listBoxContainer = new HorizontalLayout();
         listBoxContainer.setWidth("100%");
-        listBoxContainer.setHeight("60%");
+        listBoxContainer.setHeight("50%");
 
         // Selected Countries
         MultiSelectListBox<String> selectedListBox = new MultiSelectListBox<>();
@@ -178,8 +174,7 @@ public class InternationalZoneGeneration extends Div {
         );
 
         zoneGenerationContainer.add(selectContainerHZLayout, listBoxTitleContainer, listBoxContainer);
-        horizontalLayout.add(zoneGenerationContainer);
-        dialog.add(horizontalLayout);
+        dialog.add(zoneGenerationContainer);
         dialog.open();
 
     }

@@ -2,6 +2,7 @@ package com.krupatek.courier.view;
 
 import com.krupatek.courier.model.Company;
 import com.krupatek.courier.repository.CompanyRepository;
+import com.krupatek.courier.utils.ViewUtils;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -32,6 +33,8 @@ public class SystemSettingsForm extends Div {
                 new FormLayout.ResponsiveStep("25em", 1),
                 new FormLayout.ResponsiveStep("25em", 2));
         formLayout.setMaxWidth("50em");
+
+        formLayout.add(ViewUtils.addCloseButton(dialog), 2);
 
         H4 title = new H4();
         title.setSizeFull();

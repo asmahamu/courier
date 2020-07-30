@@ -4,6 +4,7 @@ import com.krupatek.courier.model.PlaceGeneration;
 import com.krupatek.courier.model.Zones;
 import com.krupatek.courier.service.PlaceGenerationService;
 import com.krupatek.courier.service.ZonesService;
+import com.krupatek.courier.utils.ViewUtils;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -31,15 +32,10 @@ public class ZoneGeneration extends Div {
         dialog.setWidth("600px");
         dialog.setHeight("600px");
 
-        HorizontalLayout horizontalLayout = new HorizontalLayout();
-        horizontalLayout.setWidth("100%");
-        horizontalLayout.setHeight("100%");
-        horizontalLayout.setPadding(true);
-        horizontalLayout.setMargin(false);
-
         VerticalLayout zoneGenerationContainer = new VerticalLayout();
         zoneGenerationContainer.setWidth("100%");
         zoneGenerationContainer.setHeight("100%");
+        zoneGenerationContainer.add(ViewUtils.addCloseButton(dialog));
 
 
         // Title
@@ -62,22 +58,22 @@ public class ZoneGeneration extends Div {
         zoneSelect.setValue(zonesSource.first());
 
         // Title
-        H4 selectedListBoxTitle = new H4("Selected (Read Only)");
+        H4 selectedListBoxTitle = new H4("Selected Cities");
         selectedListBoxTitle.setWidth("40%");
         Label emptyLabel = new Label();
         emptyLabel.setWidth("20%");
-        H4 allListBoxTitle = new H4("All (Select here)");
+        H4 allListBoxTitle = new H4("All Cities");
         allListBoxTitle.setWidth("40%");
 
         HorizontalLayout listBoxTitleContainer = new HorizontalLayout();
         listBoxTitleContainer.setWidth("100%");
-        listBoxTitleContainer.setHeight("10%");
+//        listBoxTitleContainer.setHeight("10%");
         listBoxTitleContainer.add(selectedListBoxTitle, emptyLabel, allListBoxTitle);
 
         // Select City
         HorizontalLayout listBoxContainer = new HorizontalLayout();
         listBoxContainer.setWidthFull();
-        listBoxContainer.setHeight("60%");
+        listBoxContainer.setHeight("50%");
 
         MultiSelectListBox<String> selectedListBox = new MultiSelectListBox<>();
         selectedListBox.setWidth("50%");
@@ -157,8 +153,7 @@ public class ZoneGeneration extends Div {
         });
 
         zoneGenerationContainer.setAlignItems(FlexComponent.Alignment.CENTER);
-        horizontalLayout.add(zoneGenerationContainer);
-        dialog.add(horizontalLayout);
+        dialog.add(zoneGenerationContainer);
         dialog.open();
 
     }

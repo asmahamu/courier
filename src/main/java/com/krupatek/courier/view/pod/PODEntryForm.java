@@ -4,6 +4,7 @@ import com.krupatek.courier.model.AccountCopy;
 import com.krupatek.courier.service.AccountCopyService;
 import com.krupatek.courier.utils.DateUtils;
 import com.krupatek.courier.utils.NumberUtils;
+import com.krupatek.courier.utils.ViewUtils;
 import com.krupatek.courier.view.HorizonDatePicker;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
@@ -32,6 +33,7 @@ public class PODEntryForm extends Div {
         dialog.setWidth("800px");
 
         VerticalLayout verticalLayout = new VerticalLayout();
+        verticalLayout.add(ViewUtils.addCloseButton(dialog));
 
         Binder<AccountCopy> binder = new Binder<>(AccountCopy.class);
 

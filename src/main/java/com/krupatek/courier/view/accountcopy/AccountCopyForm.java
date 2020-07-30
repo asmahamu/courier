@@ -5,6 +5,7 @@ import com.krupatek.courier.service.*;
 import com.krupatek.courier.utils.DateUtils;
 import com.krupatek.courier.utils.NumberUtils;
 import com.krupatek.courier.utils.RateUtils;
+import com.krupatek.courier.utils.ViewUtils;
 import com.krupatek.courier.view.HorizonDatePicker;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
@@ -52,6 +53,8 @@ public class AccountCopyForm extends Div {
         boolean isNewAccountCopy = accountCopy.getDocNo() == null || accountCopy.getDocNo().isEmpty();
 
         Dialog dialog = new Dialog();
+
+
         HorizontalLayout horizontalLayout = new HorizontalLayout();
         horizontalLayout.setPadding(true);
         horizontalLayout.setMargin(false);
@@ -64,13 +67,13 @@ public class AccountCopyForm extends Div {
                 new FormLayout.ResponsiveStep("15em", 4));
 
         H4 title = new H4();
-        title.setSizeFull();
 
         if(isNewAccountCopy){
             title.setText("Create New Account Copy");
         } else {
             title.setText("Edit Account Copy");
         }
+        formLayout.add(ViewUtils.addCloseButton(dialog), 4);
         formLayout.add(title, 4);
 
         Binder<AccountCopy> binder = new Binder<>(AccountCopy.class);
