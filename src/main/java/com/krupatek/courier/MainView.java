@@ -13,10 +13,7 @@ import com.krupatek.courier.view.accountcopy.AccountCopyEditor;
 import com.krupatek.courier.view.accountcopy.AccountCopyForm;
 import com.krupatek.courier.view.clientprofile.ClientProfileEditor;
 import com.krupatek.courier.view.pod.PODEntryForm;
-import com.krupatek.courier.view.rate.InternationalZoneGeneration;
-import com.krupatek.courier.view.rate.RateEntryEditor;
-import com.krupatek.courier.view.rate.RateIntEntryEditor;
-import com.krupatek.courier.view.rate.ZoneGeneration;
+import com.krupatek.courier.view.rate.*;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.contextmenu.MenuItem;
@@ -124,6 +121,10 @@ public class MainView extends VerticalLayout {
 
         Component rateMasterMenu = getMenuItemComponent(VaadinIcon.MONEY_EXCHANGE, "Rate Master");
         MenuItem rateMaster = masters.getSubMenu().addItem(rateMasterMenu);
+        rateMaster.getSubMenu().addItem(getMenuItemComponent(null, "Create Zone"), e -> {
+            component.removeAll();
+            component.add(new CreateZoneForm(zonesService));
+        });
         rateMaster.getSubMenu().addItem(getMenuItemComponent(null, "Zone Generation"), e -> {
             component.removeAll();
             component.add(new ZoneGeneration(zonesService, placeGenerationService));
