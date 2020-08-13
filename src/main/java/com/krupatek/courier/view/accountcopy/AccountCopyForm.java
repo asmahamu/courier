@@ -37,6 +37,7 @@ import java.util.logging.Logger;
 @UIScope
 public class AccountCopyForm extends Div {
     private boolean isDomestic = true; // False means International.
+    private boolean isCashCustomer = false;
 
     public AccountCopyForm(
             AccountCopyService accountCopyService,
@@ -61,10 +62,18 @@ public class AccountCopyForm extends Div {
         FormLayout formLayout = new FormLayout();
         formLayout.setMaxWidth("60em");
         formLayout.setResponsiveSteps(
-                new FormLayout.ResponsiveStep("15em", 1),
-                new FormLayout.ResponsiveStep("15em", 2),
-                new FormLayout.ResponsiveStep("15em", 3),
-                new FormLayout.ResponsiveStep("15em", 4));
+                new FormLayout.ResponsiveStep("5em", 1),
+                new FormLayout.ResponsiveStep("5em", 2),
+                new FormLayout.ResponsiveStep("5em", 3),
+                new FormLayout.ResponsiveStep("5em", 4),
+                new FormLayout.ResponsiveStep("5em", 5),
+                new FormLayout.ResponsiveStep("5em", 6),
+                new FormLayout.ResponsiveStep("5em", 7),
+                new FormLayout.ResponsiveStep("5em", 8),
+                new FormLayout.ResponsiveStep("5em", 9),
+                new FormLayout.ResponsiveStep("5em", 10),
+                new FormLayout.ResponsiveStep("5em", 11),
+                new FormLayout.ResponsiveStep("5em", 12));
 
         H4 title = new H4();
 
@@ -73,8 +82,8 @@ public class AccountCopyForm extends Div {
         } else {
             title.setText("Edit Account Copy");
         }
-        formLayout.add(ViewUtils.addCloseButton(dialog), 4);
-        formLayout.add(title, 4);
+        formLayout.add(ViewUtils.addCloseButton(dialog), 12);
+        formLayout.add(title, 12);
 
         Binder<AccountCopy> binder = new Binder<>(AccountCopy.class);
 
@@ -140,6 +149,7 @@ public class AccountCopyForm extends Div {
         cashCreditSelect.setItems("Cash", "Cr");
         binder.bind(cashCreditSelect, AccountCopy::getPodType, AccountCopy::setPodType);
 
+
         // Document / Parcel
         Select<String> selectDocumentOrParcelType = new Select<>();
         selectDocumentOrParcelType.setWidth("25%");
@@ -147,7 +157,10 @@ public class AccountCopyForm extends Div {
         selectDocumentOrParcelType.setItems("D", "P");
         binder.bind(selectDocumentOrParcelType, AccountCopy::getdP, AccountCopy::setdP);
 
-        formLayout.add(docNo, podDate, cashCreditSelect, selectDocumentOrParcelType);
+        formLayout.add(docNo, 3);
+        formLayout.add(podDate, 3);
+        formLayout.add(cashCreditSelect, 2);
+        formLayout.add(selectDocumentOrParcelType, 2);
 
         // Client Name
 
@@ -155,10 +168,33 @@ public class AccountCopyForm extends Div {
             isDomestic =  !accountCopy.getType().equals("Inter");
         }
 
+        // Credit Client
         Select<String> clientsComboBox = new Select<>();
-        clientsComboBox.setLabel("Client Name : ");
+        clientsComboBox.setLabel("Client Name (Credit) : ");
         updateClientName(clientsComboBox, rateMasterService, rateIntMasterService);
         binder.bind(clientsComboBox, AccountCopy::getClientName, AccountCopy::setClientName);
+
+
+        // Cash Client
+        TextField cashClientTextField = new TextField();
+        cashClientTextField.setLabel("Client Name (Cash): ");
+        cashClientTextField.setValueChangeMode(ValueChangeMode.LAZY);
+        cashClientTextField.setAutoselect(true);
+        cashClientTextField.setEnabled(false);
+        binder.bind(cashClientTextField, AccountCopy::getClientName, AccountCopy::setClientName);
+
+        cashCreditSelect.addValueChangeListener(event -> {
+            if(event.getValue().equalsIgnoreCase("Cash")){
+                clientsComboBox.setEnabled(false);
+                cashClientTextField.setEnabled(true);
+                isCashCustomer = true;
+            } else if (event.getValue().equalsIgnoreCase("Cr")){
+                clientsComboBox.setEnabled(true);
+                cashClientTextField.setEnabled(false);
+                isCashCustomer = false;
+            }
+        });
+
 
         // Destination
         Select<String> destinationComboBox = new Select<>();
@@ -192,12 +228,11 @@ public class AccountCopyForm extends Div {
             bookingTypeSelect.setReadOnly(true);
         }
 
-        formLayout.add(bookingTypeSelect, clientsComboBox, destinationComboBox);
-
-        formLayout.setColspan(bookingTypeSelect, 1);
-        formLayout.setColspan(clientsComboBox, 2);
-        formLayout.setColspan(destinationComboBox, 1);
-
+        formLayout.add(bookingTypeSelect, 2);
+        // Second row
+        formLayout.add(clientsComboBox, 5);
+        formLayout.add(cashClientTextField, 4);
+        formLayout.add(destinationComboBox, 3);
 
         // PinCode
         TextField pincode = new TextField();
@@ -222,11 +257,11 @@ public class AccountCopyForm extends Div {
         courierSelect.setValue("TRACKON");
         binder.bind(courierSelect, AccountCopy::getToParty, AccountCopy::setToParty);
 
-        formLayout.add(pincode, receiverName, courierSelect);
+        formLayout.add(pincode, 3);
+        formLayout.add(receiverName, 4);
+        formLayout.add(courierSelect, 4);
+        formLayout.add(new Label(""), 1);
 
-        formLayout.setColspan(pincode, 1);
-        formLayout.setColspan(receiverName, 2);
-        formLayout.setColspan(courierSelect, 1);
 
         // Mode
         Select<String> modeSelect = new Select<>();
@@ -254,13 +289,26 @@ public class AccountCopyForm extends Div {
                 AccountCopy::setRate);
         rate.setAutoselect(true);
 
-        formLayout.add(modeSelect, weight, rate);
+        formLayout.add(modeSelect, 3);
+        formLayout.add(weight, 3);
+        formLayout.add(rate, 3);
+        formLayout.add(new Label(""), 3);
 
         Button save = new Button("Save",
                 event -> {
                     try {
                         binder.writeBean(accountCopy);
+
+                        // Set pod date
                         accountCopy.setPodDate(dateUtils.asDate(podDate.getCurrentDate()));
+
+                        // Set client name
+                        if(isCashCustomer){
+                            accountCopy.setClientName(cashClientTextField.getValue());
+                        } else {
+                            accountCopy.setClientName(clientsComboBox.getValue());
+                        }
+
                         accountCopyService.saveAndFlush(accountCopy);
                         Notification.show("Account copy updated successfully.");
                         docNo.focus();
@@ -327,10 +375,10 @@ public class AccountCopyForm extends Div {
             delete.addThemeVariants(ButtonVariant.LUMO_ERROR);
 
             actions.add(save, reset, cancel, delete);
-            formLayout.add(actions, 3);
+            formLayout.add(actions, 6);
         } else {
             actions.add(save, reset, cancel);
-            formLayout.add(actions, 2);
+            formLayout.add(actions, 4);
         }
 
         horizontalLayout.add(formLayout);
@@ -355,10 +403,18 @@ public class AccountCopyForm extends Div {
 //        courierSelect.addValueChangeListener(e -> modeSelect.focus());
 //        modeSelect.addValueChangeListener(e -> weight.focus());
         weight.addKeyDownListener(Key.TAB, e -> {
-            calculateRate(rateMasterService, rateIntMasterService, accountCopy, binder, weight, rate);
+            if(!isCashCustomer){
+                calculateRate(rateMasterService, rateIntMasterService, accountCopy, binder, weight, rate, clientsComboBox.getValue());
+            } else {
+                rate.focus();
+            }
         });
         weight.addKeyDownListener(Key.ENTER, e -> {
-            calculateRate(rateMasterService, rateIntMasterService, accountCopy, binder, weight, rate);
+            if(!isCashCustomer) {
+                calculateRate(rateMasterService, rateIntMasterService, accountCopy, binder, weight, rate, clientsComboBox.getValue());
+            } else {
+                rate.focus();
+            }
         });
 //        rate.addKeyDownListener(Key.ENTER, e -> save.focus());
 
@@ -367,9 +423,18 @@ public class AccountCopyForm extends Div {
         binder.readBean(accountCopy);
     }
 
-    private void calculateRate(RateMasterService rateMasterService, RateIntMasterService rateIntMasterService, AccountCopy accountCopy, Binder<AccountCopy> binder, TextField weight, TextField rate) {
+    private void calculateRate(
+            RateMasterService rateMasterService,
+            RateIntMasterService rateIntMasterService,
+            AccountCopy accountCopy,
+            Binder<AccountCopy> binder,
+            TextField weight,
+            TextField rate,
+            String clientName) {
         try {
             binder.writeBean(accountCopy);
+            accountCopy.setClientName(clientName);
+
             Logger.getLogger(AccountCopyForm.class.getName()).info("AccountCopy : "+
                     accountCopy.getClientName()+", "+
                     accountCopy.getToParty()+", "+
