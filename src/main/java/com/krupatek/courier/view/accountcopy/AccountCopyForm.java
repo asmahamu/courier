@@ -200,17 +200,6 @@ public class AccountCopyForm extends Div {
         Select<String> destinationComboBox = new Select<>();
         destinationComboBox.setLabel("Destination : ");
         updateDestination(destinationComboBox, placeGenerationService, networkService);
-        binder.bind(destinationComboBox, AccountCopy::getDestination,  (e, r) -> {
-            e.setDestination(r);
-            e.setPlaceCode(r);
-            if(isDomestic) {
-                PlaceGeneration placeGeneration = placeGenerationService.findByCityName(accountCopy.getDestination());
-                e.setStateCode(placeGeneration.getPlaceCode());
-            } else {
-                Optional<Network> network = networkService.findOne(r);
-                network.ifPresent(value -> e.setStateCode(value.getZoneName()));
-            }
-        });
 
         // Booking Type
         Select<String> bookingTypeSelect = new Select<>();
@@ -256,6 +245,22 @@ public class AccountCopyForm extends Div {
         courierSelect.setItems("TRACKON", "HORIZON", "BLUE DART", "PAFEX", "FEDEX", "PRIME TRACK");
         courierSelect.setValue("TRACKON");
         binder.bind(courierSelect, AccountCopy::getToParty, AccountCopy::setToParty);
+
+        binder.bind(destinationComboBox, AccountCopy::getDestination,  (e, r) -> {
+            e.setDestination(r);
+            e.setPlaceCode(r);
+            if(isDomestic) {
+                PlaceGeneration placeGeneration = placeGenerationService.findByCityName(accountCopy.getDestination());
+                e.setStateCode(placeGeneration.getPlaceCode());
+            } else {
+                NetworkId networkId = new NetworkId();
+                networkId.setNetName(courierSelect.getValue());
+                networkId.setCountryName(r);
+
+                Optional<Network> network = networkService.findOne(networkId);
+                network.ifPresent(value -> e.setStateCode(value.getZoneName()));
+            }
+        });
 
         formLayout.add(pincode, 3);
         formLayout.add(receiverName, 4);
@@ -467,8 +472,14 @@ public class AccountCopyForm extends Div {
                   accountCopy.getMode()
                 );
                 Logger.getLogger(AccountCopyForm.class.getName()).info("RateIntEntry : " + rateIntEntry);
-                Double rateText = new RateUtils().charges(Double.valueOf(weight.getValue()), rateIntEntry.getFrom1(), rateIntEntry.getTo1(), rateIntEntry.getRate(), rateIntEntry.getAddWt(), (double) rateIntEntry.getAddRt());
-                rate.setValue(Integer.toString(rateText.intValue()));
+                if(rateIntEntry != null) {
+                    Double rateText = new RateUtils().charges(Double.valueOf(weight.getValue()), rateIntEntry.getFrom1(), rateIntEntry.getTo1(), rateIntEntry.getRate(), rateIntEntry.getAddWt(), (double) rateIntEntry.getAddRt());
+                    rate.setValue(Integer.toString(rateText.intValue()));
+                } else {
+                    Notification.show("Rate not defined for client "+accountCopy.getClientName()+
+                            ", to party :  "+accountCopy.getToParty()+", state code : "+accountCopy.getStateCode()+", d/p : "+accountCopy.getdP()+", mode : "+accountCopy.getMode());
+                    rate.setValue("0");
+                }
             }
             rate.focus();
         } catch (ValidationException ex) {

@@ -1,8 +1,8 @@
 package com.krupatek.courier.service;
 
 import com.krupatek.courier.model.Network;
+import com.krupatek.courier.model.NetworkId;
 import com.krupatek.courier.repository.NetworkRepository;
-import org.hibernate.criterion.Example;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,8 +21,8 @@ public class NetworkServiceImpl implements NetworkService {
     }
 
     @Override
-    public Optional<Network> findOne(String cityName) {
-        return networkRepository.findById(cityName);
+    public Optional<Network> findOne(NetworkId networkId) {
+        return networkRepository.findById(networkId);
     }
 
     @Override
