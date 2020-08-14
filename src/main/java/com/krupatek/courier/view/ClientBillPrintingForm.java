@@ -117,7 +117,7 @@ public class ClientBillPrintingForm extends Div {
         currentMonthButton.setWidth("12.5%");
 
         // Refresh Button
-        Button refreshButton = new Button("Refresh");
+        Button refreshButton = new Button("Refresh", VaadinIcon.REFRESH.create());
         refreshButton.setWidth("12.5%");
 
         // Show Button

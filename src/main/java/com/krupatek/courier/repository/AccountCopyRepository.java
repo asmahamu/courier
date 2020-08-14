@@ -42,4 +42,10 @@ public interface AccountCopyRepository extends JpaRepository<AccountCopy, String
             String billNo);
 
     AccountCopy findOneByDocNo(String docNo);
+
+    @Query(value = "SELECT sum(rate) FROM easynew.account_copy where doc_no LIKE :docNo% and client_name LIKE :clientName% and pod_dt LIKE :podDate%", nativeQuery = true)
+    long totalByDocNoStartsWithAndClientNameStartsWithAndPodDate(String docNo, String clientName, Date podDate);
+
+    @Query(value = "SELECT sum(rate) FROM easynew.account_copy where doc_no LIKE :docNo% and client_name LIKE :clientName%", nativeQuery = true)
+    long totalByDocNoStartsWithAndClientNameStartsWith(String docNo, String clientName);
 }

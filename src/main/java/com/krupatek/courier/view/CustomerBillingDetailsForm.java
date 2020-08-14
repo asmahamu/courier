@@ -161,7 +161,7 @@ public class CustomerBillingDetailsForm extends Div {
         endDatePicker.addValueChangeListener(endDateChangeListener);
 
         // Refresh
-        Button refreshButton = new Button("Refresh");
+        Button refreshButton = new Button("Refresh", VaadinIcon.REFRESH.create());
         refreshButton.setWidth("8%");
 
         Button showButton = new Button("Show");

@@ -34,6 +34,10 @@ public interface AccountCopyService {
 
     long countByDocNoStartsWithAndClientNameStartsWithAndPodDate(String docNo, String clientName, Date podDate);
 
+    long totalByDocNoStartsWithAndClientNameStartsWith(String docNo, String clientName);
+
+    long totalByDocNoStartsWithAndClientNameStartsWithAndPodDate(String docNo, String clientName, Date podDate);
+
     List<AccountCopy> findAllByBillNo(String billNo);
 
     void tagBillNo(String currentSelectedItem, Date fromLocaleDate, Date fromLocaleDate1, String type, String billNo);

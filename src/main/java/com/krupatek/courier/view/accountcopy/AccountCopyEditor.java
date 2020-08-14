@@ -12,9 +12,12 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H4;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.provider.ConfigurableFilterDataProvider;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.value.ValueChangeMode;
@@ -32,6 +35,8 @@ import java.util.logging.Logger;
 public class AccountCopyEditor extends Div {
     private AccountCopyFilter filter;
     private final int PAGE_SIZE = 1000;
+    private TextField totalDocNoTF;
+    private TextField grossTotalTF;
 
     public AccountCopyEditor(
             AccountCopyService accountCopyService,
@@ -135,10 +140,20 @@ public class AccountCopyEditor extends Div {
                             String docNoFilter = accountCopyFilter.getDocNoFilter();
                             String clientNameFilter = accountCopyFilter.getClientNameFilter();
                             Date dateFilter = accountCopyFilter.getDateFilter();
-                            return Math.toIntExact(
+                            Integer totalDocNo = Math.toIntExact(
                                     dateFilter != null ?
                                             accountCopyService.countByDocNoStartsWithAndClientNameStartsWithAndPodDate(docNoFilter, clientNameFilter, dateFilter) :
-                                    accountCopyService.countByDocNoStartsWithAndClientNameStartsWith(docNoFilter, clientNameFilter));
+                                            accountCopyService.countByDocNoStartsWithAndClientNameStartsWith(docNoFilter, clientNameFilter));
+                            totalDocNoTF.setValue(String.valueOf(totalDocNo));
+
+
+                            Integer totalRate = Math.toIntExact(
+                                    dateFilter != null ?
+                                            accountCopyService.totalByDocNoStartsWithAndClientNameStartsWithAndPodDate(docNoFilter, clientNameFilter, dateFilter) :
+                                            accountCopyService.totalByDocNoStartsWithAndClientNameStartsWith(docNoFilter, clientNameFilter));
+
+                            grossTotalTF.setValue(String.format("%.02f", totalRate.floatValue()));
+                            return totalDocNo;
                         });
 
         filter = new AccountCopyFilter();
@@ -184,8 +199,15 @@ public class AccountCopyEditor extends Div {
             add(accountCopyForm);
         });
 
+        // Panel 1
+        HorizontalLayout invoiceDateHorizontalLayout = new HorizontalLayout();
+        invoiceDateHorizontalLayout.setAlignItems(HorizontalLayout.Alignment.END);
+        invoiceDateHorizontalLayout.setMargin(false);
+        invoiceDateHorizontalLayout.setPadding(false);
+        invoiceDateHorizontalLayout.setWidth("100%");
+
         Button addNewBtn = new Button("New Account Copy", VaadinIcon.PLUS.create());
-        addNewBtn.setWidth("100%");
+        addNewBtn.setWidth("15%");
         addNewBtn.addClickListener(e -> add(new AccountCopyForm(
                 accountCopyService,
                 clientService,
@@ -196,7 +218,68 @@ public class AccountCopyEditor extends Div {
                 dateUtils,
                 numberUtils,
                 new AccountCopy())));
-        verticalLayout.add(title, accountCopyGrid, addNewBtn);
+
+        Button refreshBtn = new Button("Refresh", VaadinIcon.REFRESH.create());
+        refreshBtn.setWidth("12.5%");
+        refreshBtn.addClickListener( e -> {
+            wrapper.setFilter(filter);
+        });
+
+        Button resetBtn = new Button("Reset");
+        resetBtn.setWidth("12.5%");
+        resetBtn.addClickListener( e -> {
+            filter.setClientNameFilter("");
+            filter.setDocNoFilter("");
+            filter.setDateFilter(null);
+
+            docNo.setValue("");
+            podDate.setValue("");
+            clientName.setValue("");
+
+            wrapper.setFilter(filter);
+        });
+
+        invoiceDateHorizontalLayout.add(addNewBtn, refreshBtn, resetBtn);
+
+        // Footer
+        Label totalDocNoLbl = new Label();
+        totalDocNoLbl.setWidth("5%");
+        totalDocNoLbl.addClassName("bold-label");
+        totalDocNoLbl.setText("Total : ");
+
+        totalDocNoTF = new TextField();
+        totalDocNoTF.addThemeVariants(TextFieldVariant.LUMO_ALIGN_RIGHT);
+        totalDocNoTF.setWidth("5%");
+        totalDocNoTF.addClassName("bold-label");
+        totalDocNoTF.setReadOnly(true);
+
+        Label leftEmptyLabelGrossTotalFooterHLayout = new Label();
+        leftEmptyLabelGrossTotalFooterHLayout.setWidth("53%");
+
+        Label grossTotalLbl = new Label();
+        grossTotalLbl.setText("Amount : ");
+        grossTotalLbl.setWidth("11%");
+
+        grossTotalTF = new TextField();
+        grossTotalTF.addThemeVariants(TextFieldVariant.LUMO_ALIGN_RIGHT);
+        grossTotalTF.setWidth("10%");
+        grossTotalTF.setReadOnly(true);
+
+        Label rightEmptyLabelGrossTotalFooterHLayout = new Label();
+        rightEmptyLabelGrossTotalFooterHLayout.setWidth("16%");
+
+
+        HorizontalLayout grossTotalFooterHLayout = new HorizontalLayout();
+        grossTotalFooterHLayout.setMargin(false);
+        grossTotalFooterHLayout.setPadding(false);
+        grossTotalFooterHLayout.setSpacing(false);
+        grossTotalFooterHLayout.setWidth("100%");
+
+
+        grossTotalFooterHLayout.add(totalDocNoLbl, totalDocNoTF, leftEmptyLabelGrossTotalFooterHLayout, grossTotalLbl, grossTotalTF, rightEmptyLabelGrossTotalFooterHLayout);
+
+
+        verticalLayout.add(title, invoiceDateHorizontalLayout, accountCopyGrid, grossTotalFooterHLayout);
 
         add(verticalLayout);
     }

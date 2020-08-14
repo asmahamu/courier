@@ -82,6 +82,16 @@ public class AccountCopyServiceImpl implements AccountCopyService {
     }
 
     @Override
+    public long totalByDocNoStartsWithAndClientNameStartsWith(String docNo, String clientName) {
+        return accountCopyRepository.totalByDocNoStartsWithAndClientNameStartsWith(docNo, clientName);
+    }
+
+    @Override
+    public long totalByDocNoStartsWithAndClientNameStartsWithAndPodDate(String docNo, String clientName, Date podDate) {
+        return accountCopyRepository.totalByDocNoStartsWithAndClientNameStartsWithAndPodDate(docNo, clientName, podDate);
+    }
+
+    @Override
     public List<AccountCopy> findAllByBillNo(String billNo) {
         return accountCopyRepository.findAllByBillNo(billNo);
     }
