@@ -1,5 +1,6 @@
 package com.krupatek.courier.view;
 
+import com.krupatek.courier.Constants;
 import com.krupatek.courier.model.*;
 import com.krupatek.courier.repository.CompanyRepository;
 import com.krupatek.courier.service.AccountCopyService;
@@ -55,14 +56,17 @@ public class ClientBillRePrintingForm extends Div {
         TextField billNo = new TextField();
         billNo.setPlaceholder("Filter by Bill No");
         billNo.setValueChangeMode(ValueChangeMode.LAZY);
+        billNo.setValueChangeTimeout(Constants.TEXT_FIELD_TIMEOUT);
 
         TextField billDate = new TextField();
         billDate.setPlaceholder("Filter by Invoice Date");
         billDate.setValueChangeMode(ValueChangeMode.LAZY);
+        billDate.setValueChangeTimeout(Constants.TEXT_FIELD_TIMEOUT);
 
         TextField clientName = new TextField();
         clientName.setPlaceholder("Filter by Client Name");
         clientName.setValueChangeMode(ValueChangeMode.LAZY);
+        clientName.setValueChangeTimeout(Constants.TEXT_FIELD_TIMEOUT);
 
         Grid<BillGeneration> clientBillGrid = new Grid<>(BillGeneration.class);
         clientBillGrid.setPageSize(PAGE_SIZE);

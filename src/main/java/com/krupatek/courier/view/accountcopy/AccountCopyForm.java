@@ -1,5 +1,6 @@
 package com.krupatek.courier.view.accountcopy;
 
+import com.krupatek.courier.Constants;
 import com.krupatek.courier.model.*;
 import com.krupatek.courier.service.*;
 import com.krupatek.courier.utils.DateUtils;
@@ -92,6 +93,7 @@ public class AccountCopyForm extends Div {
         docNo.setWidth("25%");
         docNo.setLabel("Doc No. : ");
         docNo.setValueChangeMode(ValueChangeMode.LAZY);
+        docNo.setValueChangeTimeout(Constants.TEXT_FIELD_TIMEOUT);
         docNo.setAutoselect(true);
         binder.
                 forField(docNo).asRequired("Every Account copy must have Doc no").
@@ -105,10 +107,10 @@ public class AccountCopyForm extends Div {
                     if (newAccountCopy != null) {
                         docNo.setInvalid(false);
                         binder.readBean(newAccountCopy);
-                        docNo.focus();
                     } else {
                         docNo.setInvalid(true);
                         docNo.setErrorMessage("Account Copy doesn't exists with this Doc No.");
+                        docNo.focus();
                     }
                 }
             });
@@ -120,9 +122,10 @@ public class AccountCopyForm extends Div {
                     if (newAccountCopy != null) {
                         docNo.setInvalid(true);
                         docNo.setErrorMessage("Account Copy already exists with this Doc No.");
+                        docNo.focus();
                     } else {
                         docNo.setInvalid(false);
-                        docNo.focus();
+//                        docNo.focus();
                     }
                 }
             });

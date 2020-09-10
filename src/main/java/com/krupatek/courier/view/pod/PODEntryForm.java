@@ -1,5 +1,6 @@
 package com.krupatek.courier.view.pod;
 
+import com.krupatek.courier.Constants;
 import com.krupatek.courier.model.AccountCopy;
 import com.krupatek.courier.service.AccountCopyService;
 import com.krupatek.courier.utils.DateUtils;
@@ -52,6 +53,7 @@ public class PODEntryForm extends Div {
         docNo.setLabel("Doc No. : ");
         docNo.setAutoselect(true);
         docNo.setValueChangeMode(ValueChangeMode.LAZY);
+        docNo.setValueChangeTimeout(Constants.TEXT_FIELD_TIMEOUT);
         docNo.addValueChangeListener(e -> {
            if(e.getValue() != null && e.getValue().length() > 4){
                 String newDocNo = e.getValue();

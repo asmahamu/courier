@@ -1,5 +1,6 @@
 package com.krupatek.courier.view.clientprofile;
 
+import com.krupatek.courier.Constants;
 import com.krupatek.courier.model.Client;
 import com.krupatek.courier.service.ClientService;
 import com.vaadin.flow.component.button.Button;
@@ -34,6 +35,7 @@ public class ClientProfileEditor extends Div {
         TextField clientName = new TextField();
         clientName.setPlaceholder("Filter by Client Name");
         clientName.setValueChangeMode(ValueChangeMode.LAZY);
+        clientName.setValueChangeTimeout(Constants.TEXT_FIELD_TIMEOUT);
         Grid<Client> clientGrid = new Grid<>(Client.class);
         clientGrid.setPageSize(PAGE_SIZE);
         clientGrid.setColumns("clientCode", "clientName", "city", "phone", "branch_name", "gstNo", "gstEnabled", "fsc");

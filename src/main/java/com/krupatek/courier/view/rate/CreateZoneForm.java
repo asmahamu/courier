@@ -31,6 +31,7 @@ public class CreateZoneForm  extends Div {
         HorizontalLayout buttonContainer = new HorizontalLayout();
         Button createZone = new Button("Create Zone");
         Button cancelZone = new Button("Cancel");
+
         buttonContainer.add(createZone,cancelZone);
 
         H4 label = new H4("Zones");
@@ -67,6 +68,9 @@ public class CreateZoneForm  extends Div {
             }
         });
 
+        cancelZone.addClickListener(event -> {
+            dialog.close();
+        });
         dialog.open();
     }
 

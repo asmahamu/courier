@@ -1,5 +1,6 @@
 package com.krupatek.courier.view.accountcopy;
 
+import com.krupatek.courier.Constants;
 import com.krupatek.courier.model.AccountCopy;
 import com.krupatek.courier.model.AccountCopyFilter;
 import com.krupatek.courier.service.*;
@@ -23,6 +24,7 @@ import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
+import org.springframework.aop.AopInvocationException;
 import org.springframework.data.domain.Page;
 
 import java.text.ParseException;
@@ -60,14 +62,17 @@ public class AccountCopyEditor extends Div {
         TextField docNo = new TextField();
         docNo.setPlaceholder("Filter by Doc No");
         docNo.setValueChangeMode(ValueChangeMode.LAZY);
+        docNo.setValueChangeTimeout(Constants.TEXT_FIELD_TIMEOUT);
 
         TextField podDate = new TextField();
         podDate.setPlaceholder("Filter by Date");
         podDate.setValueChangeMode(ValueChangeMode.LAZY);
+        podDate.setValueChangeTimeout(Constants.TEXT_FIELD_TIMEOUT);
 
         TextField clientName = new TextField();
         clientName.setPlaceholder("Filter by Client Name");
         clientName.setValueChangeMode(ValueChangeMode.LAZY);
+        clientName.setValueChangeTimeout(Constants.TEXT_FIELD_TIMEOUT);
 
         Grid<AccountCopy> accountCopyGrid = new Grid<>(AccountCopy.class, false);
         accountCopyGrid.setPageSize(PAGE_SIZE);
@@ -147,12 +152,15 @@ public class AccountCopyEditor extends Div {
                             totalDocNoTF.setValue(String.valueOf(totalDocNo));
 
 
-                            Integer totalRate = Math.toIntExact(
-                                    dateFilter != null ?
-                                            accountCopyService.totalByDocNoStartsWithAndClientNameStartsWithAndPodDate(docNoFilter, clientNameFilter, dateFilter) :
-                                            accountCopyService.totalByDocNoStartsWithAndClientNameStartsWith(docNoFilter, clientNameFilter));
-
-                            grossTotalTF.setValue(String.format("%.02f", totalRate.floatValue()));
+                            try {
+                                Integer totalRate = Math.toIntExact(
+                                        dateFilter != null ?
+                                                accountCopyService.totalByDocNoStartsWithAndClientNameStartsWithAndPodDate(docNoFilter, clientNameFilter, dateFilter) :
+                                                accountCopyService.totalByDocNoStartsWithAndClientNameStartsWith(docNoFilter, clientNameFilter));
+                                grossTotalTF.setValue(String.format("%.02f", totalRate.floatValue()));
+                            } catch (AopInvocationException e){
+                                grossTotalTF.setValue(String.format("%.02f", 0f));
+                            }
                             return totalDocNo;
                         });
 
