@@ -103,10 +103,10 @@ public class AccountCopyForm extends Div {
             docNo.addValueChangeListener(e -> {
                 if (e.getValue() != null && e.getValue().length() > 4) {
                     String newDocNo = e.getValue();
-                    AccountCopy newAccountCopy = accountCopyService.findOneByDocNo(newDocNo);
-                    if (newAccountCopy != null) {
+                    Optional<AccountCopy> newAccountCopy = accountCopyService.findOneByDocNo(newDocNo);
+                    if (newAccountCopy.isPresent()) {
                         docNo.setInvalid(false);
-                        binder.readBean(newAccountCopy);
+                        binder.readBean(newAccountCopy.get());
                     } else {
                         docNo.setInvalid(true);
                         docNo.setErrorMessage("Account Copy doesn't exists with this Doc No.");
@@ -118,8 +118,8 @@ public class AccountCopyForm extends Div {
             docNo.addValueChangeListener(e -> {
                 if (e.getValue() != null && e.getValue().length() > 4) {
                     String newDocNo = e.getValue();
-                    AccountCopy newAccountCopy = accountCopyService.findOneByDocNo(newDocNo);
-                    if (newAccountCopy != null) {
+                    Optional<AccountCopy> newAccountCopy = accountCopyService.findOneByDocNo(newDocNo);
+                    if (newAccountCopy.isPresent()) {
                         docNo.setInvalid(true);
                         docNo.setErrorMessage("Account Copy already exists with this Doc No.");
                         docNo.focus();

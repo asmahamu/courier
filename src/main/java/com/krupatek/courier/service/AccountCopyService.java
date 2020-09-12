@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public interface AccountCopyService {
@@ -42,7 +43,7 @@ public interface AccountCopyService {
 
     void tagBillNo(String currentSelectedItem, Date fromLocaleDate, Date fromLocaleDate1, String type, String billNo);
 
-    AccountCopy findOneByDocNo(String docNo);
+    Optional<AccountCopy> findOneByDocNo(String docNo);
 
     void delete(AccountCopy accountCopy);
 }

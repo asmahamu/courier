@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class AccountCopyServiceImpl implements AccountCopyService {
@@ -57,13 +59,13 @@ public class AccountCopyServiceImpl implements AccountCopyService {
     @Override
     public Page<AccountCopy> findByDocNoStartsWithAndClientNameStartsWithAndPodDate(int offset, int limit, String docNo, String clientName, Date podDate) {
         Pageable pageable = PageRequest.of(offset, limit);
-        return accountCopyRepository.findByDocNoStartsWithAndClientNameStartsWithAndPodDate(docNo, clientName, podDate, pageable);
+        return accountCopyRepository.findByDocNoStartsWithAndClientNameStartsWithAndPodDateOrderByPodDateDesc(docNo, clientName, podDate, pageable);
     }
 
     @Override
     public Page<AccountCopy> findByDocNoStartsWithAndClientNameStartsWith(int offset, int limit, String docNo, String clientName) {
         Pageable pageable = PageRequest.of(offset, limit);
-        return accountCopyRepository.findByDocNoStartsWithAndClientNameStartsWith(docNo, clientName, pageable);
+        return accountCopyRepository.findByDocNoStartsWithAndClientNameStartsWithOrderByPodDateDesc(docNo, clientName, pageable);
     }
 
     @Override
@@ -103,7 +105,7 @@ public class AccountCopyServiceImpl implements AccountCopyService {
     }
 
     @Override
-    public AccountCopy findOneByDocNo(String docNo) {
+    public Optional<AccountCopy> findOneByDocNo(String docNo) {
         return accountCopyRepository.findOneByDocNo(docNo);
     }
 

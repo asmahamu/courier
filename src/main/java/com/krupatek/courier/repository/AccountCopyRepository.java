@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface AccountCopyRepository extends JpaRepository<AccountCopy, String> {
@@ -20,8 +21,8 @@ public interface AccountCopyRepository extends JpaRepository<AccountCopy, String
     List<AccountCopy> findAllByClientNameAndPodDateBetweenAndType(String clientName, Date startDate, Date endDate, String type);
     List<AccountCopy> findByDocNoStartsWith(String docNo);
     Page<AccountCopy> findByDocNoStartsWith(String docNo, Pageable page);
-    Page<AccountCopy> findByDocNoStartsWithAndClientNameStartsWith(String docNo, String clientName, Pageable page);
-    Page<AccountCopy> findByDocNoStartsWithAndClientNameStartsWithAndPodDate(String docNo, String clientName, Date podDate, Pageable page);
+    Page<AccountCopy> findByDocNoStartsWithAndClientNameStartsWithOrderByPodDateDesc(String docNo, String clientName, Pageable page);
+    Page<AccountCopy> findByDocNoStartsWithAndClientNameStartsWithAndPodDateOrderByPodDateDesc(String docNo, String clientName, Date podDate, Pageable page);
     long countByDocNoStartsWith(String docNo);
     long countByDocNoStartsWithAndClientNameStartsWith(String docNo, String clientName);
     long countByDocNoStartsWithAndClientNameStartsWithAndPodDate(String docNo, String clientName, Date podDate);
@@ -41,7 +42,7 @@ public interface AccountCopyRepository extends JpaRepository<AccountCopy, String
             @Param("billNo")
             String billNo);
 
-    AccountCopy findOneByDocNo(String docNo);
+    Optional<AccountCopy> findOneByDocNo(String docNo);
 
     @Query(value = "SELECT sum(rate) FROM easynew.account_copy where doc_no LIKE :docNo% and client_name LIKE :clientName% and pod_dt LIKE :podDate%", nativeQuery = true)
     long totalByDocNoStartsWithAndClientNameStartsWithAndPodDate(String docNo, String clientName, Date podDate);

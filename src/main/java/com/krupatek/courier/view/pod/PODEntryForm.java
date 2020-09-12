@@ -24,6 +24,7 @@ import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.data.value.ValueChangeMode;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 public class PODEntryForm extends Div {
     AccountCopy accountCopy = new AccountCopy();
@@ -57,8 +58,9 @@ public class PODEntryForm extends Div {
         docNo.addValueChangeListener(e -> {
            if(e.getValue() != null && e.getValue().length() > 4){
                 String newDocNo = e.getValue();
-                accountCopy =  accountCopyService.findOneByDocNo(newDocNo);
-               if (accountCopy != null) {
+                Optional<AccountCopy> newAccountCopy =  accountCopyService.findOneByDocNo(newDocNo);
+               if (newAccountCopy.isPresent()) {
+                   accountCopy = newAccountCopy.get();
                    docNo.setInvalid(false);
                    binder.readBean(accountCopy);
                    docNo.focus();
