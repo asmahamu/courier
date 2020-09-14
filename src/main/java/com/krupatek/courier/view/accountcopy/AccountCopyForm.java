@@ -110,7 +110,7 @@ public class AccountCopyForm extends Div {
                     } else {
                         docNo.setInvalid(true);
                         docNo.setErrorMessage("Account Copy doesn't exists with this Doc No.");
-                        docNo.focus();
+//                        docNo.focus();
                     }
                 }
             });
@@ -122,7 +122,7 @@ public class AccountCopyForm extends Div {
                     if (newAccountCopy.isPresent()) {
                         docNo.setInvalid(true);
                         docNo.setErrorMessage("Account Copy already exists with this Doc No.");
-                        docNo.focus();
+//                        docNo.focus();
                     } else {
                         docNo.setInvalid(false);
 //                        docNo.focus();
