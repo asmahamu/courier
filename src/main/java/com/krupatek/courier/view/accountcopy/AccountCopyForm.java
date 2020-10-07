@@ -319,7 +319,11 @@ public class AccountCopyForm extends Div {
 
                         accountCopyService.saveAndFlush(accountCopy);
                         Notification.show("Account copy updated successfully.");
-                        docNo.focus();
+                        if(isNewAccountCopy){
+                            docNo.focus();
+                        } else {
+                            dialog.close();
+                        }
                         // A real application would also save the updated person
                         // using the application's backend
                     } catch (ValidationException e) {
