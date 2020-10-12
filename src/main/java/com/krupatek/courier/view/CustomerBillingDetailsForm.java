@@ -46,6 +46,8 @@ import java.util.stream.Collectors;
 public class CustomerBillingDetailsForm extends Div {
     private final String CLIENT_SELECT_ALL = "ALL";
     private String currentSelectedItem;
+    private List<AccountCopy> allByClientNameAndPodDateBetween = new ArrayList<>();
+
 
     public CustomerBillingDetailsForm(
             AccountCopyService accountCopyService,
@@ -180,6 +182,7 @@ public class CustomerBillingDetailsForm extends Div {
         accountCopyGrid.setWidthFull();
         accountCopyGrid.setSelectionMode(Grid.SelectionMode.SINGLE);
 
+        accountCopyGrid.addColumn(accountCopy ->  (allByClientNameAndPodDateBetween.indexOf(accountCopy) + 1)).setHeader(new Html("<b>Sr No</b>")).setWidth("5%").setFlexGrow(0).setTextAlign(ColumnTextAlign.END);;
         accountCopyGrid.addColumn(AccountCopy::getDocNo).setKey("docNo");
         accountCopyGrid.addColumn(accountCopy -> dateUtils.ddmmyyFormat(accountCopy.getPodDate())).setKey("podDate");
         accountCopyGrid.addColumn(AccountCopy::getClientName).setKey("clientName");
@@ -191,13 +194,13 @@ public class CustomerBillingDetailsForm extends Div {
         accountCopyGrid.addColumn(AccountCopy::getMode).setKey("mode");
 
         accountCopyGrid.getColumnByKey("docNo").setHeader(new Html("<b>Doc No</b>")).setWidth("10%").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("podDate").setHeader(new Html("<b>POD Date</b>")).setWidth("10%").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("clientName").setHeader(new Html("<b>Client Name</b>")).setWidth("25%").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("podDate").setHeader(new Html("<b>POD Date</b>")).setWidth("8%").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("clientName").setHeader(new Html("<b>Client Name</b>")).setWidth("24%").setFlexGrow(0);
         accountCopyGrid.getColumnByKey("destination").setHeader(new Html("<b>Destination</b>")).setWidth("10%").setFlexGrow(0);
         accountCopyGrid.getColumnByKey("weight").setHeader(new Html("<b>Weight</b>")).setWidth("8%").setFlexGrow(0);
         accountCopyGrid.getColumnByKey("otherCharges").setHeader(new Html("<b>Other Charges</b>")).setWidth("11%").setFlexGrow(0);
         accountCopyGrid.getColumnByKey("rate").setHeader(new Html("<b>Rate</b>")).setWidth("10%").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("dP").setHeader(new Html("<b>D/P</b>")).setWidth("8%").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("dP").setHeader(new Html("<b>D/P</b>")).setWidth("6%").setFlexGrow(0);
         accountCopyGrid.getColumnByKey("mode").setHeader(new Html("<b>Mode</b>")).setWidth("8%").setFlexGrow(0);
 
         accountCopyGrid.getColumnByKey("docNo").setTextAlign(ColumnTextAlign.END);
@@ -467,7 +470,9 @@ public class CustomerBillingDetailsForm extends Div {
             DateFilter dateFilter,
             TextField grossTotalTF,
             TextField totalDocNoTF){
-        List<AccountCopy> allByClientNameAndPodDateBetween = new ArrayList<>();
+
+        allByClientNameAndPodDateBetween.clear();
+
         if(currentSelectedItem.equalsIgnoreCase("ALL")){
             allByClientNameAndPodDateBetween.addAll(accountCopyService.findAllByPodDateBetween(
                     fromLocaleDate(dateFilter.getStartDate()),
