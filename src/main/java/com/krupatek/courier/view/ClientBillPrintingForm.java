@@ -9,9 +9,7 @@ import com.krupatek.courier.service.*;
 import com.krupatek.courier.utils.DateUtils;
 import com.krupatek.courier.utils.NumberUtils;
 import com.krupatek.courier.view.accountcopy.AccountCopyForm;
-import com.vaadin.flow.component.AbstractField;
-import com.vaadin.flow.component.HasValue;
-import com.vaadin.flow.component.Html;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -30,6 +28,7 @@ import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.server.StreamResource;
 
@@ -41,6 +40,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ClientBillPrintingForm extends Div {
     private String currentSelectedItem;
@@ -489,23 +489,29 @@ public class ClientBillPrintingForm extends Div {
             }
         });
 
-        accountCopyGrid.addItemClickListener(listener -> {
-            AccountCopyForm accountCopyForm =  new AccountCopyForm(
-                    accountCopyService,
-                    clientService,
-                    rateMasterService,
-                    rateIntMasterService,
-                    placeGenerationService,
-                    networkService,
-                    dateUtils,
-                    numberUtils,
-                    listener.getItem());
-            add(accountCopyForm);
+        accountCopyGrid.asSingleSelect().addValueChangeListener(gridAccountCopyComponentValueChangeEvent -> {
+            accountCopyGrid.select(gridAccountCopyComponentValueChangeEvent.getValue());
+        });
+
+
+        accountCopyGrid.addSelectionListener(selectionEvent -> {
+            if(selectionEvent.isFromClient() && selectionEvent.getFirstSelectedItem().isPresent()) {
+                AccountCopyForm accountCopyForm = new AccountCopyForm(
+                        accountCopyService,
+                        clientService,
+                        rateMasterService,
+                        rateIntMasterService,
+                        placeGenerationService,
+                        networkService,
+                        dateUtils,
+                        numberUtils,
+                        selectionEvent.getFirstSelectedItem().get());
+                add(accountCopyForm);
+            }
         });
 
         updateTax(cgst,sgst,igst, fuelSurcharge, companyRepository.findAll().get(0));
         binder.readBean(dateFilter);
-
     }
 
     private void handleInvoiceAction(
@@ -710,6 +716,10 @@ public class ClientBillPrintingForm extends Div {
 
     private Date fromLocaleDate(LocalDate localDate){
         return new Date(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli());
+    }
+
+    private boolean keyEquals(Key key1, Key key2) {
+        return key1.getKeys().get(0).equals(key2.getKeys().get(0));
     }
 }
 class BillingFilter extends DateFilter{

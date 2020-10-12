@@ -8,6 +8,8 @@ import com.krupatek.courier.service.BillingService;
 import com.krupatek.courier.service.ClientService;
 import com.krupatek.courier.service.InvoiceService;
 import com.krupatek.courier.view.accountcopy.AccountCopyEditor;
+import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.KeyDownEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
@@ -24,6 +26,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.ConfigurableFilterDataProvider;
 import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.server.StreamResource;
 import org.springframework.data.domain.Page;
@@ -32,6 +35,7 @@ import java.io.*;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class ClientBillRePrintingForm extends Div {
     private ClientBillFilter filter;
@@ -111,6 +115,9 @@ public class ClientBillRePrintingForm extends Div {
                             Page<BillGeneration> accountCopies = billingService
                                     .findByBillNoStartsWithAndBillDateStartsWithAndClientNameStartsWith(offset, limit, billNoFilter, invoiceDateFilter, clientNameFilter);
                             Logger.getLogger(AccountCopyEditor.class.getName()).info("Total pages : "+accountCopies.getTotalElements());
+                            if(accountCopies.getSize() > 0){
+                                clientBillGrid.select(accountCopies.getContent().get(0));
+                            }
                             return accountCopies.stream();
                         },
                         // Second callback fetches the number of items
@@ -148,58 +155,66 @@ public class ClientBillRePrintingForm extends Div {
         });
         verticalLayout.add(title ,clientBillGrid);
 
-        clientBillGrid.addItemClickListener(listener -> {
-            String invoiceNo = listener.getItem().getBillNo();
-            List<AccountCopy> accountCopies = accountCopyService.findAllByBillNo(invoiceNo+" ");
-            Client client = clientService.findAllByClientName(listener.getItem().getClientName()).get(0);
-            Company company = companyRepository.findAll().get(0);
+        clientBillGrid.asSingleSelect().addValueChangeListener(gridBillGenerationComponentValueChangeEvent -> {
+           clientBillGrid.select(gridBillGenerationComponentValueChangeEvent.getValue());
+        });
 
-            try {
-                File pdfFile = invoiceService.generateInvoiceFor(company, client, listener.getItem(), accountCopies, Locale.getDefault());
+        clientBillGrid.addSelectionListener(selectionEvent -> {
+            if(selectionEvent.isFromClient() && selectionEvent.getFirstSelectedItem().isPresent()) {
+                String invoiceNo = selectionEvent.getFirstSelectedItem().get().getBillNo();
+                List<AccountCopy> accountCopies = accountCopyService.findAllByBillNo(invoiceNo + " ");
+                Client client = clientService.findAllByClientName(selectionEvent.getFirstSelectedItem().get().getClientName()).get(0);
+                Company company = companyRepository.findAll().get(0);
 
-                VerticalLayout embeddedPdfVLayout = new VerticalLayout();
-                embeddedPdfVLayout.setSizeFull();
+                try {
+                    File pdfFile = invoiceService.generateInvoiceFor(company, client, selectionEvent.getFirstSelectedItem().get(), accountCopies, Locale.getDefault());
 
-                StreamResource resource = new StreamResource("invoice.pdf", () -> {
-                    try {
-                        return new FileInputStream(pdfFile);
-                    } catch (FileNotFoundException e1) {
-                        return new ByteArrayInputStream(new byte[]{});
-                    }
-                });
-                String width = "1300px";
-                String height = "500px";
+                    VerticalLayout embeddedPdfVLayout = new VerticalLayout();
+                    embeddedPdfVLayout.setSizeFull();
 
-                HorizontalLayout buttonPanelReportPreview = new HorizontalLayout();
-
-                Label leftEmptyLbl = new Label();
-                leftEmptyLbl.setWidth("85%");
-
-                Anchor podSummaryDownloadLink = new Anchor(resource, "Download Invoice");
-                podSummaryDownloadLink.setWidth("10%");
-                podSummaryDownloadLink.getElement().setAttribute("download", true);
-                Button closeButton = new Button("", VaadinIcon.CLOSE.create());
-                closeButton.setWidth("5%");
-
-                buttonPanelReportPreview.add(leftEmptyLbl, podSummaryDownloadLink, closeButton);
-                buttonPanelReportPreview.setWidth(width);
-                buttonPanelReportPreview.setAlignItems(FlexComponent.Alignment.CENTER);
-
-                embeddedPdfVLayout.add(buttonPanelReportPreview);
-                embeddedPdfVLayout.add(new EmbeddedPdfDocument(resource, width, height));
-
-
-                Dialog dialog = new Dialog();
-                dialog.add(embeddedPdfVLayout);
-                closeButton.addClickListener( event -> {
-                            dialog.close();
+                    StreamResource resource = new StreamResource("invoice.pdf", () -> {
+                        try {
+                            return new FileInputStream(pdfFile);
+                        } catch (FileNotFoundException e1) {
+                            return new ByteArrayInputStream(new byte[]{});
                         }
-                );
-                dialog.open();
-            } catch (IOException e) {
-                e.printStackTrace();
+                    });
+                    String width = "1300px";
+                    String height = "500px";
+
+                    HorizontalLayout buttonPanelReportPreview = new HorizontalLayout();
+
+                    Label leftEmptyLbl = new Label();
+                    leftEmptyLbl.setWidth("85%");
+
+                    Anchor podSummaryDownloadLink = new Anchor(resource, "Download Invoice");
+                    podSummaryDownloadLink.setWidth("10%");
+                    podSummaryDownloadLink.getElement().setAttribute("download", true);
+                    Button closeButton = new Button("", VaadinIcon.CLOSE.create());
+                    closeButton.setWidth("5%");
+
+                    buttonPanelReportPreview.add(leftEmptyLbl, podSummaryDownloadLink, closeButton);
+                    buttonPanelReportPreview.setWidth(width);
+                    buttonPanelReportPreview.setAlignItems(FlexComponent.Alignment.CENTER);
+
+                    embeddedPdfVLayout.add(buttonPanelReportPreview);
+                    embeddedPdfVLayout.add(new EmbeddedPdfDocument(resource, width, height));
+
+
+                    Dialog dialog = new Dialog();
+                    dialog.add(embeddedPdfVLayout);
+                    closeButton.addClickListener(event -> {
+                                dialog.close();
+                            }
+                    );
+                    dialog.open();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
+
+
 
         add(verticalLayout);
     }

@@ -7,6 +7,8 @@ import com.krupatek.courier.service.*;
 import com.krupatek.courier.utils.DateUtils;
 import com.krupatek.courier.utils.NumberUtils;
 import com.vaadin.flow.component.Html;
+import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.KeyDownEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
@@ -21,6 +23,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.provider.ConfigurableFilterDataProvider;
 import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
@@ -30,7 +33,9 @@ import org.springframework.data.domain.Page;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @SpringComponent
 @UIScope
@@ -136,6 +141,9 @@ public class AccountCopyEditor extends Div {
                                     accountCopyService
                                             .findByDocNoStartsWithAndClientNameStartsWith(offset, limit, docNoFilter, clientNameFilter);
                             Logger.getLogger(AccountCopyEditor.class.getName()).info("Total pages : " + accountCopies.getTotalElements());
+                            if(accountCopies.getSize() > 0){
+                                accountCopyGrid.select(accountCopies.getContent().get(0));
+                            }
                             return accountCopies.stream();
                         },
                         // Second callback fetches the number of items
@@ -193,7 +201,12 @@ public class AccountCopyEditor extends Div {
 //            wrapper.refreshAll();
         });
 
-        accountCopyGrid.addItemClickListener(listener -> {
+        accountCopyGrid.asSingleSelect().addValueChangeListener(gridAccountCopyComponentValueChangeEvent -> {
+            accountCopyGrid.select(gridAccountCopyComponentValueChangeEvent.getValue());
+        });
+
+        accountCopyGrid.addSelectionListener(selectionEvent -> {
+            if(selectionEvent.isFromClient() && selectionEvent.getFirstSelectedItem().isPresent()) {
             AccountCopyForm accountCopyForm = new AccountCopyForm(
                     accountCopyService,
                     clientService,
@@ -203,8 +216,9 @@ public class AccountCopyEditor extends Div {
                     networkService,
                     dateUtils,
                     numberUtils,
-                    listener.getItem());
-            add(accountCopyForm);
+                    selectionEvent.getFirstSelectedItem().get());
+                add(accountCopyForm);
+            }
         });
 
         // Panel 1
@@ -291,4 +305,5 @@ public class AccountCopyEditor extends Div {
 
         add(verticalLayout);
     }
+
 }

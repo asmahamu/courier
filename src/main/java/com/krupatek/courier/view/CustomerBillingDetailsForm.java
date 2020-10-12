@@ -8,9 +8,7 @@ import com.krupatek.courier.service.*;
 import com.krupatek.courier.utils.DateUtils;
 import com.krupatek.courier.utils.NumberUtils;
 import com.krupatek.courier.view.accountcopy.AccountCopyForm;
-import com.vaadin.flow.component.AbstractField;
-import com.vaadin.flow.component.HasValue;
-import com.vaadin.flow.component.Html;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -29,6 +27,7 @@ import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
@@ -40,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 @SpringComponent
 @UIScope
@@ -178,6 +178,7 @@ public class CustomerBillingDetailsForm extends Div {
 
         Grid<AccountCopy> accountCopyGrid = new Grid<>(AccountCopy.class, false);
         accountCopyGrid.setWidthFull();
+        accountCopyGrid.setSelectionMode(Grid.SelectionMode.SINGLE);
 
         accountCopyGrid.addColumn(AccountCopy::getDocNo).setKey("docNo");
         accountCopyGrid.addColumn(accountCopy -> dateUtils.ddmmyyFormat(accountCopy.getPodDate())).setKey("podDate");
@@ -423,21 +424,41 @@ public class CustomerBillingDetailsForm extends Div {
             load(accountCopyGrid, accountCopyService, dateFilter, grossTotalTF, totalDocNoTF);
         });
 
-        accountCopyGrid.addItemClickListener(listener -> {
-            AccountCopyForm accountCopyForm =  new AccountCopyForm(
-                    accountCopyService,
-                    clientService,
-                    rateMasterService,
-                    rateIntMasterService,
-                    placeGenerationService,
-                    networkService,
-                    dateUtils,
-                    numberUtils,
-                    listener.getItem());
-            add(accountCopyForm);
+        accountCopyGrid.asSingleSelect().addValueChangeListener(gridAccountCopyComponentValueChangeEvent -> {
+            accountCopyGrid.select(gridAccountCopyComponentValueChangeEvent.getValue());
+        });
+
+
+//        ShortcutEventListener shortcutEventListener = (ShortcutEventListener) shortcutEvent -> {
+//            if(accountCopyGrid.getSelectedItems().size() > 0){
+//                loadAccountForm(accountCopyService, clientService, rateMasterService, rateIntMasterService, placeGenerationService, networkService, dateUtils, numberUtils, accountCopyGrid.getSelectedItems().stream().findFirst().get());
+//            }
+//        };
+//        Shortcuts.addShortcutListener(accountCopyGrid, shortcutEventListener, Key.ENTER);
+
+
+        accountCopyGrid.addSelectionListener(selectionEvent -> {
+            if(selectionEvent.isFromClient() && selectionEvent.getFirstSelectedItem().isPresent()){
+                loadAccountForm(accountCopyService, clientService, rateMasterService, rateIntMasterService, placeGenerationService, networkService, dateUtils, numberUtils, selectionEvent.getFirstSelectedItem().get());
+            }
         });
 
         binder.readBean(dateFilter);
+    }
+
+    private void loadAccountForm(AccountCopyService accountCopyService, ClientService clientService, RateMasterService rateMasterService, RateIntMasterService rateIntMasterService, PlaceGenerationService placeGenerationService, NetworkService networkService, DateUtils dateUtils, NumberUtils numberUtils, AccountCopy accountCopy) {
+        AccountCopyForm accountCopyForm =  new AccountCopyForm(
+                accountCopyService,
+                clientService,
+                rateMasterService,
+                rateIntMasterService,
+                placeGenerationService,
+                networkService,
+                dateUtils,
+                numberUtils,
+                accountCopy
+                );
+        add(accountCopyForm);
     }
 
     private void load(
