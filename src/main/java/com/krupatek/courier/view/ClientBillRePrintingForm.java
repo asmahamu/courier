@@ -8,6 +8,7 @@ import com.krupatek.courier.service.BillingService;
 import com.krupatek.courier.service.ClientService;
 import com.krupatek.courier.service.InvoiceService;
 import com.krupatek.courier.view.accountcopy.AccountCopyEditor;
+import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.KeyDownEvent;
 import com.vaadin.flow.component.button.Button;
@@ -72,15 +73,19 @@ public class ClientBillRePrintingForm extends Div {
         clientName.setValueChangeMode(ValueChangeMode.LAZY);
         clientName.setValueChangeTimeout(Constants.TEXT_FIELD_TIMEOUT);
 
-        Grid<BillGeneration> clientBillGrid = new Grid<>(BillGeneration.class);
+        Grid<BillGeneration> clientBillGrid = new Grid<>(BillGeneration.class, false);
         clientBillGrid.setPageSize(PAGE_SIZE);
-        clientBillGrid.setColumns("billNo", "billDate", "clientName", "billAmount", "netAmount");
 
-        clientBillGrid.getColumnByKey("billNo").setTextAlign(ColumnTextAlign.END).setWidth("16.5%").setFlexGrow(0);
-        clientBillGrid.getColumnByKey("billDate").setWidth("16.5%").setFlexGrow(0);
-        clientBillGrid.getColumnByKey("clientName").setWidth("33%").setFlexGrow(0);
-        clientBillGrid.getColumnByKey("billAmount").setTextAlign(ColumnTextAlign.END).setWidth("16.5%").setFlexGrow(0);
-        clientBillGrid.getColumnByKey("netAmount").setTextAlign(ColumnTextAlign.END).setWidth("16.5%").setFlexGrow(0);
+        clientBillGrid.addColumn(BillGeneration::getBillNo).setKey("srNo").setHeader(new Html("<b>Sr No</b>")).
+                setTextAlign(ColumnTextAlign.END).setWidth("8%").setFlexGrow(0).getElement().executeJs("this.renderer = function(root, column, rowData) {root.textContent = rowData.index + 1}");;
+
+
+        clientBillGrid.addColumn(BillGeneration::getBillNo).setKey("billNo").setHeader(new Html("<b>Bill No</b>")).setTextAlign(ColumnTextAlign.END).setWidth("14%").setFlexGrow(0);
+        clientBillGrid.addColumn(BillGeneration::getBillDate).setKey("billDate").setHeader(new Html("<b>Bill Date</b>")).setWidth("14%").setFlexGrow(0);
+        clientBillGrid.addColumn(BillGeneration::getClientName).setKey("clientName").setHeader(new Html("<b>Client Name</b>")).setWidth("30%").setFlexGrow(0);
+        clientBillGrid.addColumn(BillGeneration::getBillAmount).setKey("billAmount").setHeader(new Html("<b>Gross Amount</b>")).setTextAlign(ColumnTextAlign.END).setWidth("16.5%").setFlexGrow(0);
+        clientBillGrid.addColumn(BillGeneration::getNetAmount).setKey("netAmount").setHeader(new Html("<b>Net Amount</b>")).setTextAlign(ColumnTextAlign.END).setWidth("16.5%").setFlexGrow(0);
+
 
         HeaderRow hr = clientBillGrid.prependHeaderRow();
         hr.getCell(clientBillGrid.getColumnByKey("billNo")).setComponent(billNo);
@@ -115,9 +120,6 @@ public class ClientBillRePrintingForm extends Div {
                             Page<BillGeneration> accountCopies = billingService
                                     .findByBillNoStartsWithAndBillDateStartsWithAndClientNameStartsWith(offset, limit, billNoFilter, invoiceDateFilter, clientNameFilter);
                             Logger.getLogger(AccountCopyEditor.class.getName()).info("Total pages : "+accountCopies.getTotalElements());
-                            if(accountCopies.getSize() > 0){
-                                clientBillGrid.select(accountCopies.getContent().get(0));
-                            }
                             return accountCopies.stream();
                         },
                         // Second callback fetches the number of items
