@@ -82,6 +82,7 @@ public class AccountCopyEditor extends Div {
         Grid<AccountCopy> accountCopyGrid = new Grid<>(AccountCopy.class, false);
         accountCopyGrid.setPageSize(PAGE_SIZE);
 
+        accountCopyGrid.addColumn(AccountCopy::getDocNo).setKey("srNo").setHeader(new Html("<b>Sr No</b>")).setWidth("8%").setFlexGrow(0);;
         accountCopyGrid.addColumn(AccountCopy::getDocNo).setKey("docNo");
         accountCopyGrid.addColumn(accountCopy -> dateUtils.ddmmyyFormat(accountCopy.getPodDate())).setKey("podDate");
         accountCopyGrid.addColumn(AccountCopy::getClientName).setKey("clientName");
@@ -97,10 +98,12 @@ public class AccountCopyEditor extends Div {
         accountCopyGrid.getColumnByKey("clientName").setHeader(new Html("<b>Client Name</b>")).setWidth("25%").setFlexGrow(0);
         accountCopyGrid.getColumnByKey("destination").setHeader(new Html("<b>Destination</b>")).setWidth("10%").setFlexGrow(0);
         accountCopyGrid.getColumnByKey("weight").setHeader(new Html("<b>Weight</b>")).setWidth("8%").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("otherCharges").setHeader(new Html("<b>Other Charges</b>")).setWidth("11%").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("otherCharges").setHeader(new Html("<b>Other Charges</b>")).setWidth("8%").setFlexGrow(0);
         accountCopyGrid.getColumnByKey("rate").setHeader(new Html("<b>Rate</b>")).setWidth("10%").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("dP").setHeader(new Html("<b>D/P</b>")).setWidth("8%").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("mode").setHeader(new Html("<b>Mode</b>")).setWidth("8%").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("dP").setHeader(new Html("<b>D/P</b>")).setWidth("6%").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("mode").setHeader(new Html("<b>Mode</b>")).setWidth("6%").setFlexGrow(0);
+
+        accountCopyGrid.getColumnByKey("srNo").getElement().executeJs("this.renderer = function(root, column, rowData) {root.textContent = rowData.index + 1}");
 
         accountCopyGrid.getColumnByKey("docNo").setTextAlign(ColumnTextAlign.END);
         accountCopyGrid.getColumnByKey("weight").setTextAlign(ColumnTextAlign.END);
@@ -141,9 +144,6 @@ public class AccountCopyEditor extends Div {
                                     accountCopyService
                                             .findByDocNoStartsWithAndClientNameStartsWith(offset, limit, docNoFilter, clientNameFilter);
                             Logger.getLogger(AccountCopyEditor.class.getName()).info("Total pages : " + accountCopies.getTotalElements());
-                            if(accountCopies.getSize() > 0){
-                                accountCopyGrid.select(accountCopies.getContent().get(0));
-                            }
                             return accountCopies.stream();
                         },
                         // Second callback fetches the number of items
