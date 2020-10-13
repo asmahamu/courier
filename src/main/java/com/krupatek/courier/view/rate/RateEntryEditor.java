@@ -1,14 +1,20 @@
 package com.krupatek.courier.view.rate;
 
+import com.krupatek.courier.model.AccountCopy;
 import com.krupatek.courier.model.Client;
 import com.krupatek.courier.model.Courier;
 import com.krupatek.courier.model.RateEntry;
 import com.krupatek.courier.service.ClientService;
 import com.krupatek.courier.service.CourierService;
 import com.krupatek.courier.service.RateMasterService;
+import com.krupatek.courier.service.ZonesService;
+import com.krupatek.courier.view.accountcopy.AccountCopyForm;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H4;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
@@ -23,6 +29,7 @@ public class RateEntryEditor extends Div {
 
     public RateEntryEditor(ClientService clientService,
                            CourierService courierService,
+                           ZonesService zoneService,
                            RateMasterService rateMasterService){
         VerticalLayout verticalLayout = new VerticalLayout();
         verticalLayout.setSizeFull();
@@ -35,11 +42,12 @@ public class RateEntryEditor extends Div {
 
         // Client selection
         HorizontalLayout horizontalLayout = new HorizontalLayout();
+        horizontalLayout.setAlignItems(FlexComponent.Alignment.BASELINE);
         horizontalLayout.setWidth("100%");
 
         Select<String> clientSelect = new Select<>();
         clientSelect.setLabel("Select Client Name : ");
-        clientSelect.setWidth("50%");
+        clientSelect.setWidth("40%");
 
 
         List<Client> clientList = clientService.findAll();
@@ -53,7 +61,7 @@ public class RateEntryEditor extends Div {
         // Courier selection
         Select<String> courierSelect = new Select<>();
         courierSelect.setLabel("Select Courier Name : ");
-        courierSelect.setWidth("50%");
+        courierSelect.setWidth("40%");
 
 
         List<Courier> couriersList = courierService.findAll();
@@ -64,7 +72,12 @@ public class RateEntryEditor extends Div {
         courierSelect.setItems(courierNameList);
         courierSelect.setValue(currentSelectedCourier);
 
-        horizontalLayout.add(clientSelect, courierSelect);
+        // New Rate Entry
+        Button addNewBtn = new Button("New Rate Entry", VaadinIcon.PLUS.create());
+        addNewBtn.setWidth("20%");
+
+
+        horizontalLayout.add(clientSelect, courierSelect, addNewBtn);
 
         Grid<RateEntry> rateEntryGrid = new Grid<>(RateEntry.class);
         rateEntryGrid.setColumns(
@@ -105,10 +118,29 @@ public class RateEntryEditor extends Div {
             load(rateEntryGrid, rateMasterService);
         });
 
+        addNewBtn.addClickListener(e ->
+        {
+            RateEntry rateEntry = new RateEntry();
+            rateEntry.setClientName(currentSelectedClient);
+            rateEntry.setCourier(currentSelectedCourier);
+            add(new RateEntryForm(
+                    clientService,
+                    courierService,
+                    zoneService,
+                    rateMasterService,
+                    rateEntry,
+                    item -> {
+                        load(rateEntryGrid, rateMasterService);
+                    }));
+        });
+
         verticalLayout.add(title, horizontalLayout, rateEntryGrid);
         add(verticalLayout);
         rateEntryGrid.addItemClickListener(listener -> {
             RateEntryForm rateEntryForm =  new RateEntryForm(
+                    clientService,
+                    courierService,
+                    zoneService,
                     rateMasterService,
                     listener.getItem(),
                     item -> {

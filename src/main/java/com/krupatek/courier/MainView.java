@@ -131,7 +131,7 @@ public class MainView extends VerticalLayout {
         });
         rateMaster.getSubMenu().addItem(getMenuItemComponent(null, "Rate Entry"), e -> {
             component.removeAll();
-            component.add(new RateEntryEditor(clientService, courierService, rateMasterService));
+            component.add(new RateEntryEditor(clientService, courierService, zonesService, rateMasterService));
         });
 
 

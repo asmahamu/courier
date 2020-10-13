@@ -23,19 +23,19 @@ public class RateEntry {
     private String mode;
 
     @Column(name = "from1")
-    private Double from1;
+    private Double from1 = 0.001;
 
     @Column(name = "to1")
-    private Double to1;
+    private Double to1 = 0.5D;
 
     @Column(name = "rate")
-    private Integer rate;
+    private Integer rate = 55;
 
     @Column(name = "addwt")
-    private Double addWt;
+    private Double addWt = 0.5;
 
     @Column(name = "addrt")
-    private Integer addRt;
+    private Integer addRt = 40;
 
     @Column(name = "courier")
     private String courier;
