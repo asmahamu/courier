@@ -14,28 +14,28 @@ public class RateIntEntry {
     private String clientName;
 
     @Column(name = "state_code")
-    private String stateCode;
+    private String stateCode = "ZONE A";
 
     @Column(name = "pod_type")
-    private String podType;
+    private String podType = "D";
 
     @Column(name = "mode")
-    private String mode;
+    private String mode = "A";
 
     @Column(name = "from1")
-    private Double from1;
+    private Double from1 = 0.001;
 
     @Column(name = "to1")
-    private Double to1;
+    private Double to1 = 0.5;
 
     @Column(name = "rate")
-    private Integer rate;
+    private Integer rate = 1200;
 
     @Column(name = "addwt")
-    private Double addWt;
+    private Double addWt = 0.5;
 
     @Column(name = "addrt")
-    private Integer addRt;
+    private Integer addRt = 275;
 
     public String getClientName() {
         return clientName;

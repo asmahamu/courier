@@ -1,12 +1,16 @@
 package com.krupatek.courier.view.rate;
 
-import com.krupatek.courier.model.*;
+import com.krupatek.courier.model.Client;
+import com.krupatek.courier.model.Courier;
+import com.krupatek.courier.model.RateEntry;
+import com.krupatek.courier.model.Zones;
 import com.krupatek.courier.service.ClientService;
 import com.krupatek.courier.service.CourierService;
 import com.krupatek.courier.service.RateMasterService;
 import com.krupatek.courier.service.ZonesService;
 import com.krupatek.courier.utils.ViewUtils;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -129,7 +133,7 @@ public class RateEntryForm extends Div {
             // State code
 
             ComboBox<String> zoneSelect = new ComboBox<>();
-            zoneSelect.setLabel("Zone : ");
+            zoneSelect.setLabel("State Code : ");
 
             TreeSet<String> zonesSource = zonesService.findAll().parallelStream().map(Zones::getZoneCode).collect(Collectors.toCollection(TreeSet::new));
             zoneSelect.setItems(zonesSource);
@@ -262,8 +266,8 @@ public class RateEntryForm extends Div {
                 event -> {
                     try {
                         binder.writeBean(this.rateEntry);
-                        this.rateEntry.setRateMasterId(rateMasterService.latestMasterId() + 1);
                         if(isNewRateEntry){
+                            this.rateEntry.setRateMasterId(rateMasterService.latestMasterId() + 1);
                             RateEntry existingRateEntry =
                                     rateMasterService.findByClientNameAndCourierAndStateCodeAndPodTypeAndMode(
                                             this.rateEntry.getClientName(),
@@ -313,6 +317,8 @@ public class RateEntryForm extends Div {
                 }
                 dialog.close();
             });
+            delete.addThemeVariants(ButtonVariant.LUMO_ERROR);
+
             HorizontalLayout actions = new HorizontalLayout();
             actions.setAlignItems(HorizontalLayout.Alignment.END);
             actions.add(save, reset, cancel, delete);

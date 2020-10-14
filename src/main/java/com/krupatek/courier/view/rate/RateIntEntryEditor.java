@@ -4,10 +4,14 @@ import com.krupatek.courier.model.Client;
 import com.krupatek.courier.model.RateIntEntry;
 import com.krupatek.courier.service.ClientService;
 import com.krupatek.courier.service.CourierService;
+import com.krupatek.courier.service.NetworkService;
 import com.krupatek.courier.service.RateIntMasterService;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H4;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
@@ -20,6 +24,7 @@ public class RateIntEntryEditor extends Div {
 
     public RateIntEntryEditor(ClientService clientService,
                               CourierService courierService,
+                              NetworkService networkService,
                               RateIntMasterService rateIntMasterService){
         VerticalLayout verticalLayout = new VerticalLayout();
         verticalLayout.setSizeFull();
@@ -33,12 +38,17 @@ public class RateIntEntryEditor extends Div {
         // Client selection
         HorizontalLayout horizontalLayout = new HorizontalLayout();
         horizontalLayout.setWidth("100%");
+        horizontalLayout.setAlignItems(FlexComponent.Alignment.BASELINE);
 
         Select<String> clientSelect = new Select<>();
         clientSelect.setLabel("Select Client Name : ");
         clientSelect.setWidth("50%");
 
-        horizontalLayout.add(clientSelect);
+        // New Rate Entry
+        Button addNewBtn = new Button("New Int Rate Entry", VaadinIcon.PLUS.create());
+        addNewBtn.setWidth("20%");
+
+        horizontalLayout.add(clientSelect, addNewBtn);
 
         List<Client> clientList = clientService.findAll();
         List<String> clientNameList = new ArrayList<>();
@@ -82,10 +92,28 @@ public class RateIntEntryEditor extends Div {
             load(rateEntryGrid, rateIntMasterService);
         });
 
+        addNewBtn.addClickListener(e -> {
+            RateIntEntry rateIntEntry = new RateIntEntry();
+            rateIntEntry.setClientName (currentSelectedClient);
+
+            add(new RateIntEntryForm(
+                    clientService,
+                    networkService,
+                    courierService,
+                    rateIntMasterService,
+                    rateIntEntry,
+                    item -> {
+                        load(rateEntryGrid, rateIntMasterService);
+                    }));
+        });
+
         verticalLayout.add(title, horizontalLayout, rateEntryGrid);
         add(verticalLayout);
         rateEntryGrid.addItemClickListener(listener -> {
             RateIntEntryForm rateIntEntryForm =  new RateIntEntryForm(
+                    clientService,
+                    networkService,
+                    courierService,
                     rateIntMasterService,
                     listener.getItem(),
                     item -> {

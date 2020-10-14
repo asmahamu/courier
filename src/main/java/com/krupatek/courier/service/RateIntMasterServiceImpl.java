@@ -32,4 +32,14 @@ public class RateIntMasterServiceImpl implements RateIntMasterService {
     public Set<String> findDistinctClientName() {
         return rateIntMasterRepository.findDistinctClientName();
     }
+
+    @Override
+    public Integer latestIntMasterId() {
+        return rateIntMasterRepository.latestIntMasterId();
+    }
+
+    @Override
+    public void delete(RateIntEntry rateIntEntry) {
+        rateIntMasterRepository.delete(rateIntEntry);
+    }
 }

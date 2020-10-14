@@ -143,7 +143,7 @@ public class MainView extends VerticalLayout {
         });
         intRateMaster.getSubMenu().addItem(getMenuItemComponent(null, "Rate International Entry"), e -> {
             component.removeAll();
-            component.add(new RateIntEntryEditor(clientService, courierService, rateIntMasterService));
+            component.add(new RateIntEntryEditor(clientService, courierService, networkService, rateIntMasterService));
         });
 
         Component accountCopyMenu = getMenuItemComponent(VaadinIcon.FILE_ADD, "Account Copy");

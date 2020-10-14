@@ -1,6 +1,5 @@
 package com.krupatek.courier.view.rate;
 
-import com.krupatek.courier.model.AccountCopy;
 import com.krupatek.courier.model.Client;
 import com.krupatek.courier.model.Courier;
 import com.krupatek.courier.model.RateEntry;
@@ -8,7 +7,6 @@ import com.krupatek.courier.service.ClientService;
 import com.krupatek.courier.service.CourierService;
 import com.krupatek.courier.service.RateMasterService;
 import com.krupatek.courier.service.ZonesService;
-import com.krupatek.courier.view.accountcopy.AccountCopyForm;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;

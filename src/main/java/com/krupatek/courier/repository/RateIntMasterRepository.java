@@ -14,4 +14,7 @@ public interface RateIntMasterRepository extends JpaRepository<RateIntEntry, Int
     RateIntEntry findByClientNameAndStateCodeAndPodTypeAndMode(String clientName, String stateCode, String podType, String mode);
     @Query(value = "SELECT distinct(clientcode) FROM easynew.rate_int_master ORDER BY clientcode", nativeQuery = true)
     Set<String> findDistinctClientName();
+
+    @Query(value = "Select max(rate_int_master_id) from easynew.rate_int_master", nativeQuery = true)
+    Integer latestIntMasterId();
 }
