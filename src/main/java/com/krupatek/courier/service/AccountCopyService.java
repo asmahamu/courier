@@ -46,4 +46,6 @@ public interface AccountCopyService {
     Optional<AccountCopy> findOneByDocNo(String docNo);
 
     void delete(AccountCopy accountCopy);
+
+    void saveAll(List<AccountCopy> accountCopyList);
 }

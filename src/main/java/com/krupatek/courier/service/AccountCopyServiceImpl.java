@@ -22,7 +22,7 @@ public class AccountCopyServiceImpl implements AccountCopyService {
 
     @Override
     public List<AccountCopy> findAllByClientNameAndPodDateBetween(String clientName, Date startDate, Date endDate) {
-        return accountCopyRepository.findAllByClientNameAndPodDateBetween(clientName, startDate, endDate);
+        return accountCopyRepository.findAllByClientNameAndPodDateBetweenOrderByPodDate(clientName, startDate, endDate);
     }
 
     @Override
@@ -112,5 +112,10 @@ public class AccountCopyServiceImpl implements AccountCopyService {
     @Override
     public void delete(AccountCopy accountCopy) {
         accountCopyRepository.delete(accountCopy);
+    }
+
+    @Override
+    public void saveAll(List<AccountCopy> accountCopyList) {
+        accountCopyRepository.saveAll(accountCopyList);
     }
 }
