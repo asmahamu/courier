@@ -87,7 +87,7 @@ public class AccountCopy implements AccountCopyCSVAdapter{
 
     @Column(name = "status_date", columnDefinition="DATETIME")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date statusDate = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());;
+    private Date statusDate;
 
     @Column(name = "remark")
     private String remark;
