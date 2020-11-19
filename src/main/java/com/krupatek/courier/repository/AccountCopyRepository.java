@@ -18,7 +18,7 @@ public interface AccountCopyRepository extends JpaRepository<AccountCopy, String
     List<AccountCopy> findAllByClientName(String clientName);
     List<AccountCopy> findAllByClientNameAndPodDateBetweenOrderByPodDate(String clientName, Date startDate, Date endDate);
     List<AccountCopy> findAllByPodDateBetweenOrderByClientName(Date startDate, Date endDate);
-    List<AccountCopy> findAllByClientNameAndPodDateBetweenAndType(String clientName, Date startDate, Date endDate, String type);
+    List<AccountCopy> findAllByClientNameAndPodDateBetweenAndTypeOrderByPodDate(String clientName, Date startDate, Date endDate, String type);
     List<AccountCopy> findByDocNoStartsWith(String docNo);
     Page<AccountCopy> findByDocNoStartsWith(String docNo, Pageable page);
     Page<AccountCopy> findByDocNoStartsWithAndClientNameStartsWithOrderByPodDateDesc(String docNo, String clientName, Pageable page);

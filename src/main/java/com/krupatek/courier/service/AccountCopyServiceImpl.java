@@ -32,7 +32,7 @@ public class AccountCopyServiceImpl implements AccountCopyService {
 
     @Override
     public List<AccountCopy> findAllByClientNameAndPodDateBetweenAndType(String clientName, Date startDate, Date endDate, String type) {
-        return accountCopyRepository.findAllByClientNameAndPodDateBetweenAndType(clientName, startDate, endDate, type);
+        return accountCopyRepository.findAllByClientNameAndPodDateBetweenAndTypeOrderByPodDate(clientName, startDate, endDate, type);
     }
 
     @Override

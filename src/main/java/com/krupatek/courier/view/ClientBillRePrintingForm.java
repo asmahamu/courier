@@ -33,6 +33,8 @@ import com.vaadin.flow.server.StreamResource;
 import org.springframework.data.domain.Page;
 
 import java.io.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Logger;
@@ -168,8 +170,39 @@ public class ClientBillRePrintingForm extends Div {
                 Client client = clientService.findAllByClientName(selectionEvent.getFirstSelectedItem().get().getClientName()).get(0);
                 Company company = companyRepository.findAll().get(0);
 
+
                 try {
-                    File pdfFile = invoiceService.generateInvoiceFor(company, client, selectionEvent.getFirstSelectedItem().get(), accountCopies, Locale.getDefault());
+                    BillGeneration billGeneration = selectionEvent.getFirstSelectedItem().get();
+
+                    String oldBillDate = billGeneration.getBillDate();
+                    String oldStartDate = billGeneration.getStartDate();
+                    String oldEndDate = billGeneration.getEndDate();
+
+                    try {
+                        String newBillDate = new SimpleDateFormat("dd-MMM-yyyy").format(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(oldBillDate));
+                        billGeneration.setBillDate(newBillDate);
+
+                        String newStartDate = new SimpleDateFormat("dd-MMM-yyyy").format(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(oldStartDate));
+                        billGeneration.setStartDate(newStartDate);
+
+                        String newEndDate = new SimpleDateFormat("dd-MMM-yyyy").format(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(oldEndDate));
+                        billGeneration.setEndDate(newEndDate);
+                    } catch (Exception e){
+                        String newBillDate = new SimpleDateFormat("dd-MMM-yyyy").format(new SimpleDateFormat("dd/MM/yy").parse(oldBillDate));
+                        billGeneration.setBillDate(newBillDate);
+
+                        String newStartDate = new SimpleDateFormat("dd-MMM-yyyy").format(new SimpleDateFormat("dd/MM/yy").parse(oldStartDate));
+                        billGeneration.setStartDate(newStartDate);
+
+                        String newEndDate = new SimpleDateFormat("dd-MMM-yyyy").format(new SimpleDateFormat("dd/MM/yy").parse(oldEndDate));
+                        billGeneration.setEndDate(newEndDate);
+                    }
+
+                    File pdfFile = invoiceService.generateInvoiceFor(company, client, billGeneration, accountCopies, Locale.getDefault());
+
+                    billGeneration.setBillDate(oldBillDate);
+                    billGeneration.setStartDate(oldStartDate);
+                    billGeneration.setEndDate(oldEndDate);
 
                     VerticalLayout embeddedPdfVLayout = new VerticalLayout();
                     embeddedPdfVLayout.setSizeFull();
@@ -210,7 +243,7 @@ public class ClientBillRePrintingForm extends Div {
                             }
                     );
                     dialog.open();
-                } catch (IOException e) {
+                } catch (IOException | ParseException e) {
                     e.printStackTrace();
                 }
             }

@@ -128,7 +128,7 @@
 				</reportElement>
 			</line>
 			<textField>
-				<reportElement style="Detail" x="175" y="0" width="205" height="18" uuid="9c8b4905-bca0-4b17-862a-809d777adac2"/>
+				<reportElement style="Table_TD" x="175" y="0" width="205" height="18" backcolor="#FFFFFF" uuid="9c8b4905-bca0-4b17-862a-809d777adac2"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -136,30 +136,48 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font fontName="SansSerif" size="12" isBold="true"/>
+					<font fontName="Times New Roman" size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{company}.getCompanyName()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="Detail" x="175" y="18" width="205" height="18" uuid="3554ce31-ae8d-4791-b9eb-eafec2d5a59f"/>
+				<reportElement style="Table_TD" x="175" y="18" width="205" height="18" backcolor="#FFFFFF" uuid="3554ce31-ae8d-4791-b9eb-eafec2d5a59f"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font fontName="SansSerif" isBold="true"/>
+					<font fontName="Times New Roman" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{company}.getCompanyAddress1()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="Detail" x="175" y="36" width="205" height="18" uuid="4e9c8bd4-ef32-4bff-8967-f126c915ffb5"/>
+				<reportElement style="Table_TD" x="175" y="36" width="205" height="18" backcolor="#FFFFFF" uuid="4e9c8bd4-ef32-4bff-8967-f126c915ffb5"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font fontName="SansSerif" isBold="true"/>
+					<font fontName="Times New Roman" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{company}.getCompanyAddress2()+" "+$P{company}.getCity()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="Detail" x="175" y="54" width="205" height="18" uuid="adbc6a33-2f05-4f06-8085-bf6f016d7a0c">
+				<reportElement style="Table_TD" x="175" y="54" width="205" height="18" backcolor="#FFFFFF" uuid="adbc6a33-2f05-4f06-8085-bf6f016d7a0c">
 					<property name="com.jaspersoft.studio.element.name" value="Phone"/>
 				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font fontName="SansSerif" isBold="true"/>
+					<font fontName="Times New Roman" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Phone : " + $P{company}.getPhone()]]></textFieldExpression>
 			</textField>
@@ -169,7 +187,7 @@
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font fontName="SansSerif" isBold="true"/>
+					<font fontName="Times New Roman" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{client}.getClientName()]]></textFieldExpression>
 			</textField>
@@ -178,53 +196,53 @@
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font fontName="SansSerif"/>
+					<font fontName="Times New Roman"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{client}.getClientAddress1()+", "+$P{client}.getClientAddress2()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{client}.getClientAddress1()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="80" y="155" width="160" height="18" uuid="412a1f0d-74be-4797-9297-3dc17aa53316">
+				<reportElement x="80" y="209" width="160" height="18" uuid="412a1f0d-74be-4797-9297-3dc17aa53316">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font fontName="SansSerif"/>
+					<font fontName="Times New Roman"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{client}.getPhone()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="80" y="173" width="160" height="18" uuid="905b8197-ac3a-40ac-8532-c0bc5b3ae6a3"/>
+				<reportElement x="80" y="227" width="160" height="18" uuid="905b8197-ac3a-40ac-8532-c0bc5b3ae6a3"/>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font fontName="SansSerif"/>
+					<font fontName="Times New Roman"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{client}.getGstNo()]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="222" y="73" width="111" height="21" uuid="85976297-200d-4e94-ae92-2dcb6a069806"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font fontName="SansSerif" size="12"/>
+					<font fontName="Times New Roman" size="12"/>
 				</textElement>
 				<text><![CDATA[GST INVOICE]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1" y="173" width="80" height="18" uuid="4871e01a-0a29-4e6d-94fe-1ad4d4953f7d">
+				<reportElement x="1" y="227" width="80" height="18" uuid="4871e01a-0a29-4e6d-94fe-1ad4d4953f7d">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font fontName="SansSerif" isBold="true"/>
+					<font fontName="Times New Roman" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Client's GSTIN : ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="155" width="80" height="18" uuid="96cd73e2-3f25-47d6-a806-dfd864a00c74">
+				<reportElement x="0" y="209" width="80" height="18" uuid="96cd73e2-3f25-47d6-a806-dfd864a00c74">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font fontName="SansSerif" isBold="true"/>
+					<font fontName="Times New Roman" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Phone : ]]></text>
 			</staticText>
@@ -236,7 +254,7 @@
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font fontName="SansSerif"/>
+					<font fontName="Times New Roman"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{billGeneration}.getBillNo()]]></textFieldExpression>
 			</textField>
@@ -248,7 +266,7 @@
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font fontName="SansSerif" isBold="true"/>
+					<font fontName="Times New Roman" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Invoice No. :]]></text>
 			</staticText>
@@ -259,9 +277,9 @@
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font fontName="SansSerif"/>
+					<font fontName="Times New Roman"/>
 				</textElement>
-				<textFieldExpression><![CDATA[new SimpleDateFormat("dd-MMM-yyyy").format(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse($P{billGeneration}.getBillDate()))]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{billGeneration}.getBillDate()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="390" y="155" width="165" height="18" uuid="d79a6b1d-2f04-4e09-9d0e-329b0a2ae5ca">
@@ -270,9 +288,9 @@
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font fontName="SansSerif"/>
+					<font fontName="Times New Roman"/>
 				</textElement>
-				<textFieldExpression><![CDATA["From "+ new SimpleDateFormat("dd-MMM-yyyy").format(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse( $P{billGeneration}.getStartDate())) +" To "+new SimpleDateFormat("dd-MMM-yyyy").format(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse( $P{billGeneration}.getEndDate()))]]></textFieldExpression>
+				<textFieldExpression><![CDATA["From "+  $P{billGeneration}.getStartDate() +" To "+$P{billGeneration}.getEndDate()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="390" y="191" width="165" height="18" uuid="00644e97-542a-4bb8-98dd-067740a58df2">
@@ -281,7 +299,7 @@
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font fontName="SansSerif"/>
+					<font fontName="Times New Roman"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{company}.getGstin()]]></textFieldExpression>
 			</textField>
@@ -291,7 +309,9 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
-				<textElement verticalAlignment="Bottom"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Times New Roman"/>
+				</textElement>
 				<text><![CDATA[996812]]></text>
 			</staticText>
 			<staticText>
@@ -300,7 +320,9 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
-				<textElement verticalAlignment="Bottom"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Times New Roman"/>
+				</textElement>
 				<text><![CDATA[Courier]]></text>
 			</staticText>
 			<staticText>
@@ -311,7 +333,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement verticalAlignment="Bottom">
-					<font isBold="true"/>
+					<font fontName="Times New Roman" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Invoice Date :]]></text>
 			</staticText>
@@ -322,7 +344,7 @@
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<textElement verticalAlignment="Bottom">
-					<font isBold="true"/>
+					<font fontName="Times New Roman" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Period :]]></text>
 			</staticText>
@@ -333,7 +355,7 @@
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<textElement verticalAlignment="Bottom">
-					<font isBold="true"/>
+					<font fontName="Times New Roman" isBold="true"/>
 				</textElement>
 				<text><![CDATA[GSTIN :]]></text>
 			</staticText>
@@ -344,7 +366,7 @@
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<textElement verticalAlignment="Bottom">
-					<font isBold="true"/>
+					<font fontName="Times New Roman" isBold="true"/>
 				</textElement>
 				<text><![CDATA[SAC No. :]]></text>
 			</staticText>
@@ -355,7 +377,7 @@
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<textElement verticalAlignment="Bottom">
-					<font isBold="true"/>
+					<font fontName="Times New Roman" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Service Type : ]]></text>
 			</staticText>
@@ -367,10 +389,23 @@
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement verticalAlignment="Bottom">
-					<font size="10" isBold="true"/>
+					<font fontName="Times New Roman" size="10" isBold="true"/>
+					<paragraph lineSpacingSize="1.0"/>
 				</textElement>
 				<text><![CDATA[Whether reverse charge mechanism applicable? : No]]></text>
 			</staticText>
+			<textField>
+				<reportElement x="0" y="155" width="240" height="18" uuid="580f3e40-94ce-4bd0-9b6e-2b9b98ae2a8d">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Times New Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{client}.getClientAddress2()]]></textFieldExpression>
+			</textField>
 		</band>
 	</title>
 	<columnHeader>
@@ -385,7 +420,9 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman"/>
+				</textElement>
 				<text><![CDATA[C / No]]></text>
 			</staticText>
 			<staticText>
@@ -399,7 +436,9 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman"/>
+				</textElement>
 				<text><![CDATA[Date]]></text>
 			</staticText>
 			<staticText>
@@ -413,7 +452,9 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman"/>
+				</textElement>
 				<text><![CDATA[Destination]]></text>
 			</staticText>
 			<staticText>
@@ -424,7 +465,9 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman"/>
+				</textElement>
 				<text><![CDATA[Pincode]]></text>
 			</staticText>
 			<staticText>
@@ -435,7 +478,9 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman"/>
+				</textElement>
 				<text><![CDATA[D / ND]]></text>
 			</staticText>
 			<staticText>
@@ -448,7 +493,9 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman"/>
+				</textElement>
 				<text><![CDATA[Weight]]></text>
 			</staticText>
 			<staticText>
@@ -459,7 +506,9 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman"/>
+				</textElement>
 				<text><![CDATA[Rate]]></text>
 			</staticText>
 			<staticText>
@@ -474,7 +523,9 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman"/>
+				</textElement>
 				<text><![CDATA[Sr. No.]]></text>
 			</staticText>
 		</band>
@@ -493,8 +544,8 @@
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{docNo}]]></textFieldExpression>
 			</textField>
@@ -511,8 +562,8 @@
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yy").format($F{podDate})]]></textFieldExpression>
 			</textField>
@@ -529,7 +580,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8"/>
+					<font fontName="Times New Roman" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[String.format("%.02f", $F{rate}.floatValue())]]></textFieldExpression>
 			</textField>
@@ -547,8 +598,8 @@
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{destination}]]></textFieldExpression>
 			</textField>
@@ -561,8 +612,8 @@
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{area}]]></textFieldExpression>
 			</textField>
@@ -575,8 +626,8 @@
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{dP}]]></textFieldExpression>
 			</textField>
@@ -589,8 +640,8 @@
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[String.format("%.03f", $F{weight}.floatValue())]]></textFieldExpression>
 			</textField>
@@ -601,8 +652,8 @@
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
@@ -617,7 +668,7 @@
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font isBold="true"/>
+					<font fontName="Times New Roman" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
@@ -627,7 +678,7 @@
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font isBold="true"/>
+					<font fontName="Times New Roman" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[" of " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
@@ -647,7 +698,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font isBold="true"/>
+					<font fontName="Times New Roman" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
@@ -656,7 +707,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font isBold="true"/>
+					<font fontName="Times New Roman" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[" of " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
@@ -678,7 +729,7 @@
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font isBold="true"/>
+					<font fontName="Times New Roman" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Gross Total : ]]></text>
 			</staticText>
@@ -689,7 +740,7 @@
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font isBold="true"/>
+					<font fontName="Times New Roman" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[String.format("%.02f", $P{billGeneration}.getBillAmount().floatValue())]]></textFieldExpression>
 			</textField>
@@ -708,7 +759,7 @@
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font isBold="true"/>
+					<font fontName="Times New Roman" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Fuel S'Charge @ "+$V{FUEL_SURCHAGE}+"% : "]]></textFieldExpression>
 			</textField>
@@ -720,7 +771,7 @@
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font isBold="true"/>
+					<font fontName="Times New Roman" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[String.format("%.02f", $V{TOTAL_AFTER_FUEL_SURCHARGE})]]></textFieldExpression>
 			</textField>
@@ -730,7 +781,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font isBold="true"/>
+					<font fontName="Times New Roman" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Subtotal : ]]></text>
 			</staticText>
@@ -741,7 +792,7 @@
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font isBold="true"/>
+					<font fontName="Times New Roman" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[String.format("%.02f", $V{SUBTOTAL})]]></textFieldExpression>
 			</textField>
@@ -752,7 +803,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font isBold="true"/>
+					<font fontName="Times New Roman" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["CGST @ "+$V{CGST}+"% : "]]></textFieldExpression>
 			</textField>
@@ -762,7 +813,7 @@
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font isBold="true"/>
+					<font fontName="Times New Roman" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["SGST @ "+$V{SGST}+"% : "]]></textFieldExpression>
 			</textField>
@@ -773,7 +824,7 @@
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font isBold="true"/>
+					<font fontName="Times New Roman" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[String.format("%.02f", $V{TOTAL_CGST})]]></textFieldExpression>
 			</textField>
@@ -784,7 +835,7 @@
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font isBold="true"/>
+					<font fontName="Times New Roman" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[String.format("%.02f", $V{TOTAL_SGST})]]></textFieldExpression>
 			</textField>
@@ -794,7 +845,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font isBold="true"/>
+					<font fontName="Times New Roman" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["IGST @ "+$V{IGST}+"% : "]]></textFieldExpression>
 			</textField>
@@ -804,7 +855,7 @@
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font isBold="true"/>
+					<font fontName="Times New Roman" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[String.format("%.02f", $V{TOTAL_IGST})]]></textFieldExpression>
 			</textField>
@@ -814,7 +865,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font isBold="true"/>
+					<font fontName="Times New Roman" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Invoice Amount : ]]></text>
 			</staticText>
@@ -824,7 +875,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font isBold="true"/>
+					<font fontName="Times New Roman" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[new DecimalFormat("#.00").format(Math.round(new Float($V{TOTAL})))]]></textFieldExpression>
 			</textField>
@@ -836,7 +887,7 @@
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
+					<font fontName="Times New Roman" isBold="true"/>
 				</textElement>
 				<text><![CDATA[In Words : ]]></text>
 			</staticText>
@@ -847,7 +898,9 @@
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$P{numberUtils}.convertNumberToWords($V{TOTAL})+" Only"]]></textFieldExpression>
 			</textField>
 			<staticText>
@@ -861,7 +914,10 @@
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<text><![CDATA[1. Though Invoice is in the name of HORIZON COURIERS, the conssignment notes will be of TRACKON/FEDEX.]]></text>
+				<textElement>
+					<font fontName="Times New Roman"/>
+				</textElement>
+				<text><![CDATA[1. Though Invoice is in the name of HORIZON COURIERS, the consignment notes will be of TRACKON/FEDEX.]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="1" y="217" width="349" height="30" uuid="b6d7ed2d-9b62-4028-97e7-1adcb4690f91">
@@ -875,6 +931,9 @@
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
+				<textElement>
+					<font fontName="Times New Roman"/>
+				</textElement>
 				<text><![CDATA[2. Kindly issue the payment by cheque or by NEFT/RTGS favouring HORIZON COURIERS]]></text>
 			</staticText>
 			<textField>
@@ -889,6 +948,9 @@
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
+				<textElement>
+					<font fontName="Times New Roman"/>
+				</textElement>
 				<textFieldExpression><![CDATA["3. Dynamic fuel surcharge = "+$V{FUEL_SURCHAGE}+"%  "]]></textFieldExpression>
 			</textField>
 			<staticText>
@@ -904,7 +966,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
+					<font fontName="Times New Roman" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Declaration : We declare that this invoice shows the actual price of services described and that all particulars are true and correct.]]></text>
 			</staticText>
@@ -921,14 +983,14 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
+					<font fontName="Times New Roman" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[This is a computer generated invoice.]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="425" y="188" width="130" height="20" uuid="1eca520b-9cd4-4d7d-a02a-b48f85ab1af4"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
+					<font fontName="Times New Roman" isBold="true"/>
 				</textElement>
 				<text><![CDATA[For HORIZON COURIERS]]></text>
 			</staticText>

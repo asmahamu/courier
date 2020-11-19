@@ -580,6 +580,12 @@ public class ClientBillPrintingForm extends Div {
         Company company = companyRepository.findAll().get(0);
 
         try {
+            formatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy");
+            billGeneration.setStartDate(startDatePicker.getValue().format(formatter));
+            billGeneration.setEndDate(endDatePicker.getValue().format(formatter));
+            billGeneration.setBillDate(invoiceDatePicker.getValue().format(formatter));
+
+
             File pdfFile = invoiceService.generateInvoiceFor(
                     company,
                     client,

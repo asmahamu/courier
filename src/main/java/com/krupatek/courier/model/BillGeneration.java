@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 
 @Entity(name = "bill_generation")
-public class BillGeneration {
+public class BillGeneration implements Cloneable {
     @Id
     @Column(name = "bill_no")
     private String billNo;
