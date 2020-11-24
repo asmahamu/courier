@@ -13,13 +13,13 @@ import javax.persistence.OrderBy;
 @Repository
 public interface BillGenerationRepository extends JpaRepository<BillGeneration, String> {
 
-    Page<BillGeneration> findByAndBillNoStartsWithAndBillDateStartsWithAndClientNameStartsWith(
+    Page<BillGeneration> findByAndBillNoStartsWithAndBillDateContainingAndClientNameStartsWith(
             String billNoFilter,
             String invoiceDateFilter,
             String clientNameFilter,
             Pageable pageable);
 
-    long countByBillNoStartsWithAndBillDateStartsWithAndClientNameStartsWith(
+    long countByBillNoStartsWithAndBillDateContainingAndClientNameStartsWith(
             String billNoFilter,
             String invoiceDateFilter,
             String clientNameFilter);

@@ -43,6 +43,8 @@ public interface AccountCopyService {
 
     void tagBillNo(String currentSelectedItem, Date fromLocaleDate, Date fromLocaleDate1, String type, String billNo);
 
+    void resetBillNo(String billNo);
+
     Optional<AccountCopy> findOneByDocNo(String docNo);
 
     void delete(AccountCopy accountCopy);

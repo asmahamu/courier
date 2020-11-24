@@ -34,14 +34,14 @@ public class BillingServiceImpl implements BillingService {
     }
 
     @Override
-    public Page<BillGeneration> findByBillNoStartsWithAndBillDateStartsWithAndClientNameStartsWith(int offset, int limit, String billNoFilter, String invoiceDateFilter, String clientNameFilter) {
+    public Page<BillGeneration> findByAndBillNoStartsWithAndBillDateContainingAndClientNameStartsWith(int offset, int limit, String billNoFilter, String invoiceDateFilter, String clientNameFilter) {
         Pageable pageable = PageRequest.of(offset, limit, Sort.by(Sort.Direction.DESC, "billDate"));
-        return billGenerationRepository.findByAndBillNoStartsWithAndBillDateStartsWithAndClientNameStartsWith(billNoFilter, invoiceDateFilter, clientNameFilter, pageable);
+        return billGenerationRepository.findByAndBillNoStartsWithAndBillDateContainingAndClientNameStartsWith(billNoFilter, invoiceDateFilter, clientNameFilter, pageable);
     }
 
     @Override
-    public long countByBillNoStartsWithAndBillDateStartsWithAndClientNameStartsWith(String billNoFilter, String invoiceDateFilter, String clientNameFilter) {
-        return billGenerationRepository.countByBillNoStartsWithAndBillDateStartsWithAndClientNameStartsWith(billNoFilter, invoiceDateFilter, clientNameFilter);
+    public long countByBillNoStartsWithAndBillDateContainingAndClientNameStartsWith(String billNoFilter, String invoiceDateFilter, String clientNameFilter) {
+        return billGenerationRepository.countByBillNoStartsWithAndBillDateContainingAndClientNameStartsWith(billNoFilter, invoiceDateFilter, clientNameFilter);
     }
 
     @Override
@@ -64,5 +64,10 @@ public class BillingServiceImpl implements BillingService {
     @Override
     public BillGeneration saveAndFlush(BillGeneration billGeneration) {
         return billGenerationRepository.saveAndFlush(billGeneration);
+    }
+
+    @Override
+    public void delete(BillGeneration item) {
+        billGenerationRepository.delete(item);
     }
 }

@@ -12,13 +12,15 @@ public interface BillingService {
     List<BillGeneration> findAll();
     Optional<BillGeneration> findOne(String billNo);
 
-    Page<BillGeneration> findByBillNoStartsWithAndBillDateStartsWithAndClientNameStartsWith(int offset, int limit, String billNoFilter, String invoiceDateFilter, String clientNameFilter);
+    Page<BillGeneration> findByAndBillNoStartsWithAndBillDateContainingAndClientNameStartsWith(int offset, int limit, String billNoFilter, String invoiceDateFilter, String clientNameFilter);
 
-    long countByBillNoStartsWithAndBillDateStartsWithAndClientNameStartsWith(String billNoFilter, String invoiceDateFilter, String clientNameFilter);
+    long countByBillNoStartsWithAndBillDateContainingAndClientNameStartsWith(String billNoFilter, String invoiceDateFilter, String clientNameFilter);
 
     String lastBillNo(String billNoLike);
 
     String nextBillNo();
 
     BillGeneration saveAndFlush(BillGeneration billGeneration);
+
+    void delete(BillGeneration item);
 }

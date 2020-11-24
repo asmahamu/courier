@@ -104,6 +104,12 @@ public class AccountCopyServiceImpl implements AccountCopyService {
         accountCopyRepository.tagBillNo(currentSelectedItem, fromLocaleDate, fromLocaleDate1, type, billNo);
     }
 
+    @Transactional
+    @Override
+    public void resetBillNo(String billNo) {
+        accountCopyRepository.resetBillNo(billNo);
+    }
+
     @Override
     public Optional<AccountCopy> findOneByDocNo(String docNo) {
         return accountCopyRepository.findOneByDocNo(docNo);
