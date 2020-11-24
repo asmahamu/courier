@@ -31,6 +31,7 @@ import com.vaadin.flow.data.converter.StringToIntegerConverter;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
+import org.aspectj.weaver.ast.Not;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -288,7 +289,7 @@ public class AccountCopyForm extends Div {
         // Weight
         TextField weight = new TextField();
         weight.setLabel("Weight : ");
-        weight.setValueChangeMode(ValueChangeMode.TIMEOUT);
+        weight.setValueChangeMode(ValueChangeMode.ON_CHANGE);
         binder.forField(weight).withConverter(
                 new StringToDoubleConverter("Not a number")).bind(
                 AccountCopy::getWeight,
@@ -423,6 +424,7 @@ public class AccountCopyForm extends Div {
 //        courierSelect.addValueChangeListener(e -> modeSelect.focus());
 //        modeSelect.addValueChangeListener(e -> weight.focus());
         weight.addKeyDownListener(Key.TAB, e -> {
+            Notification.show("Weight is "+weight.getValue());
             if(!isCashCustomer){
                 calculateRate(rateMasterService, rateIntMasterService, accountCopy, binder, weight, rate, clientsComboBox.getValue());
             } else {
@@ -436,6 +438,14 @@ public class AccountCopyForm extends Div {
                 rate.focus();
             }
         });
+//        rate.addFocusListener(listener -> {
+//            Notification.show("Weight is "+weight.getValue());
+//            if(!isCashCustomer){
+//                calculateRate(rateMasterService, rateIntMasterService, accountCopy, binder, weight, rate, clientsComboBox.getValue());
+//            } else {
+//                rate.focus();
+//            }
+//        });
 //        rate.addKeyDownListener(Key.ENTER, e -> save.focus());
 
         docNo.focus();
