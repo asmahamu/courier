@@ -11,6 +11,7 @@ import com.krupatek.courier.view.HorizonDatePicker;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
@@ -21,6 +22,7 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
+import com.vaadin.flow.component.textfield.Autocomplete;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
@@ -200,8 +202,10 @@ public class AccountCopyForm extends Div {
 
 
         // Destination
-        Select<String> destinationComboBox = new Select<>();
+        ComboBox<String> destinationComboBox = new ComboBox<>();
+        destinationComboBox.setAllowCustomValue(true);
         destinationComboBox.setLabel("Destination : ");
+        destinationComboBox.addCustomValueSetListener(event -> destinationComboBox.setValue(event.getDetail()));
         updateDestination(destinationComboBox, placeGenerationService, networkService);
 
         // Booking Type
@@ -252,16 +256,20 @@ public class AccountCopyForm extends Div {
         binder.bind(destinationComboBox, AccountCopy::getDestination,  (e, r) -> {
             e.setDestination(r);
             e.setPlaceCode(r);
-            if(isDomestic) {
-                PlaceGeneration placeGeneration = placeGenerationService.findByCityName(accountCopy.getDestination());
-                e.setStateCode(placeGeneration.getPlaceCode());
-            } else {
-                NetworkId networkId = new NetworkId();
-                networkId.setNetName(courierSelect.getValue());
-                networkId.setCountryName(r);
+            try {
+                if (isDomestic) {
+                    PlaceGeneration placeGeneration = placeGenerationService.findByCityName(accountCopy.getDestination());
+                    e.setStateCode(placeGeneration.getPlaceCode());
+                } else {
+                    NetworkId networkId = new NetworkId();
+                    networkId.setNetName(courierSelect.getValue());
+                    networkId.setCountryName(r);
 
-                Optional<Network> network = networkService.findOne(networkId);
-                network.ifPresent(value -> e.setStateCode(value.getZoneName()));
+                    Optional<Network> network = networkService.findOne(networkId);
+                    network.ifPresent(value -> e.setStateCode(value.getZoneName()));
+                }
+            } catch (Exception exception){
+                // Ignore - Scenario custom City name
             }
         });
 
@@ -502,7 +510,7 @@ public class AccountCopyForm extends Div {
             clientComboBox.setItems(rateIntMasterService.findDistinctClientName());
         }
     }
-    private void updateDestination(Select<String> destinationComboBox, PlaceGenerationService placeGenerationService, NetworkService networkService){
+    private void updateDestination(ComboBox<String> destinationComboBox, PlaceGenerationService placeGenerationService, NetworkService networkService){
         if(isDomestic){
             destinationComboBox.setItems(placeGenerationService.findDistinctCityName());
         } else {
