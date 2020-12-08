@@ -24,7 +24,7 @@ public interface BillGenerationRepository extends JpaRepository<BillGeneration, 
             String invoiceDateFilter,
             String clientNameFilter);
 
-    @Query(value = "SELECT bill_no FROM easynew.bill_generation where bill_no like :billNoLike order by bill_no desc limit 1;", nativeQuery = true)
+    @Query(value = "SELECT max(CAST(SUBSTRING(bill_no from 11) AS UNSIGNED))  FROM easynew.bill_generation where bill_no like :billNoLike", nativeQuery = true)
     String lastBillNo(@Param("billNoLike") String billNoLike);
 }
 

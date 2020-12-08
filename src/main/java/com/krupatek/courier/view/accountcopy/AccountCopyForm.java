@@ -184,7 +184,7 @@ public class AccountCopyForm extends Div {
         // Cash Client
         TextField cashClientTextField = new TextField();
         cashClientTextField.setLabel("Client Name (Cash): ");
-        cashClientTextField.setValueChangeMode(ValueChangeMode.LAZY);
+        cashClientTextField.setValueChangeMode(ValueChangeMode.ON_CHANGE);
         cashClientTextField.setAutoselect(true);
         cashClientTextField.setEnabled(false);
         binder.bind(cashClientTextField, AccountCopy::getClientName, AccountCopy::setClientName);
@@ -234,7 +234,7 @@ public class AccountCopyForm extends Div {
         // PinCode
         TextField pincode = new TextField();
         pincode.setLabel("Pincode : ");
-        pincode.setValueChangeMode(ValueChangeMode.TIMEOUT);
+        pincode.setValueChangeMode(ValueChangeMode.ON_CHANGE);
         binder.bind(pincode,
                 AccountCopy::getArea,
                 AccountCopy::setArea);
@@ -243,7 +243,7 @@ public class AccountCopyForm extends Div {
         // Receiver Name
         TextField receiverName = new TextField();
         receiverName.setLabel("Receiver Name : ");
-        receiverName.setValueChangeMode(ValueChangeMode.TIMEOUT);
+        receiverName.setValueChangeMode(ValueChangeMode.ON_CHANGE);
         binder.forField(receiverName).asRequired("Every Account copy must receiver name").bind(AccountCopy::getReceiverName, AccountCopy::setReceiverName);
         receiverName.setAutoselect(true);
 
@@ -299,7 +299,7 @@ public class AccountCopyForm extends Div {
         // Rate
         TextField rate = new TextField();
         rate.setLabel("Rate : ");
-        rate.setValueChangeMode(ValueChangeMode.TIMEOUT);
+        rate.setValueChangeMode(ValueChangeMode.ON_CHANGE);
         binder.forField(rate).withConverter(
                 new StringToIntegerConverter("Not a number")).bind(
                 AccountCopy::getRate,

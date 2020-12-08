@@ -56,7 +56,7 @@ public class BillingServiceImpl implements BillingService {
         if(lastBillNo == null || lastBillNo.isEmpty()) {
             lastBillNo = billTag+1;
         } else {
-            lastBillNo = billTag + (Integer.parseInt(lastBillNo.split("/")[2]) + 1);
+            lastBillNo = billTag + (Integer.parseInt(lastBillNo) + 1);
         }
         return lastBillNo;
     }
