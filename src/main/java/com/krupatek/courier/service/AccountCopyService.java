@@ -10,6 +10,7 @@ import java.util.Optional;
 
 @Service
 public interface AccountCopyService {
+
     List<AccountCopy> findAllByClientNameAndPodDateBetween(String clientName, Date startDate, Date endDate);
 
     List<AccountCopy> findAllByPodDateBetween(Date startDate, Date endDate);
