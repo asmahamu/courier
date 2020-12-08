@@ -52,7 +52,7 @@ public class BillGeneration {
     @Column(name = "bill_month")
     private Integer billMonth;
 
-    @Column(name = "bill_date")
+    @Column(name = "bill_date",columnDefinition = "DATE")
     private String billDate ;
 
     @Column(name = "cgst")

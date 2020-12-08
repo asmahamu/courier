@@ -2,6 +2,9 @@ package com.krupatek.courier;
 
 import com.krupatek.courier.model.AccountCopy;
 import com.krupatek.courier.repository.CompanyRepository;
+import com.krupatek.courier.repository.CountryRepository;
+import com.krupatek.courier.repository.PlaceGenerationRepository;
+import com.krupatek.courier.repository.StateRepository;
 import com.krupatek.courier.service.*;
 import com.krupatek.courier.utils.DateUtils;
 import com.krupatek.courier.utils.NumberUtils;
@@ -48,6 +51,16 @@ public class MainView extends VerticalLayout {
     CompanyRepository companyRepository;
 
     @Autowired
+    PlaceGenerationRepository placeGenerationRepository;
+
+    @Autowired
+    CountryRepository countryRepository;
+
+
+    @Autowired
+    StateRepository stateRepository;
+
+    @Autowired
     DestinationService destinationService;
 
     @Autowired
@@ -88,6 +101,9 @@ public class MainView extends VerticalLayout {
 
     @Autowired
     CountryService countryService;
+
+    @Autowired
+    StateService stateService;
 
     public MainView(@Autowired MessageBean bean) {
         MenuBar menuBar = new MenuBar();
@@ -134,6 +150,13 @@ public class MainView extends VerticalLayout {
             component.add(new RateEntryEditor(clientService, courierService, rateMasterService));
         });
 
+        rateMaster.getSubMenu().addItem(getMenuItemComponent(null, "Place Generation"), e -> {
+            component.removeAll();
+            component.add(new PlaceGenerationForm(zonesService,placeGenerationRepository,placeGenerationService,stateService));
+
+        });
+
+
 
         Component intRateMasterMenu = getMenuItemComponent(VaadinIcon.DOLLAR, "International Rate Master");
         MenuItem intRateMaster = masters.getSubMenu().addItem(intRateMasterMenu);
@@ -144,6 +167,10 @@ public class MainView extends VerticalLayout {
         intRateMaster.getSubMenu().addItem(getMenuItemComponent(null, "Rate International Entry"), e -> {
             component.removeAll();
             component.add(new RateIntEntryEditor(clientService, courierService, rateIntMasterService));
+        });
+        intRateMaster.getSubMenu().addItem(getMenuItemComponent(null, "Country Generation"), e -> {
+            component.removeAll();
+            component.add(new CountryGenerationForm(countryRepository,countryService));
         });
 
         Component accountCopyMenu = getMenuItemComponent(VaadinIcon.FILE_ADD, "Account Copy");
@@ -199,7 +226,8 @@ public class MainView extends VerticalLayout {
                     accountCopyService,
                     invoiceService,
                     clientService,
-                    companyRepository));
+                    companyRepository,
+                    dateUtils));
         });
         Component podSummaryMenu = getMenuItemComponent(VaadinIcon.LINE_BAR_CHART, "POD Summary / Daily Report");
         billingDetails.getSubMenu().addItem(podSummaryMenu, e -> {

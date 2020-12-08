@@ -7,6 +7,7 @@ import com.krupatek.courier.service.AccountCopyService;
 import com.krupatek.courier.service.BillingService;
 import com.krupatek.courier.service.ClientService;
 import com.krupatek.courier.service.InvoiceService;
+import com.krupatek.courier.utils.DateUtils;
 import com.krupatek.courier.view.accountcopy.AccountCopyEditor;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -42,7 +43,8 @@ public class ClientBillRePrintingForm extends Div {
             AccountCopyService accountCopyService,
             InvoiceService invoiceService,
             ClientService clientService,
-            CompanyRepository companyRepository) {
+            CompanyRepository companyRepository,
+            DateUtils dateUtils) {
         super();
         VerticalLayout verticalLayout = new VerticalLayout();
         verticalLayout.setMargin(false);

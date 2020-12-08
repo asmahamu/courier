@@ -112,6 +112,7 @@ public class AccountCopyForm extends Div {
                         docNo.setErrorMessage("Account Copy doesn't exists with this Doc No.");
 //                        docNo.focus();
                     }
+
                 }
             });
         } else {
@@ -238,7 +239,7 @@ public class AccountCopyForm extends Div {
         // Receiver Name
         TextField receiverName = new TextField();
         receiverName.setLabel("Receiver Name : ");
-        receiverName.setValueChangeMode(ValueChangeMode.TIMEOUT);
+        receiverName.setValueChangeMode(ValueChangeMode.ON_CHANGE);
         binder.forField(receiverName).asRequired("Every Account copy must receiver name").bind(AccountCopy::getReceiverName, AccountCopy::setReceiverName);
         receiverName.setAutoselect(true);
 
@@ -253,8 +254,10 @@ public class AccountCopyForm extends Div {
             e.setDestination(r);
             e.setPlaceCode(r);
             if(isDomestic) {
-                PlaceGeneration placeGeneration = placeGenerationService.findByCityName(accountCopy.getDestination());
-                e.setStateCode(placeGeneration.getPlaceCode());
+                Optional<PlaceGeneration> placeGeneration = placeGenerationService.findByCityName(accountCopy.getDestination());
+                if(placeGeneration.isPresent()){
+                    e.setStateCode(placeGeneration.get().getPlaceCode());
+                }
             } else {
                 NetworkId networkId = new NetworkId();
                 networkId.setNetName(courierSelect.getValue());
