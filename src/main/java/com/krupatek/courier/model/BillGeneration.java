@@ -52,7 +52,7 @@ public class BillGeneration implements Cloneable {
     @Column(name = "bill_month")
     private Integer billMonth;
 
-    @Column(name = "bill_date",columnDefinition = "DATE")
+    @Column(name = "bill_date")
     private String billDate ;
 
     @Column(name = "cgst")

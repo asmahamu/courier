@@ -16,9 +16,6 @@ import java.util.Optional;
 @Repository
 public interface AccountCopyRepository extends JpaRepository<AccountCopy, String> {
     List<AccountCopy> findAllByClientName(String clientName);
-
-    List<AccountCopy> findAllByClientNameAndPodDateBetweenOrderByPodDateAsc(String clientName, Date startDate, Date endDate) ;
-
     List<AccountCopy> findAllByClientNameAndPodDateBetweenOrderByPodDate(String clientName, Date startDate, Date endDate);
     List<AccountCopy> findAllByPodDateBetweenOrderByClientName(Date startDate, Date endDate);
     List<AccountCopy> findAllByClientNameAndPodDateBetweenAndTypeOrderByPodDate(String clientName, Date startDate, Date endDate, String type);

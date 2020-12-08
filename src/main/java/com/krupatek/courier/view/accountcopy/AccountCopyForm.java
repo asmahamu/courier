@@ -259,8 +259,8 @@ public class AccountCopyForm extends Div {
             e.setPlaceCode(r);
             try {
                 if (isDomestic) {
-                    PlaceGeneration placeGeneration = placeGenerationService.findByCityName(accountCopy.getDestination());
-                    e.setStateCode(placeGeneration.getPlaceCode());
+                    Optional<PlaceGeneration> placeGeneration = placeGenerationService.findByCityName(accountCopy.getDestination());
+                    placeGeneration.ifPresent(generation -> e.setStateCode(generation.getPlaceCode()));
                 } else {
                     NetworkId networkId = new NetworkId();
                     networkId.setNetName(courierSelect.getValue());
