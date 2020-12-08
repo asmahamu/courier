@@ -45,6 +45,10 @@ public interface AccountCopyRepository extends JpaRepository<AccountCopy, String
             @Param("billNo")
             String billNo);
 
+    @Modifying(clearAutomatically = true)
+    @Query(value = "UPDATE account_copy SET bill_no =\"\" WHERE bill_no = :billNo", nativeQuery = true)
+    void resetBillNo(@Param("billNo") String billNo);
+
     Optional<AccountCopy> findOneByDocNo(String docNo);
 
     @Query(value = "SELECT sum(rate) FROM easynew.account_copy where doc_no LIKE :docNo% and client_name LIKE :clientName% and pod_dt LIKE :podDate%", nativeQuery = true)

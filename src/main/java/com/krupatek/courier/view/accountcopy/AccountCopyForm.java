@@ -11,6 +11,7 @@ import com.krupatek.courier.view.HorizonDatePicker;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
@@ -21,6 +22,7 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
+import com.vaadin.flow.component.textfield.Autocomplete;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
@@ -29,6 +31,7 @@ import com.vaadin.flow.data.converter.StringToIntegerConverter;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
+import org.aspectj.weaver.ast.Not;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -112,7 +115,6 @@ public class AccountCopyForm extends Div {
                         docNo.setErrorMessage("Account Copy doesn't exists with this Doc No.");
 //                        docNo.focus();
                     }
-
                 }
             });
         } else {
@@ -182,7 +184,7 @@ public class AccountCopyForm extends Div {
         // Cash Client
         TextField cashClientTextField = new TextField();
         cashClientTextField.setLabel("Client Name (Cash): ");
-        cashClientTextField.setValueChangeMode(ValueChangeMode.LAZY);
+        cashClientTextField.setValueChangeMode(ValueChangeMode.ON_CHANGE);
         cashClientTextField.setAutoselect(true);
         cashClientTextField.setEnabled(false);
         binder.bind(cashClientTextField, AccountCopy::getClientName, AccountCopy::setClientName);
@@ -201,8 +203,10 @@ public class AccountCopyForm extends Div {
 
 
         // Destination
-        Select<String> destinationComboBox = new Select<>();
+        ComboBox<String> destinationComboBox = new ComboBox<>();
+        destinationComboBox.setAllowCustomValue(true);
         destinationComboBox.setLabel("Destination : ");
+        destinationComboBox.addCustomValueSetListener(event -> destinationComboBox.setValue(event.getDetail()));
         updateDestination(destinationComboBox, placeGenerationService, networkService);
 
         // Booking Type
@@ -230,7 +234,7 @@ public class AccountCopyForm extends Div {
         // PinCode
         TextField pincode = new TextField();
         pincode.setLabel("Pincode : ");
-        pincode.setValueChangeMode(ValueChangeMode.TIMEOUT);
+        pincode.setValueChangeMode(ValueChangeMode.ON_CHANGE);
         binder.bind(pincode,
                 AccountCopy::getArea,
                 AccountCopy::setArea);
@@ -253,18 +257,20 @@ public class AccountCopyForm extends Div {
         binder.bind(destinationComboBox, AccountCopy::getDestination,  (e, r) -> {
             e.setDestination(r);
             e.setPlaceCode(r);
-            if(isDomestic) {
-                Optional<PlaceGeneration> placeGeneration = placeGenerationService.findByCityName(accountCopy.getDestination());
-                if(placeGeneration.isPresent()){
-                    e.setStateCode(placeGeneration.get().getPlaceCode());
-                }
-            } else {
-                NetworkId networkId = new NetworkId();
-                networkId.setNetName(courierSelect.getValue());
-                networkId.setCountryName(r);
+            try {
+                if (isDomestic) {
+                    PlaceGeneration placeGeneration = placeGenerationService.findByCityName(accountCopy.getDestination());
+                    e.setStateCode(placeGeneration.getPlaceCode());
+                } else {
+                    NetworkId networkId = new NetworkId();
+                    networkId.setNetName(courierSelect.getValue());
+                    networkId.setCountryName(r);
 
-                Optional<Network> network = networkService.findOne(networkId);
-                network.ifPresent(value -> e.setStateCode(value.getZoneName()));
+                    Optional<Network> network = networkService.findOne(networkId);
+                    network.ifPresent(value -> e.setStateCode(value.getZoneName()));
+                }
+            } catch (Exception exception){
+                // Ignore - Scenario custom City name
             }
         });
 
@@ -283,7 +289,7 @@ public class AccountCopyForm extends Div {
         // Weight
         TextField weight = new TextField();
         weight.setLabel("Weight : ");
-        weight.setValueChangeMode(ValueChangeMode.TIMEOUT);
+        weight.setValueChangeMode(ValueChangeMode.ON_CHANGE);
         binder.forField(weight).withConverter(
                 new StringToDoubleConverter("Not a number")).bind(
                 AccountCopy::getWeight,
@@ -293,7 +299,7 @@ public class AccountCopyForm extends Div {
         // Rate
         TextField rate = new TextField();
         rate.setLabel("Rate : ");
-        rate.setValueChangeMode(ValueChangeMode.TIMEOUT);
+        rate.setValueChangeMode(ValueChangeMode.ON_CHANGE);
         binder.forField(rate).withConverter(
                 new StringToIntegerConverter("Not a number")).bind(
                 AccountCopy::getRate,
@@ -418,6 +424,7 @@ public class AccountCopyForm extends Div {
 //        courierSelect.addValueChangeListener(e -> modeSelect.focus());
 //        modeSelect.addValueChangeListener(e -> weight.focus());
         weight.addKeyDownListener(Key.TAB, e -> {
+            Notification.show("Weight is "+weight.getValue());
             if(!isCashCustomer){
                 calculateRate(rateMasterService, rateIntMasterService, accountCopy, binder, weight, rate, clientsComboBox.getValue());
             } else {
@@ -431,6 +438,14 @@ public class AccountCopyForm extends Div {
                 rate.focus();
             }
         });
+//        rate.addFocusListener(listener -> {
+//            Notification.show("Weight is "+weight.getValue());
+//            if(!isCashCustomer){
+//                calculateRate(rateMasterService, rateIntMasterService, accountCopy, binder, weight, rate, clientsComboBox.getValue());
+//            } else {
+//                rate.focus();
+//            }
+//        });
 //        rate.addKeyDownListener(Key.ENTER, e -> save.focus());
 
         docNo.focus();
@@ -505,7 +520,7 @@ public class AccountCopyForm extends Div {
             clientComboBox.setItems(rateIntMasterService.findDistinctClientName());
         }
     }
-    private void updateDestination(Select<String> destinationComboBox, PlaceGenerationService placeGenerationService, NetworkService networkService){
+    private void updateDestination(ComboBox<String> destinationComboBox, PlaceGenerationService placeGenerationService, NetworkService networkService){
         if(isDomestic){
             destinationComboBox.setItems(placeGenerationService.findDistinctCityName());
         } else {

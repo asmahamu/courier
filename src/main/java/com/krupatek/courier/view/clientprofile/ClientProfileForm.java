@@ -67,10 +67,12 @@ public class ClientProfileForm extends Div {
         clientList.forEach(c -> clientNameList.add(c.getClientName()));
 
         ComboBox<String> clientsComboBox = new ComboBox<>();
+        clientsComboBox.setAllowCustomValue(true);
         clientsComboBox.setLabel("Client Name : ");
         clientsComboBox.setItems(clientNameList);
         clientsComboBox.setClearButtonVisible(true);
         formLayout.add(clientsComboBox, 1);
+        clientsComboBox.addCustomValueSetListener(event -> clientsComboBox.setValue(event.getDetail()));
         binder.bind(clientsComboBox, Client::getClientName, Client::setClientName);
 
 //        clientsComboBox.addCustomValueSetListener(

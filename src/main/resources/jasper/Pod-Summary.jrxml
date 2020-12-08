@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.15.0.final using JasperReports Library version 6.15.0-dd49bfb94918336b8321d5507193f0169ead4e95  -->
+<!-- Created with Jaspersoft Studio version 6.13.0.final using JasperReports Library version 6.13.0-46ada4d1be8f3c5985fd0b6146f3ed44caed6f05  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Invoice" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4eedbb89-b4f6-4469-9ab6-f642a1688cf7">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="CompanyAdaper"/>
 	<style name="Title" forecolor="#FFFFFF" fontName="Times New Roman" fontSize="50" isBold="false" pdfFontName="Times-Bold"/>
@@ -74,22 +74,14 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
-<<<<<<< HEAD
-					<font fontName="SansSerif" size="10"/>
-=======
 					<font fontName="Times New Roman" size="12"/>
->>>>>>> 702b6c3da1b41acc3455fba0f2fb8abf4dae0eed
 				</textElement>
 				<textFieldExpression><![CDATA[$P{client}.getClientName()]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="222" y="1" width="111" height="21" uuid="85976297-200d-4e94-ae92-2dcb6a069806"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
-<<<<<<< HEAD
-					<font fontName="SansSerif" size="10"/>
-=======
 					<font fontName="Times New Roman" size="12"/>
->>>>>>> 702b6c3da1b41acc3455fba0f2fb8abf4dae0eed
 				</textElement>
 				<text><![CDATA[POD Summary]]></text>
 			</staticText>
@@ -99,7 +91,7 @@
 		<band height="20">
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<staticText>
-				<reportElement x="45" y="0" width="74" height="20" uuid="d89eba7d-e26f-470a-b44f-db1f04a4dae9">
+				<reportElement x="45" y="0" width="64" height="20" uuid="d89eba7d-e26f-470a-b44f-db1f04a4dae9">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
 				<box>
@@ -109,16 +101,12 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-<<<<<<< HEAD
-					<font size="8"/>
-=======
 					<font fontName="Times New Roman"/>
->>>>>>> 702b6c3da1b41acc3455fba0f2fb8abf4dae0eed
 				</textElement>
 				<text><![CDATA[Doc No.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="120" y="0" width="55" height="20" uuid="ac5ce54c-3e98-48df-9cfa-1c566e971851">
+				<reportElement x="110" y="0" width="65" height="20" uuid="ac5ce54c-3e98-48df-9cfa-1c566e971851">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
@@ -129,11 +117,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-<<<<<<< HEAD
-					<font size="8"/>
-=======
 					<font fontName="Times New Roman"/>
->>>>>>> 702b6c3da1b41acc3455fba0f2fb8abf4dae0eed
 				</textElement>
 				<text><![CDATA[Date]]></text>
 			</staticText>
@@ -146,11 +130,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-<<<<<<< HEAD
-					<font size="8"/>
-=======
 					<font fontName="Times New Roman"/>
->>>>>>> 702b6c3da1b41acc3455fba0f2fb8abf4dae0eed
 				</textElement>
 				<text><![CDATA[Destination]]></text>
 			</staticText>
@@ -163,11 +143,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-<<<<<<< HEAD
-					<font size="8"/>
-=======
 					<font fontName="Times New Roman"/>
->>>>>>> 702b6c3da1b41acc3455fba0f2fb8abf4dae0eed
 				</textElement>
 				<text><![CDATA[Status]]></text>
 			</staticText>
@@ -182,11 +158,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-<<<<<<< HEAD
-					<font size="8"/>
-=======
 					<font fontName="Times New Roman"/>
->>>>>>> 702b6c3da1b41acc3455fba0f2fb8abf4dae0eed
 				</textElement>
 				<text><![CDATA[Delivery Date]]></text>
 			</staticText>
@@ -199,11 +171,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-<<<<<<< HEAD
-					<font size="8"/>
-=======
 					<font fontName="Times New Roman"/>
->>>>>>> 702b6c3da1b41acc3455fba0f2fb8abf4dae0eed
 				</textElement>
 				<text><![CDATA[Remark]]></text>
 			</staticText>
@@ -221,11 +189,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-<<<<<<< HEAD
-					<font size="8"/>
-=======
 					<font fontName="Times New Roman"/>
->>>>>>> 702b6c3da1b41acc3455fba0f2fb8abf4dae0eed
 				</textElement>
 				<text><![CDATA[Sr. No.]]></text>
 			</staticText>
@@ -235,7 +199,7 @@
 		<band height="20">
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<textField>
-				<reportElement x="45" y="0" width="74" height="20" uuid="da13b285-4610-444a-885d-0821837f0b3b">
+				<reportElement x="45" y="0" width="65" height="20" uuid="da13b285-4610-444a-885d-0821837f0b3b">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
@@ -247,16 +211,12 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-<<<<<<< HEAD
-					<font size="8"/>
-=======
 					<font fontName="Times New Roman" size="8"/>
->>>>>>> 702b6c3da1b41acc3455fba0f2fb8abf4dae0eed
 				</textElement>
 				<textFieldExpression><![CDATA[$F{docNo}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="120" y="0" width="55" height="20" uuid="52706dcb-d204-47de-8370-0c61a4a9b548">
+				<reportElement x="110" y="0" width="65" height="20" uuid="52706dcb-d204-47de-8370-0c61a4a9b548">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
@@ -267,11 +227,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-<<<<<<< HEAD
-					<font size="8"/>
-=======
 					<font fontName="Times New Roman" size="8"/>
->>>>>>> 702b6c3da1b41acc3455fba0f2fb8abf4dae0eed
 				</textElement>
 				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yy").format($F{podDate})]]></textFieldExpression>
 			</textField>
@@ -288,11 +244,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-<<<<<<< HEAD
-					<font size="8"/>
-=======
 					<font fontName="Times New Roman" size="8"/>
->>>>>>> 702b6c3da1b41acc3455fba0f2fb8abf4dae0eed
 				</textElement>
 				<textFieldExpression><![CDATA[$F{remark}]]></textFieldExpression>
 			</textField>
@@ -310,11 +262,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-<<<<<<< HEAD
-					<font size="8"/>
-=======
 					<font fontName="Times New Roman" size="8"/>
->>>>>>> 702b6c3da1b41acc3455fba0f2fb8abf4dae0eed
 				</textElement>
 				<textFieldExpression><![CDATA[$F{destination}]]></textFieldExpression>
 			</textField>
@@ -328,11 +276,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-<<<<<<< HEAD
-					<font size="8"/>
-=======
 					<font fontName="Times New Roman" size="8"/>
->>>>>>> 702b6c3da1b41acc3455fba0f2fb8abf4dae0eed
 				</textElement>
 				<textFieldExpression><![CDATA[$F{status}]]></textFieldExpression>
 			</textField>
@@ -346,14 +290,9 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-<<<<<<< HEAD
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yy").format($F{statusDate})]]></textFieldExpression>
-=======
 					<font fontName="Times New Roman" size="8"/>
 				</textElement>
->>>>>>> 702b6c3da1b41acc3455fba0f2fb8abf4dae0eed
+				<textFieldExpression><![CDATA[$F{status}.equals("") ? "" : new SimpleDateFormat("dd/MM/yy").format($F{statusDate})]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="0" y="0" width="45" height="20" uuid="706e3d3a-e09f-4201-ad6b-0bbdacf781a8">
@@ -369,11 +308,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-<<<<<<< HEAD
-					<font size="8"/>
-=======
 					<font fontName="Times New Roman" size="8"/>
->>>>>>> 702b6c3da1b41acc3455fba0f2fb8abf4dae0eed
 				</textElement>
 				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>

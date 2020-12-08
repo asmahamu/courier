@@ -36,6 +36,7 @@ import org.springframework.data.domain.Page;
 import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Logger;
@@ -85,11 +86,23 @@ public class ClientBillRePrintingForm extends Div {
 
 
         clientBillGrid.addColumn(BillGeneration::getBillNo).setKey("billNo").setHeader(new Html("<b>Bill No</b>")).setTextAlign(ColumnTextAlign.END).setWidth("14%").setFlexGrow(0);
-        clientBillGrid.addColumn(BillGeneration::getBillDate).setKey("billDate").setHeader(new Html("<b>Bill Date</b>")).setWidth("14%").setFlexGrow(0);
-        clientBillGrid.addColumn(BillGeneration::getClientName).setKey("clientName").setHeader(new Html("<b>Client Name</b>")).setWidth("30%").setFlexGrow(0);
+        clientBillGrid.addColumn(billGeneration ->
+                {
+                    try {
+                        return new SimpleDateFormat("dd/MM/yy").format(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(billGeneration.getBillDate()));
+                    } catch (ParseException e) {
+                        return billGeneration.getBillDate();
+                    }
+                }
+        ).setKey("billDate").setHeader(new Html("<b>Bill Date</b>")).setWidth("14%").setFlexGrow(0);
+        clientBillGrid.addColumn(BillGeneration::getClientName).setKey("clientName").setHeader(new Html("<b>Client Name</b>")).setWidth("22%").setFlexGrow(0);
         clientBillGrid.addColumn(BillGeneration::getBillAmount).setKey("billAmount").setHeader(new Html("<b>Gross Amount</b>")).setTextAlign(ColumnTextAlign.END).setWidth("16.5%").setFlexGrow(0);
         clientBillGrid.addColumn(BillGeneration::getNetAmount).setKey("netAmount").setHeader(new Html("<b>Net Amount</b>")).setTextAlign(ColumnTextAlign.END).setWidth("16.5%").setFlexGrow(0);
-
+        clientBillGrid.addComponentColumn(item -> new Button("Delete", click -> {
+            billingService.delete(item);
+            accountCopyService.resetBillNo(item.getBillNo());
+            clientBillGrid.getDataProvider().refreshAll();
+        })).setWidth("5%");
 
         HeaderRow hr = clientBillGrid.prependHeaderRow();
         hr.getCell(clientBillGrid.getColumnByKey("billNo")).setComponent(billNo);
@@ -122,7 +135,7 @@ public class ClientBillRePrintingForm extends Div {
                             Logger.getLogger(AccountCopyEditor.class.getName()).info("Corrected offset : "+offset+", limit :"+limit);
 
                             Page<BillGeneration> accountCopies = billingService
-                                    .findByBillNoStartsWithAndBillDateStartsWithAndClientNameStartsWith(offset, limit, billNoFilter, invoiceDateFilter, clientNameFilter);
+                                    .findByAndBillNoStartsWithAndBillDateContainingAndClientNameStartsWith(offset, limit, billNoFilter, invoiceDateFilter, clientNameFilter);
                             Logger.getLogger(AccountCopyEditor.class.getName()).info("Total pages : "+accountCopies.getTotalElements());
                             return accountCopies.stream();
                         },
@@ -133,7 +146,7 @@ public class ClientBillRePrintingForm extends Div {
                             String billNoFilter = clientBillFilter.getBillNoFilter();
                             String invoiceDateFilter = clientBillFilter.getInvoiceDateFilter();
                             String clientNameFilter = clientBillFilter.getClientNameFilter();
-                            return Math.toIntExact(billingService.countByBillNoStartsWithAndBillDateStartsWithAndClientNameStartsWith(billNoFilter, invoiceDateFilter,clientNameFilter));
+                            return Math.toIntExact(billingService.countByBillNoStartsWithAndBillDateContainingAndClientNameStartsWith(billNoFilter, invoiceDateFilter,clientNameFilter));
                         });
 
         filter = new ClientBillFilter();
@@ -149,8 +162,13 @@ public class ClientBillRePrintingForm extends Div {
         });
 
         billDate.addValueChangeListener(event -> {
-            filter.setInvoiceDateFilter(event.getValue());
-            wrapper.setFilter(filter);
+            try {
+                filter.setInvoiceDateFilter(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new SimpleDateFormat("dd/MM/yy").parse(event.getValue())));
+                wrapper.setFilter(filter);
+            } catch (ParseException e) {
+                filter.setInvoiceDateFilter(event.getValue());
+                wrapper.setFilter(filter);
+            }
 //            wrapper.refreshAll();
         });
 
