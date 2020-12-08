@@ -147,7 +147,7 @@ public class MainView extends VerticalLayout {
         });
         rateMaster.getSubMenu().addItem(getMenuItemComponent(null, "Rate Entry"), e -> {
             component.removeAll();
-            component.add(new RateEntryEditor(clientService, courierService, rateMasterService));
+            component.add(new RateEntryEditor(clientService, courierService, zonesService, rateMasterService));
         });
 
         rateMaster.getSubMenu().addItem(getMenuItemComponent(null, "Place Generation"), e -> {
@@ -166,7 +166,7 @@ public class MainView extends VerticalLayout {
         });
         intRateMaster.getSubMenu().addItem(getMenuItemComponent(null, "Rate International Entry"), e -> {
             component.removeAll();
-            component.add(new RateIntEntryEditor(clientService, courierService, rateIntMasterService));
+            component.add(new RateIntEntryEditor(clientService, courierService, networkService, rateIntMasterService));
         });
         intRateMaster.getSubMenu().addItem(getMenuItemComponent(null, "Country Generation"), e -> {
             component.removeAll();

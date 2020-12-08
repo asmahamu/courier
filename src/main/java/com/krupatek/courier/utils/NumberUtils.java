@@ -52,7 +52,7 @@ public class NumberUtils {
 
     public String convertNumberToWords(Float n) {
         if (n == 0) return "Zero";
-        input = numToString(n.intValue());
+        input = numToString(Math.round(n));
         String converted = "";
         int pos = 1;
         boolean hun = false;

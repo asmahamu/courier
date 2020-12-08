@@ -1,12 +1,16 @@
 package com.krupatek.courier.model;
 
 import javax.persistence.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.List;
 
 @Entity(name = "account_copy")
-public class AccountCopy {
+public class AccountCopy implements AccountCopyCSVAdapter{
     @Id
     @Column(name = "doc_no")
     private String docNo;
@@ -31,7 +35,7 @@ public class AccountCopy {
     private String receiverName;
 
     @Column(name = "party_code")
-    private Integer partyCode;
+    private String partyCode;
 
     @Column(name = "state_code")
     private String stateCode;
@@ -83,7 +87,7 @@ public class AccountCopy {
 
     @Column(name = "status_date", columnDefinition="DATETIME")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date statusDate = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());;
+    private Date statusDate;
 
     @Column(name = "remark")
     private String remark;
@@ -153,11 +157,11 @@ public class AccountCopy {
         this.receiverName = receiverName;
     }
 
-    public Integer getPartyCode() {
+    public String getPartyCode() {
         return partyCode;
     }
 
-    public void setPartyCode(Integer partyCode) {
+    public void setPartyCode(String partyCode) {
         this.partyCode = partyCode;
     }
 
@@ -327,5 +331,114 @@ public class AccountCopy {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    @Override
+    public String toString() {
+        return "AccountCopy{" +
+                "docNo='" + docNo + '\'' +
+                ", podDate=" + podDate +
+                ", podType='" + podType + '\'' +
+                ", dP='" + dP + '\'' +
+                ", mode='" + mode + '\'' +
+                ", clientName='" + clientName + '\'' +
+                ", receiverName='" + receiverName + '\'' +
+                ", partyCode=" + partyCode +
+                ", stateCode='" + stateCode + '\'' +
+                ", placeCode='" + placeCode + '\'' +
+                ", destination='" + destination + '\'' +
+                ", weight=" + weight +
+                ", rate=" + rate +
+                ", billNo='" + billNo + '\'' +
+                ", billCheck='" + billCheck + '\'' +
+                ", pod='" + pod + '\'' +
+                ", required='" + required + '\'' +
+                ", place=" + place +
+                ", from1=" + from1 +
+                ", to1=" + to1 +
+                ", toParty='" + toParty + '\'' +
+                ", gpoCode='" + gpoCode + '\'' +
+                ", area='" + area + '\'' +
+                ", status='" + status + '\'' +
+                ", statusDate=" + statusDate +
+                ", remark='" + remark + '\'' +
+                ", phone='" + phone + '\'' +
+                ", otherCharges='" + otherCharges + '\'' +
+                ", type='" + type + '\'' +
+                '}';
+    }
+
+    @Override
+    public AccountCopy adapt(String csvStr) {
+        String[] properties = csvStr.split("\\|", -1);
+
+        docNo = properties[0];
+
+        SimpleDateFormat formatter =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss ");
+        try {
+            podDate = (properties[1] != null && !properties[1].isEmpty()) ? formatter.parse(properties[1]) : null;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        podType = properties[2];
+
+        dP = properties[3];
+
+        mode = properties[4];
+
+        clientName = properties[5];
+
+        receiverName = properties[6];
+
+        partyCode = properties[7];
+
+        stateCode = properties[8];
+
+        placeCode = properties[9];
+
+        destination = properties[10];
+
+        weight = (properties[11] != null && !properties[11].isEmpty()) ? Float.parseFloat(properties[11].trim()) : weight;
+
+        rate = (properties[12] != null && !properties[12].isEmpty()) ? Integer.parseInt(properties[12].trim()) : 0;
+
+        billNo = properties[13];
+
+        billCheck = properties[14];
+
+        pod = properties[15];
+
+        required = properties[16];
+
+        place = (properties[17] != null && !properties[17].isEmpty()) ? Integer.parseInt(properties[17].trim()) : 0;
+
+        from1 = (properties[18] != null && !properties[18].isEmpty()) ? Double.parseDouble(properties[18].trim()) : 0;
+
+        to1 = (properties[19] != null && !properties[19].isEmpty()) ? Double.parseDouble(properties[19].trim()) : 0;
+
+        toParty = properties[20];
+
+        gpoCode = properties[21];
+
+        area = properties[22];
+
+        status = properties[23];
+
+        try {
+            statusDate = (properties[24] != null && !properties[24].isEmpty()) ? formatter.parse(properties[24]) : null;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        remark = properties[25];
+
+        phone = properties[26];
+
+        otherCharges = properties[27];
+
+        type = properties[28];
+
+        return this;
     }
 }

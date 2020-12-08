@@ -13,4 +13,6 @@ public interface RateMasterService {
     RateEntry saveAndFlush(RateEntry rateEntry);
     RateEntry findByClientNameAndCourierAndStateCodeAndPodTypeAndMode(String clientName, String courier, String stateCode, String podType, String mode);
     Set<String> findDistinctClientName();
+    Integer latestMasterId();
+    void delete(RateEntry rateEntry);
 }

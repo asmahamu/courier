@@ -9,6 +9,9 @@ import com.krupatek.courier.service.ClientService;
 import com.krupatek.courier.service.InvoiceService;
 import com.krupatek.courier.utils.DateUtils;
 import com.krupatek.courier.view.accountcopy.AccountCopyEditor;
+import com.vaadin.flow.component.Html;
+import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.KeyDownEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
@@ -25,14 +28,18 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.ConfigurableFilterDataProvider;
 import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.server.StreamResource;
 import org.springframework.data.domain.Page;
 
 import java.io.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class ClientBillRePrintingForm extends Div {
     private ClientBillFilter filter;
@@ -70,15 +77,19 @@ public class ClientBillRePrintingForm extends Div {
         clientName.setValueChangeMode(ValueChangeMode.LAZY);
         clientName.setValueChangeTimeout(Constants.TEXT_FIELD_TIMEOUT);
 
-        Grid<BillGeneration> clientBillGrid = new Grid<>(BillGeneration.class);
+        Grid<BillGeneration> clientBillGrid = new Grid<>(BillGeneration.class, false);
         clientBillGrid.setPageSize(PAGE_SIZE);
-        clientBillGrid.setColumns("billNo", "billDate", "clientName", "billAmount", "netAmount");
 
-        clientBillGrid.getColumnByKey("billNo").setTextAlign(ColumnTextAlign.END).setWidth("16.5%").setFlexGrow(0);
-        clientBillGrid.getColumnByKey("billDate").setWidth("16.5%").setFlexGrow(0);
-        clientBillGrid.getColumnByKey("clientName").setWidth("33%").setFlexGrow(0);
-        clientBillGrid.getColumnByKey("billAmount").setTextAlign(ColumnTextAlign.END).setWidth("16.5%").setFlexGrow(0);
-        clientBillGrid.getColumnByKey("netAmount").setTextAlign(ColumnTextAlign.END).setWidth("16.5%").setFlexGrow(0);
+        clientBillGrid.addColumn(BillGeneration::getBillNo).setKey("srNo").setHeader(new Html("<b>Sr No</b>")).
+                setTextAlign(ColumnTextAlign.END).setWidth("8%").setFlexGrow(0).getElement().executeJs("this.renderer = function(root, column, rowData) {root.textContent = rowData.index + 1}");;
+
+
+        clientBillGrid.addColumn(BillGeneration::getBillNo).setKey("billNo").setHeader(new Html("<b>Bill No</b>")).setTextAlign(ColumnTextAlign.END).setWidth("14%").setFlexGrow(0);
+        clientBillGrid.addColumn(BillGeneration::getBillDate).setKey("billDate").setHeader(new Html("<b>Bill Date</b>")).setWidth("14%").setFlexGrow(0);
+        clientBillGrid.addColumn(BillGeneration::getClientName).setKey("clientName").setHeader(new Html("<b>Client Name</b>")).setWidth("30%").setFlexGrow(0);
+        clientBillGrid.addColumn(BillGeneration::getBillAmount).setKey("billAmount").setHeader(new Html("<b>Gross Amount</b>")).setTextAlign(ColumnTextAlign.END).setWidth("16.5%").setFlexGrow(0);
+        clientBillGrid.addColumn(BillGeneration::getNetAmount).setKey("netAmount").setHeader(new Html("<b>Net Amount</b>")).setTextAlign(ColumnTextAlign.END).setWidth("16.5%").setFlexGrow(0);
+
 
         HeaderRow hr = clientBillGrid.prependHeaderRow();
         hr.getCell(clientBillGrid.getColumnByKey("billNo")).setComponent(billNo);
@@ -150,58 +161,97 @@ public class ClientBillRePrintingForm extends Div {
         });
         verticalLayout.add(title ,clientBillGrid);
 
-        clientBillGrid.addItemClickListener(listener -> {
-            String invoiceNo = listener.getItem().getBillNo();
-            List<AccountCopy> accountCopies = accountCopyService.findAllByBillNo(invoiceNo+" ");
-            Client client = clientService.findAllByClientName(listener.getItem().getClientName()).get(0);
-            Company company = companyRepository.findAll().get(0);
+        clientBillGrid.asSingleSelect().addValueChangeListener(gridBillGenerationComponentValueChangeEvent -> {
+           clientBillGrid.select(gridBillGenerationComponentValueChangeEvent.getValue());
+        });
 
-            try {
-                File pdfFile = invoiceService.generateInvoiceFor(company, client, listener.getItem(), accountCopies, Locale.getDefault());
+        clientBillGrid.addSelectionListener(selectionEvent -> {
+            if(selectionEvent.isFromClient() && selectionEvent.getFirstSelectedItem().isPresent()) {
+                String invoiceNo = selectionEvent.getFirstSelectedItem().get().getBillNo();
+                List<AccountCopy> accountCopies = accountCopyService.findAllByBillNo(invoiceNo + " ");
+                Client client = clientService.findAllByClientName(selectionEvent.getFirstSelectedItem().get().getClientName()).get(0);
+                Company company = companyRepository.findAll().get(0);
 
-                VerticalLayout embeddedPdfVLayout = new VerticalLayout();
-                embeddedPdfVLayout.setSizeFull();
 
-                StreamResource resource = new StreamResource("invoice.pdf", () -> {
+                try {
+                    BillGeneration billGeneration = selectionEvent.getFirstSelectedItem().get();
+
+                    String oldBillDate = billGeneration.getBillDate();
+                    String oldStartDate = billGeneration.getStartDate();
+                    String oldEndDate = billGeneration.getEndDate();
+
                     try {
-                        return new FileInputStream(pdfFile);
-                    } catch (FileNotFoundException e1) {
-                        return new ByteArrayInputStream(new byte[]{});
+                        String newBillDate = new SimpleDateFormat("dd-MMM-yyyy").format(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(oldBillDate));
+                        billGeneration.setBillDate(newBillDate);
+
+                        String newStartDate = new SimpleDateFormat("dd-MMM-yyyy").format(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(oldStartDate));
+                        billGeneration.setStartDate(newStartDate);
+
+                        String newEndDate = new SimpleDateFormat("dd-MMM-yyyy").format(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(oldEndDate));
+                        billGeneration.setEndDate(newEndDate);
+                    } catch (Exception e){
+                        String newBillDate = new SimpleDateFormat("dd-MMM-yyyy").format(new SimpleDateFormat("dd/MM/yy").parse(oldBillDate));
+                        billGeneration.setBillDate(newBillDate);
+
+                        String newStartDate = new SimpleDateFormat("dd-MMM-yyyy").format(new SimpleDateFormat("dd/MM/yy").parse(oldStartDate));
+                        billGeneration.setStartDate(newStartDate);
+
+                        String newEndDate = new SimpleDateFormat("dd-MMM-yyyy").format(new SimpleDateFormat("dd/MM/yy").parse(oldEndDate));
+                        billGeneration.setEndDate(newEndDate);
                     }
-                });
-                String width = "1300px";
-                String height = "500px";
 
-                HorizontalLayout buttonPanelReportPreview = new HorizontalLayout();
+                    File pdfFile = invoiceService.generateInvoiceFor(company, client, billGeneration, accountCopies, Locale.getDefault());
 
-                Label leftEmptyLbl = new Label();
-                leftEmptyLbl.setWidth("85%");
+                    billGeneration.setBillDate(oldBillDate);
+                    billGeneration.setStartDate(oldStartDate);
+                    billGeneration.setEndDate(oldEndDate);
 
-                Anchor podSummaryDownloadLink = new Anchor(resource, "Download Invoice");
-                podSummaryDownloadLink.setWidth("10%");
-                podSummaryDownloadLink.getElement().setAttribute("download", true);
-                Button closeButton = new Button("", VaadinIcon.CLOSE.create());
-                closeButton.setWidth("5%");
+                    VerticalLayout embeddedPdfVLayout = new VerticalLayout();
+                    embeddedPdfVLayout.setSizeFull();
 
-                buttonPanelReportPreview.add(leftEmptyLbl, podSummaryDownloadLink, closeButton);
-                buttonPanelReportPreview.setWidth(width);
-                buttonPanelReportPreview.setAlignItems(FlexComponent.Alignment.CENTER);
-
-                embeddedPdfVLayout.add(buttonPanelReportPreview);
-                embeddedPdfVLayout.add(new EmbeddedPdfDocument(resource, width, height));
-
-
-                Dialog dialog = new Dialog();
-                dialog.add(embeddedPdfVLayout);
-                closeButton.addClickListener( event -> {
-                            dialog.close();
+                    StreamResource resource = new StreamResource("invoice.pdf", () -> {
+                        try {
+                            return new FileInputStream(pdfFile);
+                        } catch (FileNotFoundException e1) {
+                            return new ByteArrayInputStream(new byte[]{});
                         }
-                );
-                dialog.open();
-            } catch (IOException e) {
-                e.printStackTrace();
+                    });
+                    String width = "1300px";
+                    String height = "500px";
+
+                    HorizontalLayout buttonPanelReportPreview = new HorizontalLayout();
+
+                    Label leftEmptyLbl = new Label();
+                    leftEmptyLbl.setWidth("85%");
+
+                    Anchor podSummaryDownloadLink = new Anchor(resource, "Download Invoice");
+                    podSummaryDownloadLink.setWidth("10%");
+                    podSummaryDownloadLink.getElement().setAttribute("download", true);
+                    Button closeButton = new Button("", VaadinIcon.CLOSE.create());
+                    closeButton.setWidth("5%");
+
+                    buttonPanelReportPreview.add(leftEmptyLbl, podSummaryDownloadLink, closeButton);
+                    buttonPanelReportPreview.setWidth(width);
+                    buttonPanelReportPreview.setAlignItems(FlexComponent.Alignment.CENTER);
+
+                    embeddedPdfVLayout.add(buttonPanelReportPreview);
+                    embeddedPdfVLayout.add(new EmbeddedPdfDocument(resource, width, height));
+
+
+                    Dialog dialog = new Dialog();
+                    dialog.add(embeddedPdfVLayout);
+                    closeButton.addClickListener(event -> {
+                                dialog.close();
+                            }
+                    );
+                    dialog.open();
+                } catch (IOException | ParseException e) {
+                    e.printStackTrace();
+                }
             }
         });
+
+
 
         add(verticalLayout);
     }

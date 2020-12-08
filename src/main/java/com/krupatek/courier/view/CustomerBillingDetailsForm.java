@@ -8,9 +8,7 @@ import com.krupatek.courier.service.*;
 import com.krupatek.courier.utils.DateUtils;
 import com.krupatek.courier.utils.NumberUtils;
 import com.krupatek.courier.view.accountcopy.AccountCopyForm;
-import com.vaadin.flow.component.AbstractField;
-import com.vaadin.flow.component.HasValue;
-import com.vaadin.flow.component.Html;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -29,6 +27,7 @@ import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
@@ -40,12 +39,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 @SpringComponent
 @UIScope
 public class CustomerBillingDetailsForm extends Div {
     private final String CLIENT_SELECT_ALL = "ALL";
     private String currentSelectedItem;
+    private List<AccountCopy> allByClientNameAndPodDateBetween = new ArrayList<>();
+
 
     public CustomerBillingDetailsForm(
             AccountCopyService accountCopyService,
@@ -178,7 +180,9 @@ public class CustomerBillingDetailsForm extends Div {
 
         Grid<AccountCopy> accountCopyGrid = new Grid<>(AccountCopy.class, false);
         accountCopyGrid.setWidthFull();
+        accountCopyGrid.setSelectionMode(Grid.SelectionMode.SINGLE);
 
+        accountCopyGrid.addColumn(accountCopy ->  (allByClientNameAndPodDateBetween.indexOf(accountCopy) + 1)).setHeader(new Html("<b>Sr No</b>")).setWidth("5%").setFlexGrow(0).setTextAlign(ColumnTextAlign.END);;
         accountCopyGrid.addColumn(AccountCopy::getDocNo).setKey("docNo");
         accountCopyGrid.addColumn(accountCopy -> dateUtils.ddmmyyFormat(accountCopy.getPodDate())).setKey("podDate");
         accountCopyGrid.addColumn(AccountCopy::getClientName).setKey("clientName");
@@ -190,13 +194,13 @@ public class CustomerBillingDetailsForm extends Div {
         accountCopyGrid.addColumn(AccountCopy::getMode).setKey("mode");
 
         accountCopyGrid.getColumnByKey("docNo").setHeader(new Html("<b>Doc No</b>")).setWidth("10%").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("podDate").setHeader(new Html("<b>POD Date</b>")).setWidth("10%").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("clientName").setHeader(new Html("<b>Client Name</b>")).setWidth("25%").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("podDate").setHeader(new Html("<b>POD Date</b>")).setWidth("8%").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("clientName").setHeader(new Html("<b>Client Name</b>")).setWidth("24%").setFlexGrow(0);
         accountCopyGrid.getColumnByKey("destination").setHeader(new Html("<b>Destination</b>")).setWidth("10%").setFlexGrow(0);
         accountCopyGrid.getColumnByKey("weight").setHeader(new Html("<b>Weight</b>")).setWidth("8%").setFlexGrow(0);
         accountCopyGrid.getColumnByKey("otherCharges").setHeader(new Html("<b>Other Charges</b>")).setWidth("11%").setFlexGrow(0);
         accountCopyGrid.getColumnByKey("rate").setHeader(new Html("<b>Rate</b>")).setWidth("10%").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("dP").setHeader(new Html("<b>D/P</b>")).setWidth("8%").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("dP").setHeader(new Html("<b>D/P</b>")).setWidth("6%").setFlexGrow(0);
         accountCopyGrid.getColumnByKey("mode").setHeader(new Html("<b>Mode</b>")).setWidth("8%").setFlexGrow(0);
 
         accountCopyGrid.getColumnByKey("docNo").setTextAlign(ColumnTextAlign.END);
@@ -423,21 +427,41 @@ public class CustomerBillingDetailsForm extends Div {
             load(accountCopyGrid, accountCopyService, dateFilter, grossTotalTF, totalDocNoTF);
         });
 
-        accountCopyGrid.addItemClickListener(listener -> {
-            AccountCopyForm accountCopyForm =  new AccountCopyForm(
-                    accountCopyService,
-                    clientService,
-                    rateMasterService,
-                    rateIntMasterService,
-                    placeGenerationService,
-                    networkService,
-                    dateUtils,
-                    numberUtils,
-                    listener.getItem());
-            add(accountCopyForm);
+        accountCopyGrid.asSingleSelect().addValueChangeListener(gridAccountCopyComponentValueChangeEvent -> {
+            accountCopyGrid.select(gridAccountCopyComponentValueChangeEvent.getValue());
+        });
+
+
+//        ShortcutEventListener shortcutEventListener = (ShortcutEventListener) shortcutEvent -> {
+//            if(accountCopyGrid.getSelectedItems().size() > 0){
+//                loadAccountForm(accountCopyService, clientService, rateMasterService, rateIntMasterService, placeGenerationService, networkService, dateUtils, numberUtils, accountCopyGrid.getSelectedItems().stream().findFirst().get());
+//            }
+//        };
+//        Shortcuts.addShortcutListener(accountCopyGrid, shortcutEventListener, Key.ENTER);
+
+
+        accountCopyGrid.addSelectionListener(selectionEvent -> {
+            if(selectionEvent.isFromClient() && selectionEvent.getFirstSelectedItem().isPresent()){
+                loadAccountForm(accountCopyService, clientService, rateMasterService, rateIntMasterService, placeGenerationService, networkService, dateUtils, numberUtils, selectionEvent.getFirstSelectedItem().get());
+            }
         });
 
         binder.readBean(dateFilter);
+    }
+
+    private void loadAccountForm(AccountCopyService accountCopyService, ClientService clientService, RateMasterService rateMasterService, RateIntMasterService rateIntMasterService, PlaceGenerationService placeGenerationService, NetworkService networkService, DateUtils dateUtils, NumberUtils numberUtils, AccountCopy accountCopy) {
+        AccountCopyForm accountCopyForm =  new AccountCopyForm(
+                accountCopyService,
+                clientService,
+                rateMasterService,
+                rateIntMasterService,
+                placeGenerationService,
+                networkService,
+                dateUtils,
+                numberUtils,
+                accountCopy
+                );
+        add(accountCopyForm);
     }
 
     private void load(
@@ -446,7 +470,9 @@ public class CustomerBillingDetailsForm extends Div {
             DateFilter dateFilter,
             TextField grossTotalTF,
             TextField totalDocNoTF){
-        List<AccountCopy> allByClientNameAndPodDateBetween = new ArrayList<>();
+
+        allByClientNameAndPodDateBetween.clear();
+
         if(currentSelectedItem.equalsIgnoreCase("ALL")){
             allByClientNameAndPodDateBetween.addAll(accountCopyService.findAllByPodDateBetween(
                     fromLocaleDate(dateFilter.getStartDate()),

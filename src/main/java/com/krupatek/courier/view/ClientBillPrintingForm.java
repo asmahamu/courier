@@ -9,9 +9,7 @@ import com.krupatek.courier.service.*;
 import com.krupatek.courier.utils.DateUtils;
 import com.krupatek.courier.utils.NumberUtils;
 import com.krupatek.courier.view.accountcopy.AccountCopyForm;
-import com.vaadin.flow.component.AbstractField;
-import com.vaadin.flow.component.HasValue;
-import com.vaadin.flow.component.Html;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -30,6 +28,7 @@ import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.server.StreamResource;
 
@@ -41,12 +40,14 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ClientBillPrintingForm extends Div {
     private String currentSelectedItem;
     private boolean isDomestic = true; // False means International.
     private boolean isGSTEnabled = true;
     private boolean isFuelSurchargeEnabled = true;
+    private List<AccountCopy> allByClientNameAndPodDateBetween = new ArrayList<>();
 
     public ClientBillPrintingForm(
             AccountCopyService accountCopyService,
@@ -234,6 +235,7 @@ public class ClientBillPrintingForm extends Div {
         Grid<AccountCopy> accountCopyGrid = new Grid<>(AccountCopy.class, false);
         accountCopyGrid.setWidthFull();
 
+        accountCopyGrid.addColumn(accountCopy ->  (allByClientNameAndPodDateBetween.indexOf(accountCopy) + 1)).setHeader(new Html("<b>Sr No</b>")).setWidth("5%").setFlexGrow(0).setTextAlign(ColumnTextAlign.END);;
         accountCopyGrid.addColumn(AccountCopy::getDocNo).setKey("docNo");
         accountCopyGrid.addColumn(accountCopy -> dateUtils.ddmmyyFormat(accountCopy.getPodDate())).setKey("podDate");
         accountCopyGrid.addColumn(AccountCopy::getClientName).setKey("clientName");
@@ -245,13 +247,13 @@ public class ClientBillPrintingForm extends Div {
         accountCopyGrid.addColumn(AccountCopy::getMode).setKey("mode");
 
         accountCopyGrid.getColumnByKey("docNo").setHeader(new Html("<b>Doc No</b>")).setWidth("10%").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("podDate").setHeader(new Html("<b>POD Date</b>")).setWidth("10%").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("clientName").setHeader(new Html("<b>Client Name</b>")).setWidth("25%").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("podDate").setHeader(new Html("<b>POD Date</b>")).setWidth("8%").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("clientName").setHeader(new Html("<b>Client Name</b>")).setWidth("24%").setFlexGrow(0);
         accountCopyGrid.getColumnByKey("destination").setHeader(new Html("<b>Destination</b>")).setWidth("10%").setFlexGrow(0);
         accountCopyGrid.getColumnByKey("weight").setHeader(new Html("<b>Weight</b>")).setWidth("8%").setFlexGrow(0);
         accountCopyGrid.getColumnByKey("otherCharges").setHeader(new Html("<b>Other Charges</b>")).setWidth("11%").setFlexGrow(0);
         accountCopyGrid.getColumnByKey("rate").setHeader(new Html("<b>Rate</b>")).setWidth("10%").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("dP").setHeader(new Html("<b>D/P</b>")).setWidth("8%").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("dP").setHeader(new Html("<b>D/P</b>")).setWidth("6%").setFlexGrow(0);
         accountCopyGrid.getColumnByKey("mode").setHeader(new Html("<b>Mode</b>")).setWidth("8%").setFlexGrow(0);
 
         accountCopyGrid.getColumnByKey("docNo").setTextAlign(ColumnTextAlign.END);
@@ -489,23 +491,29 @@ public class ClientBillPrintingForm extends Div {
             }
         });
 
-        accountCopyGrid.addItemClickListener(listener -> {
-            AccountCopyForm accountCopyForm =  new AccountCopyForm(
-                    accountCopyService,
-                    clientService,
-                    rateMasterService,
-                    rateIntMasterService,
-                    placeGenerationService,
-                    networkService,
-                    dateUtils,
-                    numberUtils,
-                    listener.getItem());
-            add(accountCopyForm);
+        accountCopyGrid.asSingleSelect().addValueChangeListener(gridAccountCopyComponentValueChangeEvent -> {
+            accountCopyGrid.select(gridAccountCopyComponentValueChangeEvent.getValue());
+        });
+
+
+        accountCopyGrid.addSelectionListener(selectionEvent -> {
+            if(selectionEvent.isFromClient() && selectionEvent.getFirstSelectedItem().isPresent()) {
+                AccountCopyForm accountCopyForm = new AccountCopyForm(
+                        accountCopyService,
+                        clientService,
+                        rateMasterService,
+                        rateIntMasterService,
+                        placeGenerationService,
+                        networkService,
+                        dateUtils,
+                        numberUtils,
+                        selectionEvent.getFirstSelectedItem().get());
+                add(accountCopyForm);
+            }
         });
 
         updateTax(cgst,sgst,igst, fuelSurcharge, companyRepository.findAll().get(0));
         binder.readBean(dateFilter);
-
     }
 
     private void handleInvoiceAction(
@@ -562,15 +570,22 @@ public class ClientBillPrintingForm extends Div {
         }
 
         Client client = clientService.findAllByClientName(currentSelectedItem).get(0);
-        List<AccountCopy> allByClientNameAndPodDateBetween = accountCopyService.findAllByClientNameAndPodDateBetweenAndType(
+        allByClientNameAndPodDateBetween.clear();
+        allByClientNameAndPodDateBetween.addAll(accountCopyService.findAllByClientNameAndPodDateBetweenAndType(
                 currentSelectedItem,
                 fromLocaleDate(dateFilter.getStartDate()),
                 fromLocaleDate(dateFilter.getEndDate()),
-                bookingTypeSelect.getValue());
+                bookingTypeSelect.getValue()));
 
         Company company = companyRepository.findAll().get(0);
 
         try {
+            formatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy");
+            billGeneration.setStartDate(startDatePicker.getValue().format(formatter));
+            billGeneration.setEndDate(endDatePicker.getValue().format(formatter));
+            billGeneration.setBillDate(invoiceDatePicker.getValue().format(formatter));
+
+
             File pdfFile = invoiceService.generateInvoiceFor(
                     company,
                     client,
@@ -685,11 +700,12 @@ public class ClientBillPrintingForm extends Div {
             TextField igst,
             TextField fuelSurcharge,
             TextField totalDocNo){
-        List<AccountCopy> allByClientNameAndPodDateBetween = accountCopyService.findAllByClientNameAndPodDateBetweenAndType(
+        allByClientNameAndPodDateBetween.clear();
+        allByClientNameAndPodDateBetween.addAll(accountCopyService.findAllByClientNameAndPodDateBetweenAndType(
                 currentSelectedItem,
                 fromLocaleDate(dateFilter.getStartDate()),
                 fromLocaleDate(dateFilter.getEndDate()),
-                bookingTypeSelect.getValue());
+                bookingTypeSelect.getValue()));
         accountCopyGrid.setItems(
                 allByClientNameAndPodDateBetween);
         Integer grossTotal = allByClientNameAndPodDateBetween.parallelStream().map(AccountCopy::getRate).reduce(0, Math::addExact);
@@ -710,6 +726,10 @@ public class ClientBillPrintingForm extends Div {
 
     private Date fromLocaleDate(LocalDate localDate){
         return new Date(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli());
+    }
+
+    private boolean keyEquals(Key key1, Key key2) {
+        return key1.getKeys().get(0).equals(key2.getKeys().get(0));
     }
 }
 class BillingFilter extends DateFilter{

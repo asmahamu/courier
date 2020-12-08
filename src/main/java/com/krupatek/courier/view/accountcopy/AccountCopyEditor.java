@@ -7,6 +7,8 @@ import com.krupatek.courier.service.*;
 import com.krupatek.courier.utils.DateUtils;
 import com.krupatek.courier.utils.NumberUtils;
 import com.vaadin.flow.component.Html;
+import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.KeyDownEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
@@ -21,6 +23,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.provider.ConfigurableFilterDataProvider;
 import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
@@ -30,7 +33,9 @@ import org.springframework.data.domain.Page;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @SpringComponent
 @UIScope
@@ -77,6 +82,7 @@ public class AccountCopyEditor extends Div {
         Grid<AccountCopy> accountCopyGrid = new Grid<>(AccountCopy.class, false);
         accountCopyGrid.setPageSize(PAGE_SIZE);
 
+        accountCopyGrid.addColumn(AccountCopy::getDocNo).setKey("srNo").setHeader(new Html("<b>Sr No</b>")).setWidth("8%").setFlexGrow(0);;
         accountCopyGrid.addColumn(AccountCopy::getDocNo).setKey("docNo");
         accountCopyGrid.addColumn(accountCopy -> dateUtils.ddmmyyFormat(accountCopy.getPodDate())).setKey("podDate");
         accountCopyGrid.addColumn(AccountCopy::getClientName).setKey("clientName");
@@ -92,10 +98,12 @@ public class AccountCopyEditor extends Div {
         accountCopyGrid.getColumnByKey("clientName").setHeader(new Html("<b>Client Name</b>")).setWidth("25%").setFlexGrow(0);
         accountCopyGrid.getColumnByKey("destination").setHeader(new Html("<b>Destination</b>")).setWidth("10%").setFlexGrow(0);
         accountCopyGrid.getColumnByKey("weight").setHeader(new Html("<b>Weight</b>")).setWidth("8%").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("otherCharges").setHeader(new Html("<b>Other Charges</b>")).setWidth("11%").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("otherCharges").setHeader(new Html("<b>Other Charges</b>")).setWidth("8%").setFlexGrow(0);
         accountCopyGrid.getColumnByKey("rate").setHeader(new Html("<b>Rate</b>")).setWidth("10%").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("dP").setHeader(new Html("<b>D/P</b>")).setWidth("8%").setFlexGrow(0);
-        accountCopyGrid.getColumnByKey("mode").setHeader(new Html("<b>Mode</b>")).setWidth("8%").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("dP").setHeader(new Html("<b>D/P</b>")).setWidth("6%").setFlexGrow(0);
+        accountCopyGrid.getColumnByKey("mode").setHeader(new Html("<b>Mode</b>")).setWidth("6%").setFlexGrow(0);
+
+        accountCopyGrid.getColumnByKey("srNo").getElement().executeJs("this.renderer = function(root, column, rowData) {root.textContent = rowData.index + 1}");
 
         accountCopyGrid.getColumnByKey("docNo").setTextAlign(ColumnTextAlign.END);
         accountCopyGrid.getColumnByKey("weight").setTextAlign(ColumnTextAlign.END);
@@ -193,7 +201,12 @@ public class AccountCopyEditor extends Div {
 //            wrapper.refreshAll();
         });
 
-        accountCopyGrid.addItemClickListener(listener -> {
+        accountCopyGrid.asSingleSelect().addValueChangeListener(gridAccountCopyComponentValueChangeEvent -> {
+            accountCopyGrid.select(gridAccountCopyComponentValueChangeEvent.getValue());
+        });
+
+        accountCopyGrid.addSelectionListener(selectionEvent -> {
+            if(selectionEvent.isFromClient() && selectionEvent.getFirstSelectedItem().isPresent()) {
             AccountCopyForm accountCopyForm = new AccountCopyForm(
                     accountCopyService,
                     clientService,
@@ -203,8 +216,9 @@ public class AccountCopyEditor extends Div {
                     networkService,
                     dateUtils,
                     numberUtils,
-                    listener.getItem());
-            add(accountCopyForm);
+                    selectionEvent.getFirstSelectedItem().get());
+                add(accountCopyForm);
+            }
         });
 
         // Panel 1
@@ -291,4 +305,5 @@ public class AccountCopyEditor extends Div {
 
         add(verticalLayout);
     }
+
 }

@@ -96,14 +96,14 @@ public class PODEntryForm extends Div {
         receiverName.setAutoselect(true);
         receiverName.setLabel("Receiver's Name : ");
         receiverName.setValueChangeMode(ValueChangeMode.EAGER);
-        binder.bind(receiverName, AccountCopy::getReceiverName, AccountCopy::setReceiverName);
+        binder.bind(receiverName,  status -> "", AccountCopy::setReceiverName);
 
         // Remark
         TextField remark = new TextField();
         remark.setLabel("Remark : ");
         remark.setAutoselect(true);
         remark.setValueChangeMode(ValueChangeMode.EAGER);
-        binder.bind(remark, AccountCopy::getRemark, AccountCopy::setRemark);
+        binder.bind(remark, status -> "", AccountCopy::setRemark);
 
         receiverName.addKeyDownListener(Key.ENTER, event ->
                 remark.focus());
@@ -220,7 +220,7 @@ public class PODEntryForm extends Div {
         TextField dateLabel = new TextField();
         dateLabel.setReadOnly(true);
         binder.bind(dateLabel,
-                d -> accountCopy.getStatusDate() != null ? dateUtils.ddmmyyFormat(accountCopy.getStatusDate()) : "",
+                d -> (accountCopy.getStatusDate() != null && !isStatusEmpty(accountCopy)) ? dateUtils.ddmmyyFormat(accountCopy.getStatusDate()) : "",
                 null);
 
         rightBottomFormLayout.add(new Label( "Status Date : "), dateLabel);
@@ -228,7 +228,8 @@ public class PODEntryForm extends Div {
         // Receiver's Name
         TextField receiverNameLabel = new TextField();
         receiverNameLabel.setReadOnly(true);
-        binder.bind(receiverNameLabel, AccountCopy::getReceiverName, null);
+        binder.bind(receiverNameLabel,
+                status -> isStatusEmpty(accountCopy) ? "" : accountCopy.getReceiverName(), null);
 
         rightBottomFormLayout.add(new Label( "Receiver's Name : "), receiverNameLabel);
 
@@ -248,5 +249,9 @@ public class PODEntryForm extends Div {
 
         dialog.open();
 
+    }
+
+    private boolean isStatusEmpty(AccountCopy accountCopy){
+        return accountCopy.getStatus() == null || accountCopy.getStatus().isEmpty();
     }
 }
