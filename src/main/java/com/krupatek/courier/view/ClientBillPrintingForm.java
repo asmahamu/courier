@@ -60,7 +60,8 @@ public class ClientBillPrintingForm extends Div {
             CompanyRepository companyRepository,
             BillingService billingService,
             DateUtils dateUtils,
-            NumberUtils numberUtils) {
+            NumberUtils numberUtils,
+            CourierService courierService) {
         super();
         VerticalLayout verticalLayout = new VerticalLayout();
         verticalLayout.setMargin(false);
@@ -401,8 +402,7 @@ public class ClientBillPrintingForm extends Div {
 
         // Last Month
         lastMonthButton.addClickListener( c -> {
-            int month = currentDate.getMonthValue();
-            LocalDate lastMonth = currentDate.withMonth( (month - 1) % 11);
+            LocalDate lastMonth = currentDate.minusMonths(1);
             dateFilter.setStartDate(lastMonth.withDayOfMonth(1));
             dateFilter.setEndDate(lastMonth.withDayOfMonth(lastMonth.lengthOfMonth()));
             binder.readBean(dateFilter);
@@ -507,7 +507,8 @@ public class ClientBillPrintingForm extends Div {
                         networkService,
                         dateUtils,
                         numberUtils,
-                        selectionEvent.getFirstSelectedItem().get());
+                        selectionEvent.getFirstSelectedItem().get(),
+                        courierService);
                 add(accountCopyForm);
             }
         });

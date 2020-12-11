@@ -19,6 +19,7 @@ import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.H5;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
@@ -35,7 +36,9 @@ import org.aspectj.weaver.ast.Not;
 
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.TreeSet;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @SpringComponent
 @UIScope
@@ -52,7 +55,8 @@ public class AccountCopyForm extends Div {
             NetworkService networkService,
             DateUtils dateUtils,
             NumberUtils numberUtils,
-            AccountCopy accountCopy) {
+            AccountCopy accountCopy,
+            CourierService courierService) {
         super();
 
         boolean isNewAccountCopy = accountCopy.getDocNo() == null || accountCopy.getDocNo().isEmpty();
@@ -90,6 +94,15 @@ public class AccountCopyForm extends Div {
         formLayout.add(title, 12);
 
         Binder<AccountCopy> binder = new Binder<>(AccountCopy.class);
+
+        // Courier Name
+        Select<String> courierSelect = new Select<>();
+        courierSelect.setLabel("Courier Name : ");
+        TreeSet<String> courierSource = courierService.findAll().parallelStream().map(Courier::getCourierName).collect(Collectors.toCollection(TreeSet::new));
+        courierSelect.setItems(courierSource);
+        binder.bind(courierSelect, AccountCopy::getToParty, AccountCopy::setToParty);
+        formLayout.add(courierSelect, 3);
+        formLayout.add(new Label(""), 9);
 
         // Doc Number
         TextField docNo = new TextField();
@@ -138,8 +151,11 @@ public class AccountCopyForm extends Div {
         // Date
         LocalDate currentDate = dateUtils.asLocalDate(accountCopy.getPodDate());
 
-        HorizonDatePicker podDate = new HorizonDatePicker(currentDate, dateUtils, numberUtils);
-        podDate.setWidth("25%");
+        HorizontalLayout podDateLayout = new HorizontalLayout();
+        podDateLayout.setWidth("25%");
+        HorizonDatePicker podDate = new HorizonDatePicker();
+        podDate.wrap(podDateLayout, currentDate, dateUtils, numberUtils);
+        podDateLayout.setAlignItems(FlexComponent.Alignment.BASELINE);
 
 //        DatePicker podDate = new DatePicker();
 //        podDate.setLabel("Date : ");
@@ -164,7 +180,7 @@ public class AccountCopyForm extends Div {
         binder.bind(selectDocumentOrParcelType, AccountCopy::getdP, AccountCopy::setdP);
 
         formLayout.add(docNo, 3);
-        formLayout.add(podDate, 3);
+        formLayout.add(podDateLayout, 3);
         formLayout.add(cashCreditSelect, 2);
         formLayout.add(selectDocumentOrParcelType, 2);
 
@@ -247,13 +263,6 @@ public class AccountCopyForm extends Div {
         binder.forField(receiverName).asRequired("Every Account copy must receiver name").bind(AccountCopy::getReceiverName, AccountCopy::setReceiverName);
         receiverName.setAutoselect(true);
 
-        // Courier Name
-        Select<String> courierSelect = new Select<>();
-        courierSelect.setLabel("Courier Name : ");
-        courierSelect.setItems("TRACKON", "HORIZON", "BLUE DART", "PAFEX", "FEDEX", "PRIME TRACK");
-        courierSelect.setValue("TRACKON");
-        binder.bind(courierSelect, AccountCopy::getToParty, AccountCopy::setToParty);
-
         binder.bind(destinationComboBox, AccountCopy::getDestination,  (e, r) -> {
             e.setDestination(r);
             e.setPlaceCode(r);
@@ -274,10 +283,9 @@ public class AccountCopyForm extends Div {
             }
         });
 
-        formLayout.add(pincode, 3);
+        formLayout.add(pincode, 2);
         formLayout.add(receiverName, 4);
-        formLayout.add(courierSelect, 4);
-        formLayout.add(new Label(""), 1);
+//        formLayout.add(new Label(""), 1);
 
 
         // Mode
@@ -306,10 +314,10 @@ public class AccountCopyForm extends Div {
                 AccountCopy::setRate);
         rate.setAutoselect(true);
 
-        formLayout.add(modeSelect, 3);
-        formLayout.add(weight, 3);
-        formLayout.add(rate, 3);
-        formLayout.add(new Label(""), 3);
+        formLayout.add(modeSelect, 2);
+        formLayout.add(weight, 2);
+        formLayout.add(rate, 2);
+//        formLayout.add(new Label(""), 3);
 
         Button save = new Button("Save",
                 event -> {
@@ -407,8 +415,9 @@ public class AccountCopyForm extends Div {
 
         dialog.open();
 
-        docNo.addKeyDownListener(Key.TAB, event ->
-                podDate.focus());
+//        docNo.addKeyDownListener(Key.TAB, event ->
+//                podDate.focus());
+
 
 //        docNo.addKeyDownListener(Key.ENTER, event ->
 //                podDate.focus());

@@ -1,34 +1,26 @@
 package com.krupatek.courier.view.rate;
 
-import com.krupatek.courier.model.AccountCopy;
 import com.krupatek.courier.model.PlaceGeneration;
 import com.krupatek.courier.model.State;
 import com.krupatek.courier.model.Zones;
 import com.krupatek.courier.repository.PlaceGenerationRepository;
-import com.krupatek.courier.repository.StateRepository;
 import com.krupatek.courier.service.PlaceGenerationService;
 import com.krupatek.courier.service.StateService;
 import com.krupatek.courier.service.ZonesService;
 import com.krupatek.courier.utils.ViewUtils;
-import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.data.value.ValueChangeMode;
-import com.vaadin.flow.component.select.Select;
-import com.vaadin.flow.component.button.Button;
-//import org.hibernate.sql.Select;
 
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.TreeSet;
 import java.util.stream.Collectors;

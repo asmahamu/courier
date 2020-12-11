@@ -60,7 +60,8 @@ public class CustomerBillingDetailsForm extends Div {
             DailyReportService dailyReportService,
             CompanyRepository companyRepository,
             DateUtils dateUtils,
-            NumberUtils numberUtils) {
+            NumberUtils numberUtils,
+            CourierService courierService) {
         super();
         VerticalLayout verticalLayout = new VerticalLayout();
         verticalLayout.setMargin(false);
@@ -360,8 +361,7 @@ public class CustomerBillingDetailsForm extends Div {
 
         // Last Month
         lastMonthButton.addClickListener( c -> {
-            int month = currentDate.getMonthValue();
-            LocalDate lastMonth = currentDate.withMonth( (month - 1) % 11);
+            LocalDate lastMonth = currentDate.minusMonths(1);
             dateFilter.setStartDate(lastMonth.withDayOfMonth(1));
             dateFilter.setEndDate(lastMonth.withDayOfMonth(lastMonth.lengthOfMonth()));
             binder.readBean(dateFilter);
@@ -442,14 +442,34 @@ public class CustomerBillingDetailsForm extends Div {
 
         accountCopyGrid.addSelectionListener(selectionEvent -> {
             if(selectionEvent.isFromClient() && selectionEvent.getFirstSelectedItem().isPresent()){
-                loadAccountForm(accountCopyService, clientService, rateMasterService, rateIntMasterService, placeGenerationService, networkService, dateUtils, numberUtils, selectionEvent.getFirstSelectedItem().get());
+                loadAccountForm(
+                        accountCopyService,
+                        clientService,
+                        rateMasterService,
+                        rateIntMasterService,
+                        placeGenerationService,
+                        networkService,
+                        dateUtils,
+                        numberUtils,
+                        selectionEvent.getFirstSelectedItem().get(),
+                        courierService);
             }
         });
 
         binder.readBean(dateFilter);
     }
 
-    private void loadAccountForm(AccountCopyService accountCopyService, ClientService clientService, RateMasterService rateMasterService, RateIntMasterService rateIntMasterService, PlaceGenerationService placeGenerationService, NetworkService networkService, DateUtils dateUtils, NumberUtils numberUtils, AccountCopy accountCopy) {
+    private void loadAccountForm(
+            AccountCopyService accountCopyService,
+            ClientService clientService,
+            RateMasterService rateMasterService,
+            RateIntMasterService rateIntMasterService,
+            PlaceGenerationService placeGenerationService,
+            NetworkService networkService,
+            DateUtils dateUtils,
+            NumberUtils numberUtils,
+            AccountCopy accountCopy,
+            CourierService courierService) {
         AccountCopyForm accountCopyForm =  new AccountCopyForm(
                 accountCopyService,
                 clientService,
@@ -459,7 +479,8 @@ public class CustomerBillingDetailsForm extends Div {
                 networkService,
                 dateUtils,
                 numberUtils,
-                accountCopy
+                accountCopy,
+                courierService
                 );
         add(accountCopyForm);
     }

@@ -15,6 +15,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
@@ -22,6 +23,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.data.value.ValueChangeMode;
+import org.aspectj.weaver.ast.Not;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -32,7 +34,7 @@ public class PODEntryForm extends Div {
 
     public PODEntryForm(AccountCopyService accountCopyService, DateUtils dateUtils, NumberUtils numberUtils){
         Dialog dialog = new Dialog();
-        dialog.setWidth("800px");
+        dialog.setWidth("1000px");
 
         VerticalLayout verticalLayout = new VerticalLayout();
         verticalLayout.add(ViewUtils.addCloseButton(dialog));
@@ -76,10 +78,16 @@ public class PODEntryForm extends Div {
         // Status Date
         LocalDate currentDate = LocalDate.now();
 
-        HorizonDatePicker dateComponent = new HorizonDatePicker(currentDate, dateUtils, numberUtils);
+        HorizontalLayout dateComponent = new HorizontalLayout();
+        HorizonDatePicker datePicker = new HorizonDatePicker();
+        datePicker.wrap(dateComponent, currentDate, dateUtils, numberUtils);
+        dateComponent.setAlignItems(FlexComponent.Alignment.BASELINE);
+        dateComponent.setWidth("50%");
+        dateComponent.setMaxWidth("50%");
 
-        docNo.addKeyDownListener(Key.TAB, event ->
-                dateComponent.focus());
+
+//        docNo.addKeyDownListener(Key.TAB, event ->
+//                dateComponent.focus());
 
         // Status
         Select<String> statusTypeSelect = new Select<>();
@@ -113,7 +121,7 @@ public class PODEntryForm extends Div {
                 event -> {
                     try {
                         binder.writeBean(accountCopy);
-                        accountCopy.setStatusDate(dateUtils.asDate(dateComponent.getCurrentDate()));
+                        accountCopy.setStatusDate(dateUtils.asDate(datePicker.getCurrentDate()));
                         accountCopyService.saveAndFlush(accountCopy);
 
                         binder.readBean(accountCopy);
@@ -138,8 +146,11 @@ public class PODEntryForm extends Div {
         actions.setAlignItems(HorizontalLayout.Alignment.END);
         actions.add(save, reset, cancel);
 
-
-        leftVerticalLayout.add(docNo, dateComponent, statusTypeSelect, receiverName, remark, actions);
+        leftVerticalLayout.add(
+                docNo,
+                dateComponent,
+                statusTypeSelect,
+                receiverName, remark, actions);
 
 
         VerticalLayout rightVerticalLayout = new VerticalLayout();

@@ -186,7 +186,8 @@ public class MainView extends VerticalLayout {
                     networkService,
                     dateUtils,
                     numberUtils,
-                    new AccountCopy()));
+                    new AccountCopy(),
+                    courierService));
         } );
         accountCopyMenuItem.getSubMenu().addItem(getMenuItemComponent(null, "Edit Account Copy"), e -> {
             component.removeAll();
@@ -198,7 +199,8 @@ public class MainView extends VerticalLayout {
                     placeGenerationService,
                     networkService,
                     dateUtils,
-                    numberUtils));
+                    numberUtils,
+                    courierService));
         } );
         Component clientBillingMenu = getMenuItemComponent(VaadinIcon.INVOICE, "Client Billing");
 
@@ -216,7 +218,8 @@ public class MainView extends VerticalLayout {
                     companyRepository,
                     billingService,
                     dateUtils,
-                    numberUtils));
+                    numberUtils,
+                    courierService));
 
         });
         clientBillingCopyItem.getSubMenu().addItem(getMenuItemComponent(null, "Client Bill Reprinting"), e -> {
@@ -243,7 +246,8 @@ public class MainView extends VerticalLayout {
                     dailyReportService,
                     companyRepository,
                     dateUtils,
-                    numberUtils));
+                    numberUtils,
+                    courierService));
         } );
 
         Component podEntryForm = getMenuItemComponent(VaadinIcon.EDIT, "POD Entry Form");
