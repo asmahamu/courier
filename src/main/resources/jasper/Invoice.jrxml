@@ -89,34 +89,34 @@
 	<field name="area" class="java.lang.String"/>
 	<field name="weight" class="java.lang.Double"/>
 	<field name="dP" class="java.lang.String"/>
-	<variable name="FUEL_SURCHAGE" class="java.lang.Float">
-		<variableExpression><![CDATA[$P{billGeneration}.getFuelSurcharge()]]></variableExpression>
+	<variable name="FUEL_SURCHAGE" class="java.lang.Double">
+		<variableExpression><![CDATA[$P{billGeneration}.getFuelSurcharge().doubleValue()]]></variableExpression>
 	</variable>
-	<variable name="CGST" class="java.lang.Float">
-		<variableExpression><![CDATA[$P{billGeneration}.getCgst()]]></variableExpression>
+	<variable name="CGST" class="java.lang.Double">
+		<variableExpression><![CDATA[$P{billGeneration}.getCgst().doubleValue()]]></variableExpression>
 	</variable>
-	<variable name="SGST" class="java.lang.Float">
-		<variableExpression><![CDATA[$P{billGeneration}.getSgst()]]></variableExpression>
+	<variable name="SGST" class="java.lang.Double">
+		<variableExpression><![CDATA[$P{billGeneration}.getSgst().doubleValue()]]></variableExpression>
 	</variable>
-	<variable name="IGST" class="java.lang.Float">
-		<variableExpression><![CDATA[$P{billGeneration}.getIgst()]]></variableExpression>
+	<variable name="IGST" class="java.lang.Double">
+		<variableExpression><![CDATA[$P{billGeneration}.getIgst().doubleValue()]]></variableExpression>
 	</variable>
-	<variable name="TOTAL_AFTER_FUEL_SURCHARGE" class="java.lang.Float">
-		<variableExpression><![CDATA[$P{billGeneration}.getBillAmount()*$V{FUEL_SURCHAGE}/100]]></variableExpression>
+	<variable name="TOTAL_AFTER_FUEL_SURCHARGE" class="java.lang.Double">
+		<variableExpression><![CDATA[$P{billGeneration}.getBillAmount().doubleValue()*$V{FUEL_SURCHAGE}/100d]]></variableExpression>
 	</variable>
-	<variable name="SUBTOTAL" class="java.lang.Float">
+	<variable name="SUBTOTAL" class="java.lang.Double">
 		<variableExpression><![CDATA[$V{TOTAL_AFTER_FUEL_SURCHARGE}+$P{billGeneration}.getBillAmount()]]></variableExpression>
 	</variable>
-	<variable name="TOTAL_CGST" class="java.lang.Float">
-		<variableExpression><![CDATA[$V{SUBTOTAL}*$V{CGST}/100]]></variableExpression>
+	<variable name="TOTAL_CGST" class="java.lang.Double">
+		<variableExpression><![CDATA[$V{SUBTOTAL}*$V{CGST}/100d]]></variableExpression>
 	</variable>
-	<variable name="TOTAL_SGST" class="java.lang.Float">
-		<variableExpression><![CDATA[$V{SUBTOTAL}*$V{SGST}/100]]></variableExpression>
+	<variable name="TOTAL_SGST" class="java.lang.Double">
+		<variableExpression><![CDATA[$V{SUBTOTAL}*$V{SGST}/100d]]></variableExpression>
 	</variable>
-	<variable name="TOTAL_IGST" class="java.lang.Float">
-		<variableExpression><![CDATA[$V{SUBTOTAL}*$V{IGST}/100]]></variableExpression>
+	<variable name="TOTAL_IGST" class="java.lang.Double">
+		<variableExpression><![CDATA[$V{SUBTOTAL}*$V{IGST}/100d]]></variableExpression>
 	</variable>
-	<variable name="TOTAL" class="java.lang.Float">
+	<variable name="TOTAL" class="java.lang.Double">
 		<variableExpression><![CDATA[$V{SUBTOTAL}+$V{TOTAL_CGST}+$V{TOTAL_SGST}+$V{TOTAL_IGST}]]></variableExpression>
 	</variable>
 	<title>

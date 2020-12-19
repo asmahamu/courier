@@ -12,7 +12,7 @@ public class TestNumberUtils {
     public void testZeroSuccess(){
         NumberUtils numberUtils = new NumberUtils();
         String expectedOutput = "Zero";
-        String actualOutput = numberUtils.convertNumberToWords(0.0f);
+        String actualOutput = numberUtils.convertNumberToWords(0.0d);
         Assert.assertEquals(expectedOutput, actualOutput);
     }
 
@@ -20,7 +20,7 @@ public class TestNumberUtils {
     public void testTwoDigitSuccess(){
         NumberUtils numberUtils = new NumberUtils();
         String expectedOutput = "Fifteen";
-        String actualOutput = numberUtils.convertNumberToWords(15.0f);
+        String actualOutput = numberUtils.convertNumberToWords(15.0d);
         Assert.assertEquals(expectedOutput, actualOutput);
     }
 
@@ -28,7 +28,7 @@ public class TestNumberUtils {
     public void testThreeDigitNumberSuccess(){
         NumberUtils numberUtils = new NumberUtils();
         String expectedOutput = "One Hundred";
-        String actualOutput = numberUtils.convertNumberToWords(100.0f);
+        String actualOutput = numberUtils.convertNumberToWords(100.0d);
         Assert.assertEquals(expectedOutput, actualOutput);
     }
 
@@ -36,7 +36,7 @@ public class TestNumberUtils {
     public void testFourDigitNumberSuccess(){
         NumberUtils numberUtils = new NumberUtils();
         String expectedOutput = "Three Thousand Four Hundred and Thirty Five";
-        String actualOutput = numberUtils.convertNumberToWords(3435.0f);
+        String actualOutput = numberUtils.convertNumberToWords(3435.0d);
         Assert.assertEquals(expectedOutput, actualOutput);
     }
 
@@ -44,7 +44,7 @@ public class TestNumberUtils {
     public void testFiveDigitNumberSuccess(){
         NumberUtils numberUtils = new NumberUtils();
         String expectedOutput = "Fifty Thousand Four Hundred and Thirty Five";
-        String actualOutput = numberUtils.convertNumberToWords(50435.0f);
+        String actualOutput = numberUtils.convertNumberToWords(50435.0d);
         Assert.assertEquals(expectedOutput, actualOutput);
     }
 
@@ -53,6 +53,6 @@ public class TestNumberUtils {
     public void testSixDigitNumberSuccess(){
         NumberUtils numberUtils = new NumberUtils();
         String expectedOutput = "Three Lac Forty Six Thousand Eight Hundred and Seventy Eight";
-        String actualOutput = numberUtils.convertNumberToWords(346878.0f);
+        String actualOutput = numberUtils.convertNumberToWords(346878.0d);
         Assert.assertEquals(expectedOutput, actualOutput);
     }}
