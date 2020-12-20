@@ -9,9 +9,11 @@ import com.krupatek.courier.utils.RateUtils;
 import com.krupatek.courier.utils.ViewUtils;
 import com.krupatek.courier.view.HorizonDatePicker;
 import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.ShortcutEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.dependency.JavaScript;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
@@ -39,6 +41,8 @@ import java.util.Optional;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
+import static com.vaadin.flow.component.Key.TAB;
 
 @SpringComponent
 @UIScope
@@ -335,6 +339,7 @@ public class AccountCopyForm extends Div {
                         }
 
                         accountCopyService.saveAndFlush(accountCopy);
+                        destinationComboBox.setValue(null);
                         Notification.show("Account copy updated successfully.");
                         if(isNewAccountCopy){
                             docNo.focus();
@@ -432,7 +437,7 @@ public class AccountCopyForm extends Div {
 //        receiverName.addKeyDownListener(Key.ENTER, e -> courierSelect.focus());
 //        courierSelect.addValueChangeListener(e -> modeSelect.focus());
 //        modeSelect.addValueChangeListener(e -> weight.focus());
-        weight.addKeyDownListener(Key.TAB, e -> {
+        weight.addKeyDownListener(TAB, e -> {
             Notification.show("Weight is "+weight.getValue());
             if(!isCashCustomer){
                 calculateRate(rateMasterService, rateIntMasterService, accountCopy, binder, weight, rate, clientsComboBox.getValue());
@@ -524,9 +529,9 @@ public class AccountCopyForm extends Div {
 
     private void updateClientName(Select<String> clientComboBox, RateMasterService rateMasterService, RateIntMasterService rateIntMasterService){
         if(isDomestic){
-            clientComboBox.setItems(rateMasterService.findDistinctClientName());
+            clientComboBox.setItems(rateMasterService.findEnabledDistinctClientName());
         } else {
-            clientComboBox.setItems(rateIntMasterService.findDistinctClientName());
+            clientComboBox.setItems(rateIntMasterService.findEnabledDistinctClientName());
         }
     }
     private void updateDestination(ComboBox<String> destinationComboBox, PlaceGenerationService placeGenerationService, NetworkService networkService){

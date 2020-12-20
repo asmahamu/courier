@@ -12,7 +12,7 @@ public interface RateIntMasterService {
     RateIntEntry saveAndFlush(RateIntEntry rateEntry);
     RateIntEntry findByClientNameAndStateCodeAndPodTypeAndMode(String clientName, String stateCode, String podType, String mode);
     Set<String> findDistinctClientName();
+    Set<String> findEnabledDistinctClientName();
     Integer latestIntMasterId();
-
     void delete(RateIntEntry rateIntEntry);
 }

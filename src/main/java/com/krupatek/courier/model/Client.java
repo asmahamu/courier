@@ -103,6 +103,14 @@ public class Client {
         this.gstEnabled = gstEnabled;
     }
 
+    public String getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(String enabled) {
+        this.enabled = enabled;
+    }
+
     @Id
     @Column(name = "client_code")
     private Integer clientCode;
@@ -139,4 +147,7 @@ public class Client {
 
     @Column(name = "gst_enabled")
     private String gstEnabled;
+
+    @Column(name = "enabled")
+    private String enabled;
 }

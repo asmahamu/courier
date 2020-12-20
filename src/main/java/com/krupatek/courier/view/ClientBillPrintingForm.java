@@ -677,12 +677,12 @@ public class ClientBillPrintingForm extends Div {
 
     private void updateClientName(Select<String> clientSelect, RateMasterService rateMasterService, RateIntMasterService rateIntMasterService){
         if(isDomestic){
-            Set<String> distinctClientName = rateMasterService.findDistinctClientName();
+            Set<String> distinctClientName = rateMasterService.findEnabledDistinctClientName();
             clientSelect.setItems(distinctClientName);
             currentSelectedItem = distinctClientName.iterator().next();
             clientSelect.setValue(currentSelectedItem);
         } else {
-            Set<String> distinctClientName = rateIntMasterService.findDistinctClientName();
+            Set<String> distinctClientName = rateIntMasterService.findEnabledDistinctClientName();
             clientSelect.setItems(distinctClientName);
             currentSelectedItem = distinctClientName.iterator().next();
             clientSelect.setValue(currentSelectedItem);

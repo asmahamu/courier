@@ -8,7 +8,9 @@ import com.krupatek.courier.service.*;
 import com.krupatek.courier.utils.DateUtils;
 import com.krupatek.courier.utils.NumberUtils;
 import com.krupatek.courier.view.accountcopy.AccountCopyForm;
-import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.AbstractField;
+import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -27,7 +29,6 @@ import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
@@ -35,11 +36,7 @@ import com.vaadin.flow.spring.annotation.UIScope;
 import java.io.*;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @SpringComponent
 @UIScope
@@ -77,13 +74,12 @@ public class CustomerBillingDetailsForm extends Div {
         clientSelect.setWidth("18%");
         clientSelect.setLabel("Select Client Name : ");
 
-        List<Client> clientList = clientService.findAll();
-        List<String> clientNameList = new ArrayList<>();
-        clientNameList.add("ALL");
-        clientList.forEach(c -> clientNameList.add(c.getClientName()));
-        currentSelectedItem = clientNameList.get(0);
+        List<String> clientList = new ArrayList<>();
+        clientList.add("ALL");
+        clientList.addAll(clientService.findAllEnabled());
+        currentSelectedItem = clientList.iterator().next();
 
-        clientSelect.setItems(clientNameList);
+        clientSelect.setItems(clientList);
         clientSelect.setValue(currentSelectedItem);
 
         HorizontalLayout dateHorizontalLayout = new HorizontalLayout();
