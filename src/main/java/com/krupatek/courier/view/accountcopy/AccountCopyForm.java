@@ -9,11 +9,9 @@ import com.krupatek.courier.utils.RateUtils;
 import com.krupatek.courier.utils.ViewUtils;
 import com.krupatek.courier.view.HorizonDatePicker;
 import com.vaadin.flow.component.Key;
-import com.vaadin.flow.component.ShortcutEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.dependency.JavaScript;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
@@ -25,7 +23,6 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
-import com.vaadin.flow.component.textfield.Autocomplete;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
@@ -34,7 +31,6 @@ import com.vaadin.flow.data.converter.StringToIntegerConverter;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
-import org.aspectj.weaver.ast.Not;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -536,9 +532,13 @@ public class AccountCopyForm extends Div {
     }
     private void updateDestination(ComboBox<String> destinationComboBox, PlaceGenerationService placeGenerationService, NetworkService networkService){
         if(isDomestic){
-            destinationComboBox.setItems(placeGenerationService.findDistinctCityName());
+            destinationComboBox.setItems(
+                    (ComboBox.ItemFilter<String>) (s, s2) -> s.toLowerCase().startsWith(s2.toLowerCase()),
+                    placeGenerationService.findDistinctCityName());
         } else {
-            destinationComboBox.setItems(networkService.findDistinctCountry());
+            destinationComboBox.setItems(
+                    (ComboBox.ItemFilter<String>) (s, s2) -> s.toLowerCase().startsWith(s2.toLowerCase()),
+                    networkService.findDistinctCountry());
         }
     }
 }
