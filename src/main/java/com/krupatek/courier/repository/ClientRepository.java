@@ -14,8 +14,8 @@ import java.util.Set;
 public interface ClientRepository extends JpaRepository<Client, Integer> {
     List<Client> findByOrderByClientName();
     List<Client> findAllByClientName(String clientName);
-    List<Client> findByClientNameStartsWith(String clientName);
-    Page<Client> findByClientNameStartsWith(String clientName, Pageable pageable);
+    List<Client> findByClientNameStartsWithOrderByClientName(String clientName);
+    Page<Client> findByClientNameStartsWithOrderByClientName(String clientName, Pageable pageable);
     long countByClientNameStartsWith(String clientName);
 
     @Query(value = "SELECT client_name FROM easynew.client where enabled = 'Yes' ORDER BY client_name;", nativeQuery = true)

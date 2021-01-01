@@ -39,11 +39,10 @@ public class ClientProfileEditor extends Div {
         clientName.setValueChangeTimeout(Constants.TEXT_FIELD_TIMEOUT);
         Grid<Client> clientGrid = new Grid<>(Client.class);
         clientGrid.setPageSize(PAGE_SIZE);
-        clientGrid.setColumns("clientCode", "clientName", "city", "phone", "branch_name", "gstNo", "gstEnabled", "fsc", "enabled");
+        clientGrid.setColumns("clientName", "city", "phone", "branch_name", "gstNo", "gstEnabled", "fsc", "enabled");
 
-        clientGrid.getColumnByKey("clientCode").setWidth("10%").setFlexGrow(0);
-        clientGrid.getColumnByKey("clientName").setWidth("25%").setFlexGrow(0);
-        clientGrid.getColumnByKey("city").setWidth("8%").setFlexGrow(0);
+        clientGrid.getColumnByKey("clientName").setWidth("28%").setFlexGrow(0);
+        clientGrid.getColumnByKey("city").setWidth("10%").setFlexGrow(0);
         clientGrid.getColumnByKey("phone").setWidth("8%").setFlexGrow(0);
         clientGrid.getColumnByKey("branch_name").setWidth("6%").setFlexGrow(0);
         clientGrid.getColumnByKey("gstNo").setWidth("13%").setFlexGrow(0);
@@ -78,7 +77,7 @@ public class ClientProfileEditor extends Div {
                             Logger.getLogger(ClientProfileEditor.class.getName()).info("Filter is "+clientNameFilter);
 
                             Page<Client> accountCopies = clientService
-                                    .findByClientNameStartsWith(offset, limit, clientNameFilter);
+                                    .findByClientNameStartsWithOrderByClientName(offset, limit, clientNameFilter);
                             Logger.getLogger(ClientProfileEditor.class.getName()).info("pages: "+accountCopies.getNumber());
                             Logger.getLogger(ClientProfileEditor.class.getName()).info("numberOfElements : "+accountCopies.getNumberOfElements());
                             Logger.getLogger(ClientProfileEditor.class.getName()).info("size : "+accountCopies.getSize());

@@ -13,7 +13,7 @@ public interface ClientService {
     List<Client> findAll();
     Set<String> findAllEnabled();
     Client saveAndFlush(Client client);
-    List<Client> findByClientNameStartsWith(String clientName);
-    Page<Client> findByClientNameStartsWith(int offset, int limit, String clientName);
+    List<Client> findByClientNameStartsWithOrderByClientName(String clientName);
+    Page<Client> findByClientNameStartsWithOrderByClientName(int offset, int limit, String clientName);
     long countByClientNameStartsWith(String clientName);
 }

@@ -38,14 +38,14 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public List<Client> findByClientNameStartsWith(String clientName) {
-        return clientRepository.findByClientNameStartsWith(clientName);
+    public List<Client> findByClientNameStartsWithOrderByClientName(String clientName) {
+        return clientRepository.findByClientNameStartsWithOrderByClientName(clientName);
     }
 
     @Override
-    public Page<Client> findByClientNameStartsWith(int offset, int limit, String clientName) {
+    public Page<Client> findByClientNameStartsWithOrderByClientName(int offset, int limit, String clientName) {
         Pageable pageable = PageRequest.of(offset, limit);
-        return clientRepository.findByClientNameStartsWith(clientName, pageable);
+        return clientRepository.findByClientNameStartsWithOrderByClientName(clientName, pageable);
     }
 
     @Override
