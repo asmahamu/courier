@@ -541,7 +541,8 @@ public class ClientBillPrintingForm extends Div {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy");
 
         BillGeneration billGeneration = new BillGeneration();
-        billGeneration.setBillNo(billingService.nextBillNo());
+        String billNo = billingService.nextBillNo();
+        billGeneration.setBillNo(billNo);
         billGeneration.setStartDate(startDatePicker.getValue().format(formatter));
         billGeneration.setEndDate(endDatePicker.getValue().format(formatter));
         billGeneration.setBillDate(invoiceDatePicker.getValue().format(formatter));
@@ -557,6 +558,8 @@ public class ClientBillPrintingForm extends Div {
         billGeneration.setSgst(Float.valueOf(sgst.getValue()));
         billGeneration.setIgst(Float.valueOf(igst.getValue()));
         billGeneration.setFuelSurcharge(Float.valueOf(fuelSurcharge.getValue()));
+        String billSequence = billNo.split("/")[1]+String.format("%07d", Integer.parseInt(billNo.split("/")[2]));
+        billGeneration.setBillSequence(billSequence);
 
         if (!onlyPreview) {
             billingService.saveAndFlush(billGeneration);

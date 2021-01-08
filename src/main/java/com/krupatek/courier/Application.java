@@ -1,10 +1,16 @@
 package com.krupatek.courier;
 
+import com.krupatek.courier.model.BillGeneration;
+import com.krupatek.courier.service.BillingService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.data.domain.Page;
+
+import javax.annotation.PostConstruct;
 
 /**
  * The entry point of the Spring Boot application.
@@ -26,13 +32,25 @@ public class Application extends SpringBootServletInitializer {
 //
 //    @Autowired
 //    BillingService billingService;
-//
+
 //    @Autowired
 //    AccountCopyService accountCopyService;
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
+
+
+//    @PostConstruct
+//    void billGenerationUpdateSequence(){
+//        Page<BillGeneration> page1 = billingService.findByAndBillNoStartsWithAndBillDateContainingAndClientNameStartsWith(0, 1000, "GST/20-21/", "", "");
+//        page1.get().forEach(billGeneration -> {
+//            String billNo = billGeneration.getBillNo();
+//            String billSequence = billNo.split("/")[1]+String.format("%07d", Integer.parseInt(billNo.split("/")[2]));
+//            billGeneration.setBillSequence(billSequence);
+//            billingService.saveAndFlush(billGeneration);
+//        });
+//    }
 
 //    @PostConstruct
 //    void clientServiceTest(){
