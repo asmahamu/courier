@@ -33,6 +33,7 @@ import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.TreeSet;
 import java.util.logging.Logger;
@@ -56,7 +57,8 @@ public class AccountCopyForm extends Div {
             DateUtils dateUtils,
             NumberUtils numberUtils,
             AccountCopy accountCopy,
-            CourierService courierService) {
+            CourierService courierService,
+            BillingService billingService) {
         super();
 
         boolean isNewAccountCopy = accountCopy.getDocNo() == null || accountCopy.getDocNo().isEmpty();
@@ -335,6 +337,32 @@ public class AccountCopyForm extends Div {
                         }
 
                         accountCopyService.saveAndFlush(accountCopy);
+
+                        if(!isNewAccountCopy && !(accountCopy.getBillNo() == null || accountCopy.getBillNo().isEmpty())){
+
+                            // Update Gross and Net total
+
+                            String billNo = accountCopy.getBillNo();
+                            List<AccountCopy> accountCopyList = accountCopyService.findAllByBillNo(billNo);
+                            Integer grossTotal = accountCopyList.parallelStream().map(AccountCopy::getRate).reduce(0, Math::addExact);
+
+                            Optional<BillGeneration> billGeneration = billingService.findOne(billNo.trim());
+                            if(billGeneration.isPresent()){
+                                BillGeneration billToBeUpdated = billGeneration.get();
+                                Double subTotal = grossTotal +
+                                        billToBeUpdated.getFuelSurcharge() * grossTotal / 100.0;
+                                double netTotal = subTotal +
+                                        billToBeUpdated.getCgst() * subTotal / 100.0 +
+                                        billToBeUpdated.getSgst() * subTotal / 100.0 +
+                                        billToBeUpdated.getIgst() * subTotal / 100.0;
+                                billToBeUpdated.setBillAmount(grossTotal);
+                                billToBeUpdated.setNetAmount(Math.toIntExact((Math.round(netTotal))));
+                                billToBeUpdated.setBalance(Math.toIntExact((Math.round(netTotal))));
+
+                                billingService.saveAndFlush(billToBeUpdated);
+                            }
+                        }
+
                         destinationComboBox.setValue(null);
                         Notification.show("Account copy updated successfully.");
                         if(isNewAccountCopy){

@@ -508,7 +508,8 @@ public class ClientBillPrintingForm extends Div {
                         dateUtils,
                         numberUtils,
                         selectionEvent.getFirstSelectedItem().get(),
-                        courierService);
+                        courierService,
+                        billingService);
                 add(accountCopyForm);
             }
         });

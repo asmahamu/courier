@@ -58,7 +58,8 @@ public class CustomerBillingDetailsForm extends Div {
             CompanyRepository companyRepository,
             DateUtils dateUtils,
             NumberUtils numberUtils,
-            CourierService courierService) {
+            CourierService courierService,
+            BillingService billingService) {
         super();
         VerticalLayout verticalLayout = new VerticalLayout();
         verticalLayout.setMargin(false);
@@ -448,7 +449,8 @@ public class CustomerBillingDetailsForm extends Div {
                         dateUtils,
                         numberUtils,
                         selectionEvent.getFirstSelectedItem().get(),
-                        courierService);
+                        courierService,
+                        billingService);
             }
         });
 
@@ -465,7 +467,8 @@ public class CustomerBillingDetailsForm extends Div {
             DateUtils dateUtils,
             NumberUtils numberUtils,
             AccountCopy accountCopy,
-            CourierService courierService) {
+            CourierService courierService,
+            BillingService billingService) {
         AccountCopyForm accountCopyForm =  new AccountCopyForm(
                 accountCopyService,
                 clientService,
@@ -476,7 +479,8 @@ public class CustomerBillingDetailsForm extends Div {
                 dateUtils,
                 numberUtils,
                 accountCopy,
-                courierService
+                courierService,
+                billingService
                 );
         add(accountCopyForm);
     }

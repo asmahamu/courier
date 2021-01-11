@@ -49,7 +49,8 @@ public class AccountCopyEditor extends Div {
             NetworkService networkService,
             DateUtils dateUtils,
             NumberUtils numberUtils,
-            CourierService courierService) {
+            CourierService courierService,
+            BillingService billingService) {
         super();
         VerticalLayout verticalLayout = new VerticalLayout();
         verticalLayout.setSizeFull();
@@ -213,7 +214,8 @@ public class AccountCopyEditor extends Div {
                     dateUtils,
                     numberUtils,
                     selectionEvent.getFirstSelectedItem().get(),
-                    courierService);
+                    courierService,
+                    billingService);
                 add(accountCopyForm);
             }
         });
@@ -237,7 +239,8 @@ public class AccountCopyEditor extends Div {
                 dateUtils,
                 numberUtils,
                 new AccountCopy(),
-                courierService)));
+                courierService,
+                billingService)));
 
         Button refreshBtn = new Button("Refresh", VaadinIcon.REFRESH.create());
         refreshBtn.setWidth("12.5%");
