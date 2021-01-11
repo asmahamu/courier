@@ -92,7 +92,7 @@ public class PODEntryForm extends Div {
         // Status
         Select<String> statusTypeSelect = new Select<>();
         statusTypeSelect.setLabel("Status : ");
-        statusTypeSelect.setItems("DELIVERED", "SIGN", "STAMP");
+        statusTypeSelect.setItems("DELIVERED", "SIGN", "STAMP", "NOT_DELVD.");
         binder.bind(statusTypeSelect, status -> "", AccountCopy::setStatus);
 
         docNo.addKeyDownListener(Key.ENTER, event ->
