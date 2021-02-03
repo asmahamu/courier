@@ -65,7 +65,7 @@ public class PODEntryForm extends Div {
                    accountCopy = newAccountCopy.get();
                    docNo.setInvalid(false);
                    binder.readBean(accountCopy);
-                   docNo.focus();
+//                   docNo.focus();
                } else {
                    docNo.setInvalid(true);
                    docNo.setErrorMessage("Account Copy doesn't exists with this Doc No.");
