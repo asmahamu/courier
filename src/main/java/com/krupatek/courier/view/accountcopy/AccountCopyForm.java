@@ -31,7 +31,11 @@ import com.vaadin.flow.data.converter.StringToIntegerConverter;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
+import org.aspectj.weaver.ast.Not;
 
+
+import java.awt.*;
+import java.awt.Checkbox;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -97,14 +101,27 @@ public class AccountCopyForm extends Div {
 
         Binder<AccountCopy> binder = new Binder<>(AccountCopy.class);
 
+
+
         // Courier Name
         Select<String> courierSelect = new Select<>();
         courierSelect.setLabel("Courier Name : ");
         TreeSet<String> courierSource = courierService.findAll().parallelStream().map(Courier::getCourierName).collect(Collectors.toCollection(TreeSet::new));
         courierSelect.setItems(courierSource);
         binder.bind(courierSelect, AccountCopy::getToParty, AccountCopy::setToParty);
-        formLayout.add(courierSelect, 3);
-        formLayout.add(new Label(""), 9);
+
+
+        //Reset Destination
+        Select<String> resetDestination = new Select<>();
+        resetDestination.setLabel("Reset Destination");
+        resetDestination.setItems("Yes", "No");
+        resetDestination.setValue("No");
+
+        formLayout.add(courierSelect,2);
+        formLayout.add(new Label(""), 8);
+        formLayout.add(resetDestination,2);
+
+
 
         // Doc Number
         TextField docNo = new TextField();
@@ -363,7 +380,20 @@ public class AccountCopyForm extends Div {
                             }
                         }
 
-                        destinationComboBox.setValue(null);
+                       if( resetDestination.getValue().equals("Yes"))
+                       {
+                            destinationComboBox.setValue(null);
+
+                        }
+
+                        courierSelect.addValueChangeListener(e->{
+                            resetDestination.setValue("Yes");
+
+
+                        });
+
+
+
                         Notification.show("Account copy updated successfully.");
                         if(isNewAccountCopy){
                             docNo.focus();
