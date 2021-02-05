@@ -3,13 +3,14 @@ package com.krupatek.courier.view.clientprofile;
 import com.krupatek.courier.Constants;
 import com.krupatek.courier.model.Client;
 import com.krupatek.courier.service.ClientService;
+import com.krupatek.courier.view.accountcopy.AccountCopyEditor;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H4;
-import com.vaadin.flow.component.html.H5;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.ConfigurableFilterDataProvider;
@@ -21,7 +22,7 @@ import java.util.logging.Logger;
 
 public class ClientProfileEditor extends Div {
 
-    private final int PAGE_SIZE = 50;
+    private final int PAGE_SIZE = 500;
     private String clientNameFilter;
     public  ClientProfileEditor(ClientService clientService){
         VerticalLayout verticalLayout = new VerticalLayout();
@@ -38,16 +39,16 @@ public class ClientProfileEditor extends Div {
         clientName.setValueChangeTimeout(Constants.TEXT_FIELD_TIMEOUT);
         Grid<Client> clientGrid = new Grid<>(Client.class);
         clientGrid.setPageSize(PAGE_SIZE);
-        clientGrid.setColumns("clientCode", "clientName", "city", "phone", "branch_name", "gstNo", "gstEnabled", "fsc");
+        clientGrid.setColumns("clientName", "city", "phone", "branch_name", "gstNo", "gstEnabled", "fsc", "enabled");
 
-        clientGrid.getColumnByKey("clientCode").setWidth("10%").setFlexGrow(0);
-        clientGrid.getColumnByKey("clientName").setWidth("25%").setFlexGrow(0);
-        clientGrid.getColumnByKey("city").setWidth("12%").setFlexGrow(0);
+        clientGrid.getColumnByKey("clientName").setWidth("28%").setFlexGrow(0);
+        clientGrid.getColumnByKey("city").setWidth("10%").setFlexGrow(0);
         clientGrid.getColumnByKey("phone").setWidth("8%").setFlexGrow(0);
-        clientGrid.getColumnByKey("branch_name").setWidth("10%").setFlexGrow(0);
-        clientGrid.getColumnByKey("gstNo").setWidth("15%").setFlexGrow(0);
+        clientGrid.getColumnByKey("branch_name").setWidth("6%").setFlexGrow(0);
+        clientGrid.getColumnByKey("gstNo").setWidth("13%").setFlexGrow(0);
         clientGrid.getColumnByKey("gstEnabled").setWidth("10%").setFlexGrow(0);
         clientGrid.getColumnByKey("fsc").setWidth("10%").setFlexGrow(0);
+        clientGrid.getColumnByKey("enabled").setWidth("10%").setFlexGrow(0);
 
         HeaderRow hr = clientGrid.prependHeaderRow();
         hr.getCell(clientGrid.getColumnByKey("clientName")).setComponent(clientName);
@@ -69,11 +70,14 @@ public class ClientProfileEditor extends Div {
                             offset = offset/PAGE_SIZE;
                             limit = PAGE_SIZE;
 
-                            clientNameFilter = query.getFilter().orElse("");
+                            Logger.getLogger(AccountCopyEditor.class.getName()).info("Corrected offset : " + offset + ", limit :" + limit);
+
+                            String clientNameFilter = query.getFilter().orElse("");
+
+                            Logger.getLogger(ClientProfileEditor.class.getName()).info("Filter is "+clientNameFilter);
+
                             Page<Client> accountCopies = clientService
-                                    .findByClientNameStartsWith(offset, limit, clientNameFilter);
-                            Logger.getLogger(ClientProfileEditor.class.getName()).info("First callback output for  : "+offset+", limit :"+limit);
-                            Logger.getLogger(ClientProfileEditor.class.getName()).info("offset : "+offset+", limit :"+limit);
+                                    .findByClientNameStartsWithOrderByClientName(offset, limit, clientNameFilter);
                             Logger.getLogger(ClientProfileEditor.class.getName()).info("pages: "+accountCopies.getNumber());
                             Logger.getLogger(ClientProfileEditor.class.getName()).info("numberOfElements : "+accountCopies.getNumberOfElements());
                             Logger.getLogger(ClientProfileEditor.class.getName()).info("size : "+accountCopies.getSize());
@@ -90,7 +94,7 @@ public class ClientProfileEditor extends Div {
                             // The number of items to load
                             int limit = query.getLimit();
 
-                            clientNameFilter = query.getFilter().orElse("");
+                            String clientNameFilter = query.getFilter().orElse("");
 
                             return Math.toIntExact(clientService.countByClientNameStartsWith(clientNameFilter));
                         });
@@ -101,7 +105,8 @@ public class ClientProfileEditor extends Div {
         clientGrid.setDataProvider(wrapper);
 
         clientName.addValueChangeListener(event -> {
-            wrapper.setFilter(event.getValue());
+            clientNameFilter = event.getValue();
+            wrapper.setFilter(clientNameFilter);
 //            clientNameFilter = event.getValue();
 //            wrapper.refreshAll();
         });
@@ -114,11 +119,24 @@ public class ClientProfileEditor extends Div {
             add(clientProfileForm);
         });
 
+
         Button addNewBtn = new Button("New Client", VaadinIcon.PLUS.create());
-        addNewBtn.setWidth("100%");
+        addNewBtn.setWidth("12.5%");
         addNewBtn.addClickListener(e -> add(new ClientProfileForm(clientService, new Client())));
 
-        verticalLayout.add(title ,clientGrid, addNewBtn);
+        Button refreshBtn = new Button("Refresh", VaadinIcon.REFRESH.create());
+        refreshBtn.setWidth("12.5%");
+        refreshBtn.addClickListener( e -> {
+            clientNameFilter = "";
+            wrapper.setFilter(clientNameFilter);
+        });
+
+        HorizontalLayout actions = new HorizontalLayout();
+        actions.setWidth("100%");
+        actions.setAlignItems(HorizontalLayout.Alignment.END);
+        actions.add(addNewBtn, refreshBtn);
+
+        verticalLayout.add(title , actions, clientGrid);
 
         add(verticalLayout);
     }

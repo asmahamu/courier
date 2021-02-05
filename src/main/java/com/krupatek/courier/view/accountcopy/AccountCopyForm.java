@@ -19,10 +19,10 @@ import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.H5;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
-import com.vaadin.flow.component.textfield.Autocomplete;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
@@ -33,9 +33,17 @@ import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 import org.aspectj.weaver.ast.Not;
 
+
+import java.awt.*;
+import java.awt.Checkbox;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
+import java.util.TreeSet;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
+import static com.vaadin.flow.component.Key.TAB;
 
 @SpringComponent
 @UIScope
@@ -52,7 +60,9 @@ public class AccountCopyForm extends Div {
             NetworkService networkService,
             DateUtils dateUtils,
             NumberUtils numberUtils,
-            AccountCopy accountCopy) {
+            AccountCopy accountCopy,
+            CourierService courierService,
+            BillingService billingService) {
         super();
 
         boolean isNewAccountCopy = accountCopy.getDocNo() == null || accountCopy.getDocNo().isEmpty();
@@ -90,6 +100,28 @@ public class AccountCopyForm extends Div {
         formLayout.add(title, 12);
 
         Binder<AccountCopy> binder = new Binder<>(AccountCopy.class);
+
+
+
+        // Courier Name
+        Select<String> courierSelect = new Select<>();
+        courierSelect.setLabel("Courier Name : ");
+        TreeSet<String> courierSource = courierService.findAll().parallelStream().map(Courier::getCourierName).collect(Collectors.toCollection(TreeSet::new));
+        courierSelect.setItems(courierSource);
+        binder.bind(courierSelect, AccountCopy::getToParty, AccountCopy::setToParty);
+
+
+        //Reset Destination
+        Select<String> resetDestination = new Select<>();
+        resetDestination.setLabel("Reset Destination");
+        resetDestination.setItems("Yes", "No");
+        resetDestination.setValue("No");
+
+        formLayout.add(courierSelect,2);
+        formLayout.add(new Label(""), 8);
+        formLayout.add(resetDestination,2);
+
+
 
         // Doc Number
         TextField docNo = new TextField();
@@ -138,8 +170,11 @@ public class AccountCopyForm extends Div {
         // Date
         LocalDate currentDate = dateUtils.asLocalDate(accountCopy.getPodDate());
 
-        HorizonDatePicker podDate = new HorizonDatePicker(currentDate, dateUtils, numberUtils);
-        podDate.setWidth("25%");
+        HorizontalLayout podDateLayout = new HorizontalLayout();
+        podDateLayout.setWidth("25%");
+        HorizonDatePicker podDate = new HorizonDatePicker();
+        podDate.wrap(podDateLayout, currentDate, dateUtils, numberUtils);
+        podDateLayout.setAlignItems(FlexComponent.Alignment.BASELINE);
 
 //        DatePicker podDate = new DatePicker();
 //        podDate.setLabel("Date : ");
@@ -164,7 +199,7 @@ public class AccountCopyForm extends Div {
         binder.bind(selectDocumentOrParcelType, AccountCopy::getdP, AccountCopy::setdP);
 
         formLayout.add(docNo, 3);
-        formLayout.add(podDate, 3);
+        formLayout.add(podDateLayout, 3);
         formLayout.add(cashCreditSelect, 2);
         formLayout.add(selectDocumentOrParcelType, 2);
 
@@ -247,20 +282,13 @@ public class AccountCopyForm extends Div {
         binder.forField(receiverName).asRequired("Every Account copy must receiver name").bind(AccountCopy::getReceiverName, AccountCopy::setReceiverName);
         receiverName.setAutoselect(true);
 
-        // Courier Name
-        Select<String> courierSelect = new Select<>();
-        courierSelect.setLabel("Courier Name : ");
-        courierSelect.setItems("TRACKON", "HORIZON", "BLUE DART", "PAFEX", "FEDEX", "PRIME TRACK");
-        courierSelect.setValue("TRACKON");
-        binder.bind(courierSelect, AccountCopy::getToParty, AccountCopy::setToParty);
-
         binder.bind(destinationComboBox, AccountCopy::getDestination,  (e, r) -> {
             e.setDestination(r);
             e.setPlaceCode(r);
             try {
                 if (isDomestic) {
-                    PlaceGeneration placeGeneration = placeGenerationService.findByCityName(accountCopy.getDestination());
-                    e.setStateCode(placeGeneration.getPlaceCode());
+                    Optional<PlaceGeneration> placeGeneration = placeGenerationService.findByCityName(accountCopy.getDestination());
+                    placeGeneration.ifPresent(generation -> e.setStateCode(generation.getPlaceCode()));
                 } else {
                     NetworkId networkId = new NetworkId();
                     networkId.setNetName(courierSelect.getValue());
@@ -274,10 +302,9 @@ public class AccountCopyForm extends Div {
             }
         });
 
-        formLayout.add(pincode, 3);
+        formLayout.add(pincode, 2);
         formLayout.add(receiverName, 4);
-        formLayout.add(courierSelect, 4);
-        formLayout.add(new Label(""), 1);
+//        formLayout.add(new Label(""), 1);
 
 
         // Mode
@@ -306,10 +333,10 @@ public class AccountCopyForm extends Div {
                 AccountCopy::setRate);
         rate.setAutoselect(true);
 
-        formLayout.add(modeSelect, 3);
-        formLayout.add(weight, 3);
-        formLayout.add(rate, 3);
-        formLayout.add(new Label(""), 3);
+        formLayout.add(modeSelect, 2);
+        formLayout.add(weight, 2);
+        formLayout.add(rate, 2);
+//        formLayout.add(new Label(""), 3);
 
         Button save = new Button("Save",
                 event -> {
@@ -327,6 +354,46 @@ public class AccountCopyForm extends Div {
                         }
 
                         accountCopyService.saveAndFlush(accountCopy);
+
+                        if(!isNewAccountCopy && !(accountCopy.getBillNo() == null || accountCopy.getBillNo().isEmpty())){
+
+                            // Update Gross and Net total
+
+                            String billNo = accountCopy.getBillNo();
+                            List<AccountCopy> accountCopyList = accountCopyService.findAllByBillNo(billNo);
+                            Integer grossTotal = accountCopyList.parallelStream().map(AccountCopy::getRate).reduce(0, Math::addExact);
+
+                            Optional<BillGeneration> billGeneration = billingService.findOne(billNo.trim());
+                            if(billGeneration.isPresent()){
+                                BillGeneration billToBeUpdated = billGeneration.get();
+                                Double subTotal = grossTotal +
+                                        billToBeUpdated.getFuelSurcharge() * grossTotal / 100.0;
+                                double netTotal = subTotal +
+                                        billToBeUpdated.getCgst() * subTotal / 100.0 +
+                                        billToBeUpdated.getSgst() * subTotal / 100.0 +
+                                        billToBeUpdated.getIgst() * subTotal / 100.0;
+                                billToBeUpdated.setBillAmount(grossTotal);
+                                billToBeUpdated.setNetAmount(Math.toIntExact((Math.round(netTotal))));
+                                billToBeUpdated.setBalance(Math.toIntExact((Math.round(netTotal))));
+
+                                billingService.saveAndFlush(billToBeUpdated);
+                            }
+                        }
+
+                       if( resetDestination.getValue().equals("Yes"))
+                       {
+                            destinationComboBox.setValue(null);
+
+                        }
+
+                        courierSelect.addValueChangeListener(e->{
+                            resetDestination.setValue("Yes");
+
+
+                        });
+
+
+
                         Notification.show("Account copy updated successfully.");
                         if(isNewAccountCopy){
                             docNo.focus();
@@ -407,8 +474,9 @@ public class AccountCopyForm extends Div {
 
         dialog.open();
 
-        docNo.addKeyDownListener(Key.TAB, event ->
-                podDate.focus());
+//        docNo.addKeyDownListener(Key.TAB, event ->
+//                podDate.focus());
+
 
 //        docNo.addKeyDownListener(Key.ENTER, event ->
 //                podDate.focus());
@@ -423,7 +491,7 @@ public class AccountCopyForm extends Div {
 //        receiverName.addKeyDownListener(Key.ENTER, e -> courierSelect.focus());
 //        courierSelect.addValueChangeListener(e -> modeSelect.focus());
 //        modeSelect.addValueChangeListener(e -> weight.focus());
-        weight.addKeyDownListener(Key.TAB, e -> {
+        weight.addKeyDownListener(TAB, e -> {
             Notification.show("Weight is "+weight.getValue());
             if(!isCashCustomer){
                 calculateRate(rateMasterService, rateIntMasterService, accountCopy, binder, weight, rate, clientsComboBox.getValue());
@@ -515,16 +583,20 @@ public class AccountCopyForm extends Div {
 
     private void updateClientName(Select<String> clientComboBox, RateMasterService rateMasterService, RateIntMasterService rateIntMasterService){
         if(isDomestic){
-            clientComboBox.setItems(rateMasterService.findDistinctClientName());
+            clientComboBox.setItems(rateMasterService.findEnabledDistinctClientName());
         } else {
-            clientComboBox.setItems(rateIntMasterService.findDistinctClientName());
+            clientComboBox.setItems(rateIntMasterService.findEnabledDistinctClientName());
         }
     }
     private void updateDestination(ComboBox<String> destinationComboBox, PlaceGenerationService placeGenerationService, NetworkService networkService){
         if(isDomestic){
-            destinationComboBox.setItems(placeGenerationService.findDistinctCityName());
+            destinationComboBox.setItems(
+                    (ComboBox.ItemFilter<String>) (s, s2) -> s.toLowerCase().startsWith(s2.toLowerCase()),
+                    placeGenerationService.findDistinctCityName());
         } else {
-            destinationComboBox.setItems(networkService.findDistinctCountry());
+            destinationComboBox.setItems(
+                    (ComboBox.ItemFilter<String>) (s, s2) -> s.toLowerCase().startsWith(s2.toLowerCase()),
+                    networkService.findDistinctCountry());
         }
     }
 }

@@ -9,11 +9,18 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.SortedSet;
 
 @Repository
 public interface PlaceGenerationRepository extends JpaRepository<PlaceGeneration, Integer> {
-    PlaceGeneration findByCityName(String cityName);
+
+
+
+
+
+
+    Optional<PlaceGeneration> findByCityName(String cityName);
 
     @Query(value = "SELECT distinct(city_name) FROM easynew.place_generation ORDER BY city_name;", nativeQuery = true)
     SortedSet<String> findDistinctCityNameOrderByCityName();

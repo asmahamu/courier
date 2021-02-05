@@ -50,9 +50,9 @@ public class NumberUtils {
             };
 
 
-    public String convertNumberToWords(Float n) {
+    public String convertNumberToWords(Double n) {
         if (n == 0) return "Zero";
-        input = numToString(Math.round(n));
+        input = numToString(Math.round(n.floatValue()));
         String converted = "";
         int pos = 1;
         boolean hun = false;

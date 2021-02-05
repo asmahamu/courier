@@ -67,6 +67,9 @@ public class BillGeneration implements Cloneable {
     @Column(name = "fuel_surcharge")
     private Float fuelSurcharge;
 
+    @Column(name = "bill_sequence")
+    private String billSequence;
+
     public String getBillNo() {
         return billNo;
     }
@@ -225,5 +228,13 @@ public class BillGeneration implements Cloneable {
 
     public void setFuelSurcharge(Float fuelSurcharge) {
         this.fuelSurcharge = fuelSurcharge;
+    }
+
+    public String getBillSequence() {
+        return billSequence;
+    }
+
+    public void setBillSequence(String billSequence) {
+        this.billSequence = billSequence;
     }
 }

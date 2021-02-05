@@ -34,6 +34,11 @@ public class RateIntMasterServiceImpl implements RateIntMasterService {
     }
 
     @Override
+    public Set<String> findEnabledDistinctClientName() {
+        return rateIntMasterRepository.findEnabledDistinctClientName();
+    }
+
+    @Override
     public Integer latestIntMasterId() {
         return rateIntMasterRepository.latestIntMasterId();
     }

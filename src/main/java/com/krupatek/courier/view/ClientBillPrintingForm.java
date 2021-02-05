@@ -60,7 +60,8 @@ public class ClientBillPrintingForm extends Div {
             CompanyRepository companyRepository,
             BillingService billingService,
             DateUtils dateUtils,
-            NumberUtils numberUtils) {
+            NumberUtils numberUtils,
+            CourierService courierService) {
         super();
         VerticalLayout verticalLayout = new VerticalLayout();
         verticalLayout.setMargin(false);
@@ -401,8 +402,7 @@ public class ClientBillPrintingForm extends Div {
 
         // Last Month
         lastMonthButton.addClickListener( c -> {
-            int month = currentDate.getMonthValue();
-            LocalDate lastMonth = currentDate.withMonth( (month - 1) % 11);
+            LocalDate lastMonth = currentDate.minusMonths(1);
             dateFilter.setStartDate(lastMonth.withDayOfMonth(1));
             dateFilter.setEndDate(lastMonth.withDayOfMonth(lastMonth.lengthOfMonth()));
             binder.readBean(dateFilter);
@@ -507,7 +507,9 @@ public class ClientBillPrintingForm extends Div {
                         networkService,
                         dateUtils,
                         numberUtils,
-                        selectionEvent.getFirstSelectedItem().get());
+                        selectionEvent.getFirstSelectedItem().get(),
+                        courierService,
+                        billingService);
                 add(accountCopyForm);
             }
         });
@@ -540,7 +542,8 @@ public class ClientBillPrintingForm extends Div {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy");
 
         BillGeneration billGeneration = new BillGeneration();
-        billGeneration.setBillNo(billingService.nextBillNo());
+        String billNo = billingService.nextBillNo();
+        billGeneration.setBillNo(billNo);
         billGeneration.setStartDate(startDatePicker.getValue().format(formatter));
         billGeneration.setEndDate(endDatePicker.getValue().format(formatter));
         billGeneration.setBillDate(invoiceDatePicker.getValue().format(formatter));
@@ -556,6 +559,8 @@ public class ClientBillPrintingForm extends Div {
         billGeneration.setSgst(Float.valueOf(sgst.getValue()));
         billGeneration.setIgst(Float.valueOf(igst.getValue()));
         billGeneration.setFuelSurcharge(Float.valueOf(fuelSurcharge.getValue()));
+        String billSequence = billNo.split("/")[1]+String.format("%07d", Integer.parseInt(billNo.split("/")[2]));
+        billGeneration.setBillSequence(billSequence);
 
         if (!onlyPreview) {
             billingService.saveAndFlush(billGeneration);
@@ -676,12 +681,12 @@ public class ClientBillPrintingForm extends Div {
 
     private void updateClientName(Select<String> clientSelect, RateMasterService rateMasterService, RateIntMasterService rateIntMasterService){
         if(isDomestic){
-            Set<String> distinctClientName = rateMasterService.findDistinctClientName();
+            Set<String> distinctClientName = rateMasterService.findEnabledDistinctClientName();
             clientSelect.setItems(distinctClientName);
             currentSelectedItem = distinctClientName.iterator().next();
             clientSelect.setValue(currentSelectedItem);
         } else {
-            Set<String> distinctClientName = rateIntMasterService.findDistinctClientName();
+            Set<String> distinctClientName = rateIntMasterService.findEnabledDistinctClientName();
             clientSelect.setItems(distinctClientName);
             currentSelectedItem = distinctClientName.iterator().next();
             clientSelect.setValue(currentSelectedItem);

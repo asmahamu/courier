@@ -152,11 +152,17 @@ public class ClientProfileForm extends Div {
         Select<String> fuelSurchargeSelect = new Select<>();
         fuelSurchargeSelect.setLabel("Fuel Surcharge : ");
         fuelSurchargeSelect.setItems("Yes", "No");
-        fuelSurchargeSelect.setValue("Yes");
         binder.bind(fuelSurchargeSelect, Client::getFsc, Client::setFsc);
 
         formLayout.add(fuelSurchargeSelect, 1);
-        formLayout.add(new Label());
+
+        // Enabled
+        Select<String> enabled = new Select<>();
+        enabled.setLabel("Enabled : ");
+        enabled.setItems("Yes", "No");
+        binder.bind(enabled, Client::getEnabled, Client::setEnabled);
+
+        formLayout.add(enabled, 1);
 
 /*
         Button add = new Button("Add", event -> {

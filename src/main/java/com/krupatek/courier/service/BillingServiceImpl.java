@@ -35,7 +35,7 @@ public class BillingServiceImpl implements BillingService {
 
     @Override
     public Page<BillGeneration> findByAndBillNoStartsWithAndBillDateContainingAndClientNameStartsWith(int offset, int limit, String billNoFilter, String invoiceDateFilter, String clientNameFilter) {
-        Pageable pageable = PageRequest.of(offset, limit, Sort.by(Sort.Direction.DESC, "billDate"));
+        Pageable pageable = PageRequest.of(offset, limit, Sort.by(Sort.Direction.DESC, "billSequence"));
         return billGenerationRepository.findByAndBillNoStartsWithAndBillDateContainingAndClientNameStartsWith(billNoFilter, invoiceDateFilter, clientNameFilter, pageable);
     }
 

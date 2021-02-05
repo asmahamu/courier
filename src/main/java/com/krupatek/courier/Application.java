@@ -1,23 +1,16 @@
 package com.krupatek.courier;
 
-import com.krupatek.courier.model.AccountCopy;
-import com.krupatek.courier.service.AccountCopyService;
+import com.krupatek.courier.model.BillGeneration;
+import com.krupatek.courier.service.BillingService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jfree.util.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.data.domain.Page;
 
 import javax.annotation.PostConstruct;
-import java.io.*;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
 
 /**
  * The entry point of the Spring Boot application.
@@ -25,7 +18,7 @@ import java.util.Scanner;
 @SpringBootApplication
 public class Application extends SpringBootServletInitializer {
 
-//    Logger log = LogManager.getLogger(Application.class);
+    Logger log = LogManager.getLogger(Application.class);
 
     //
 //    @Autowired
@@ -39,13 +32,42 @@ public class Application extends SpringBootServletInitializer {
 //
 //    @Autowired
 //    BillingService billingService;
-//
+
 //    @Autowired
 //    AccountCopyService accountCopyService;
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
+
+
+//    @PostConstruct
+//    void billGenerationUpdateSequence(){
+//        Page<BillGeneration> page1 = billingService.findByAndBillNoStartsWithAndBillDateContainingAndClientNameStartsWith(0, 1000, "GST/20-21/", "", "");
+//        page1.get().forEach(billGeneration -> {
+//            String billNo = billGeneration.getBillNo();
+//            String billSequence = billNo.split("/")[1]+String.format("%07d", Integer.parseInt(billNo.split("/")[2]));
+//            billGeneration.setBillSequence(billSequence);
+//            billingService.saveAndFlush(billGeneration);
+//        });
+//    }
+
+//    @PostConstruct
+//    void clientServiceTest(){
+//        log.info("===================================================================================================");
+//        clientService.findByClientNameStartsWith(0, 10, "").forEach(e -> log.info(e.getClientName()));
+//        log.info("===================================================================================================");
+//        clientService.findByClientNameStartsWith(1, 10, "").forEach(e -> log.info(e.getClientName()));
+//        log.info("===================================================================================================");
+//        clientService.findByClientNameStartsWith(2, 10, "").forEach(e -> log.info(e.getClientName()));
+//        log.info("===================================================================================================");
+//        clientService.findByClientNameStartsWith(3, 10, "").forEach(e -> log.info(e.getClientName()));
+//        log.info("===================================================================================================");
+//        clientService.findByClientNameStartsWith(4, 10, "").forEach(e -> log.info(e.getClientName()));
+//        log.info("===================================================================================================");
+//        clientService.findByClientNameStartsWith(5, 10, "").forEach(e -> log.info(e.getClientName()));
+//        log.info("===================================================================================================");
+//    }
 
 //    @PostConstruct
 //    void invoiceTest(){

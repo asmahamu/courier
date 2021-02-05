@@ -12,23 +12,27 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import java.time.LocalDate;
 
 @Tag("object")
-public class HorizonDatePicker extends HorizontalLayout implements Focusable<TextField>{
+public class HorizonDatePicker{
 
     private LocalDate currentDate;
     private DateUtils dateUtils;
     private TextField dayTF, monthTF, yearTF;
     private DateChangeListener dateChangeListener;
+    private Label dateSeparator1, dateSeparator2;
 
-    public HorizonDatePicker(LocalDate date, DateUtils dateUtils, NumberUtils numberUtils){
-        setWidth("100%");
+    public HorizonDatePicker(){
+
+    }
+
+    public void wrap(HorizontalLayout horizontalLayout, LocalDate date, DateUtils dateUtils, NumberUtils numberUtils){
 
         this.currentDate = date;
         this.dateUtils = dateUtils;
 
-        Label dateSeperator1 = new Label("-");
-        dateSeperator1.setWidth("15%");
-        Label dateSeperator2 = new Label("-");
-        dateSeperator2.setWidth("15%");
+        dateSeparator1 = new Label("-");
+        dateSeparator1.setWidth("15%");
+        dateSeparator2 = new Label("-");
+        dateSeparator2.setWidth("15%");
 
         dayTF = new TextField("Day : ");
         dayTF.setValueChangeMode(ValueChangeMode.LAZY);
@@ -94,12 +98,7 @@ public class HorizonDatePicker extends HorizontalLayout implements Focusable<Tex
             }
         });
 
-        add(dayTF, dateSeperator1, monthTF, dateSeperator2, yearTF);
-    }
-
-    @Override
-    public void focus() {
-        dayTF.focus();
+        horizontalLayout.add(dayTF, dateSeparator1, monthTF, dateSeparator2, yearTF);
     }
 
     public interface  DateChangeListener{
@@ -121,6 +120,44 @@ public class HorizonDatePicker extends HorizontalLayout implements Focusable<Tex
         this.dateChangeListener = dateChangeListener;
         this.dateChangeListener.changedDate(currentDate);
     }
+    public TextField getDayTF() {
+        return dayTF;
+    }
 
+    public void setDayTF(TextField dayTF) {
+        this.dayTF = dayTF;
+    }
+
+    public TextField getMonthTF() {
+        return monthTF;
+    }
+
+    public void setMonthTF(TextField monthTF) {
+        this.monthTF = monthTF;
+    }
+
+    public TextField getYearTF() {
+        return yearTF;
+    }
+
+    public void setYearTF(TextField yearTF) {
+        this.yearTF = yearTF;
+    }
+
+    public Label getDateSeparator1() {
+        return dateSeparator1;
+    }
+
+    public void setDateSeparator1(Label dateSeparator1) {
+        this.dateSeparator1 = dateSeparator1;
+    }
+
+    public Label getDateSeparator2() {
+        return dateSeparator2;
+    }
+
+    public void setDateSeparator2(Label dateSeparator2) {
+        this.dateSeparator2 = dateSeparator2;
+    }
 
 }

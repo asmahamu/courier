@@ -6,10 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class ClientServiceImpl implements ClientService {
@@ -28,19 +28,24 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
+    public Set<String> findAllEnabled() {
+        return clientRepository.findAllEnabledOrderByClientName();
+    }
+
+    @Override
     public Client saveAndFlush(Client client) {
         return clientRepository.saveAndFlush(client);
     }
 
     @Override
-    public List<Client> findByClientNameStartsWith(String clientName) {
-        return clientRepository.findByClientNameStartsWith(clientName);
+    public List<Client> findByClientNameStartsWithOrderByClientName(String clientName) {
+        return clientRepository.findByClientNameStartsWithOrderByClientName(clientName);
     }
 
     @Override
-    public Page<Client> findByClientNameStartsWith(int offset, int limit, String clientName) {
+    public Page<Client> findByClientNameStartsWithOrderByClientName(int offset, int limit, String clientName) {
         Pageable pageable = PageRequest.of(offset, limit);
-        return clientRepository.findByClientNameStartsWith(clientName, pageable);
+        return clientRepository.findByClientNameStartsWithOrderByClientName(clientName, pageable);
     }
 
     @Override

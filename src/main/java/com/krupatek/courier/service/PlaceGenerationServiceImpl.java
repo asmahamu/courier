@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.SortedSet;
 
 @Service
@@ -16,13 +17,19 @@ public class PlaceGenerationServiceImpl implements PlaceGenerationService {
     PlaceGenerationRepository placeGenerationRepository;
 
     @Override
-    public PlaceGeneration findByCityName(String cityName) {
+    public Optional<PlaceGeneration> findByCityName(String cityName) {
         return placeGenerationRepository.findByCityName(cityName);
     }
 
     @Override
-    public List<PlaceGeneration> findAll() {
-        return placeGenerationRepository.findAll();
+        public List<PlaceGeneration> findAll() {
+            return placeGenerationRepository.findAll();
+    }
+
+
+    @Override
+    public PlaceGeneration saveAndFlush(PlaceGeneration placeGeneration){
+        return placeGenerationRepository.saveAndFlush(placeGeneration);
     }
 
     @Override
