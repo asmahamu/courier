@@ -104,7 +104,19 @@ public class AccountCopyForm extends Div {
         courierSelect.setItems(courierSource);
         binder.bind(courierSelect, AccountCopy::getToParty, AccountCopy::setToParty);
         formLayout.add(courierSelect, 3);
-        formLayout.add(new Label(""), 9);
+        formLayout.add(new Label(""), 6);
+
+        // Reset Destination
+        Select<String> resetDestination = new Select<>();
+        resetDestination.setLabel("Reset Destination after save: ");
+        resetDestination.setItems("Yes", "No");
+        resetDestination.setValue("Yes");
+        resetDestination.setEnabled(isNewAccountCopy);
+        formLayout.add(resetDestination, 3);
+
+        courierSelect.addValueChangeListener(event -> {
+            resetDestination.setValue("Yes");
+        });
 
         // Doc Number
         TextField docNo = new TextField();
@@ -363,7 +375,9 @@ public class AccountCopyForm extends Div {
                             }
                         }
 
-                        destinationComboBox.setValue(null);
+                        if(resetDestination.getValue().equalsIgnoreCase("Yes")) {
+                            destinationComboBox.setValue(null);
+                        }
                         Notification.show("Account copy updated successfully.");
                         if(isNewAccountCopy){
                             docNo.focus();
