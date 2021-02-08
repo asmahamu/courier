@@ -104,19 +104,7 @@ public class AccountCopyForm extends Div {
         courierSelect.setItems(courierSource);
         binder.bind(courierSelect, AccountCopy::getToParty, AccountCopy::setToParty);
         formLayout.add(courierSelect, 3);
-        formLayout.add(new Label(""), 6);
-
-        // Reset Destination
-        Select<String> resetDestination = new Select<>();
-        resetDestination.setLabel("Reset Destination after save: ");
-        resetDestination.setItems("Yes", "No");
-        resetDestination.setValue("Yes");
-        resetDestination.setEnabled(isNewAccountCopy);
-        formLayout.add(resetDestination, 3);
-
-        courierSelect.addValueChangeListener(event -> {
-            resetDestination.setValue("Yes");
-        });
+        formLayout.add(new Label(""), 9);
 
         // Doc Number
         TextField docNo = new TextField();
@@ -333,6 +321,18 @@ public class AccountCopyForm extends Div {
         formLayout.add(rate, 2);
 //        formLayout.add(new Label(""), 3);
 
+        // Reset Destination
+        Select<String> resetDestination = new Select<>();
+        resetDestination.setLabel("Reset Destination after save: ");
+        resetDestination.setItems("Yes", "No");
+        resetDestination.setValue("Yes");
+        resetDestination.setEnabled(isNewAccountCopy);
+
+        courierSelect.addValueChangeListener(event -> {
+            resetDestination.setValue("Yes");
+        });
+
+
         Button save = new Button("Save",
                 event -> {
                     try {
@@ -451,6 +451,8 @@ public class AccountCopyForm extends Div {
         } else {
             actions.add(save, reset, cancel);
             formLayout.add(actions, 4);
+            formLayout.add(new Label(""), 5);
+            formLayout.add(resetDestination, 3);
         }
 
         horizontalLayout.add(formLayout);
