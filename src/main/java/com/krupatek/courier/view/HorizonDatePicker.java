@@ -46,8 +46,12 @@ public class HorizonDatePicker{
                 validDate = 1 <= value && value <= currentDate.lengthOfMonth();
                 if(validDate) {
                     currentDate = currentDate.withDayOfMonth(value);
-                    dateChangeListener.changedDate(currentDate);
+                    if(dateChangeListener != null) {
+                        dateChangeListener.changedDate(currentDate);
+                    }
                     dayTF.setInvalid(false);
+                    monthTF.setInvalid(false);
+                    yearTF.setInvalid(false);
                 } else {
                     dayTF.setInvalid(true);
                     dayTF.setErrorMessage("Doesn't look like a day of a month");
@@ -68,11 +72,15 @@ public class HorizonDatePicker{
                 validMonth = 1 <= value && value <= 12;
                 if(validMonth) {
                     currentDate = currentDate.withMonth(value);
-                    dateChangeListener.changedDate(currentDate);
+                    if(dateChangeListener != null) {
+                        dateChangeListener.changedDate(currentDate);
+                    }
+                    dayTF.setInvalid(false);
                     monthTF.setInvalid(false);
+                    yearTF.setInvalid(false);
                 } else {
                     monthTF.setInvalid(true);
-                    monthTF.setErrorMessage("Doesn't look like a month");
+                    monthTF.setErrorMessage("\"Doesn't look like a month");
                 }
             }
         });
@@ -89,12 +97,56 @@ public class HorizonDatePicker{
                 validYear = 2000 <= value && value <= 2099;
                 if(validYear) {
                     currentDate = currentDate.withYear(value);
-                    dateChangeListener.changedDate(currentDate);
+                    if(dateChangeListener != null) {
+                        dateChangeListener.changedDate(currentDate);
+                    }
+                    dayTF.setInvalid(false);
+                    monthTF.setInvalid(false);
                     yearTF.setInvalid(false);
                 } else {
                     yearTF.setInvalid(true);
                     yearTF.setErrorMessage("Doesn't look like a year");
                 }
+            }
+        });
+        yearTF.addBlurListener(e -> {
+            boolean validDate = numberUtils.isDecimalNumber(dayTF.getValue());
+            boolean validMonth = numberUtils.isDecimalNumber(monthTF.getValue());
+            boolean validYear = numberUtils.isDecimalNumber(yearTF.getValue());
+
+            if(validDate && validMonth && validYear) {
+                int day = Integer.parseInt(dayTF.getValue()); // Check Range
+                validDate = 1 <= day && day <= currentDate.lengthOfMonth();
+
+                int month = Integer.parseInt(monthTF.getValue()); // Check Range
+                validMonth = 1 <= month && month <= 12;
+
+                int year = Integer.parseInt(yearTF.getValue()) + 2000; // Check Range
+                validYear = 2000 <= year && year <= 2099;
+                if(validDate && validMonth && validYear) {
+                    currentDate = currentDate.withYear(year).withMonth(month).withDayOfMonth(day);
+                    if(dateChangeListener != null) {
+                        dateChangeListener.changedDate(currentDate);
+                    }
+                    dayTF.setInvalid(false);
+                    monthTF.setInvalid(false);
+                    yearTF.setInvalid(false);
+                }
+            }
+
+            if(!validDate){
+                dayTF.setInvalid(true);
+                dayTF.setErrorMessage("Doesn't look like a day of a month");
+            }
+
+            if(!validMonth){
+                monthTF.setInvalid(true);
+                monthTF.setErrorMessage("Doesn't look like a month");
+            }
+
+            if(!validYear){
+                yearTF.setInvalid(true);
+                yearTF.setErrorMessage("Doesn't look like a year");
             }
         });
 
