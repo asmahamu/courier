@@ -98,13 +98,13 @@ public class PODEntryForm extends Div {
         docNo.addKeyDownListener(Key.ENTER, event ->
                 statusTypeSelect.focus());
 
-
-        // Receiver's Name
-        TextField receiverName = new TextField();
-        receiverName.setAutoselect(true);
-        receiverName.setLabel("Receiver's Name : ");
-        receiverName.setValueChangeMode(ValueChangeMode.EAGER);
-        binder.bind(receiverName,  status -> "", AccountCopy::setReceiverName);
+//
+//        // Receiver's Name
+//        TextField receiverName = new TextField();
+//        receiverName.setAutoselect(true);
+//        receiverName.setLabel("Receiver's Name : ");
+//        receiverName.setValueChangeMode(ValueChangeMode.EAGER);
+//        binder.bind(receiverName,  status -> "", AccountCopy::setReceiverName);
 
         // Remark
         TextField remark = new TextField();
@@ -113,8 +113,8 @@ public class PODEntryForm extends Div {
         remark.setValueChangeMode(ValueChangeMode.EAGER);
         binder.bind(remark, status -> "", AccountCopy::setRemark);
 
-        receiverName.addKeyDownListener(Key.ENTER, event ->
-                remark.focus());
+//        receiverName.addKeyDownListener(Key.ENTER, event ->
+//                remark.focus());
 
 
         Button save = new Button("Save",
@@ -150,7 +150,7 @@ public class PODEntryForm extends Div {
                 docNo,
                 dateComponent,
                 statusTypeSelect,
-                receiverName, remark, actions);
+                /*receiverName,*/ remark, actions);
 
 
         VerticalLayout rightVerticalLayout = new VerticalLayout();
