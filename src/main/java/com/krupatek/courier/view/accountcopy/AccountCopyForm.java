@@ -355,7 +355,7 @@ public class AccountCopyForm extends Div {
                             // Update Gross and Net total
 
                             String billNo = accountCopy.getBillNo();
-                            List<AccountCopy> accountCopyList = accountCopyService.findAllByBillNo(billNo);
+                            List<AccountCopy> accountCopyList = accountCopyService.findAllByBillNoOrderByPodDate(billNo);
                             Integer grossTotal = accountCopyList.parallelStream().map(AccountCopy::getRate).reduce(0, Math::addExact);
 
                             Optional<BillGeneration> billGeneration = billingService.findOne(billNo.trim());

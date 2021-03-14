@@ -10,25 +10,21 @@ import com.krupatek.courier.service.InvoiceService;
 import com.krupatek.courier.utils.DateUtils;
 import com.krupatek.courier.view.accountcopy.AccountCopyEditor;
 import com.vaadin.flow.component.Html;
-import com.vaadin.flow.component.Key;
-import com.vaadin.flow.component.KeyDownEvent;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.HeaderRow;
-import com.vaadin.flow.component.html.Anchor;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.H4;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.ConfigurableFilterDataProvider;
 import com.vaadin.flow.data.provider.DataProvider;
-import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.server.StreamResource;
 import org.springframework.data.domain.Page;
@@ -36,11 +32,9 @@ import org.springframework.data.domain.Page;
 import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 public class ClientBillRePrintingForm extends Div {
     private ClientBillFilter filter;
@@ -99,9 +93,49 @@ public class ClientBillRePrintingForm extends Div {
         clientBillGrid.addColumn(BillGeneration::getBillAmount).setKey("billAmount").setHeader(new Html("<b>Gross Amount</b>")).setTextAlign(ColumnTextAlign.END).setWidth("16.5%").setFlexGrow(0);
         clientBillGrid.addColumn(BillGeneration::getNetAmount).setKey("netAmount").setHeader(new Html("<b>Net Amount</b>")).setTextAlign(ColumnTextAlign.END).setWidth("16.5%").setFlexGrow(0);
         clientBillGrid.addComponentColumn(item -> new Button("Delete", click -> {
-            billingService.delete(item);
-            accountCopyService.resetBillNo(item.getBillNo());
-            clientBillGrid.getDataProvider().refreshAll();
+            Dialog confirmDialog = new Dialog();
+            confirmDialog.setCloseOnEsc(false);
+            confirmDialog.setCloseOnOutsideClick(false);
+            confirmDialog.setWidth("400px");
+            confirmDialog.setHeight("150px");
+
+            VerticalLayout containerLayout = new VerticalLayout();
+
+            H5 confirmDelete = new H5("Confirm delete");
+            containerLayout.add(confirmDelete);
+            containerLayout.add(new Label("Are you sure you want to delete the item?"));
+
+            HorizontalLayout buttonLayout = new HorizontalLayout();
+            buttonLayout.setWidth("100%");
+
+            Button deleteBtn = new Button("Delete");
+            deleteBtn.addThemeVariants(ButtonVariant.LUMO_ERROR);
+            deleteBtn.setWidth("30%");
+
+            Label emptyLbl = new Label();
+            emptyLbl.setWidth("40%");
+
+            Button cancelBtn = new Button("Cancel");
+            cancelBtn.setWidth("30%");
+            buttonLayout.add(cancelBtn, emptyLbl, deleteBtn);
+
+            containerLayout.add(buttonLayout);
+
+            confirmDialog.add(containerLayout);
+
+            deleteBtn.addClickListener(deleteEvent -> {
+                billingService.delete(item);
+                accountCopyService.resetBillNo(item.getBillNo());
+                clientBillGrid.getDataProvider().refreshAll();
+                confirmDialog.close();
+                Notification.show("Bill no "+item.getBillNo()+" deleted successfully.");
+            });
+
+            cancelBtn.addClickListener( cancelEvent -> {
+                confirmDialog.close();
+            });
+
+            confirmDialog.open();
         })).setWidth("5%");
 
         HeaderRow hr = clientBillGrid.prependHeaderRow();
@@ -186,7 +220,7 @@ public class ClientBillRePrintingForm extends Div {
         clientBillGrid.addSelectionListener(selectionEvent -> {
             if(selectionEvent.isFromClient() && selectionEvent.getFirstSelectedItem().isPresent()) {
                 String invoiceNo = selectionEvent.getFirstSelectedItem().get().getBillNo();
-                List<AccountCopy> accountCopies = accountCopyService.findAllByBillNo(invoiceNo + " ");
+                List<AccountCopy> accountCopies = accountCopyService.findAllByBillNoOrderByPodDate(invoiceNo + " ");
                 Client client = clientService.findAllByClientName(selectionEvent.getFirstSelectedItem().get().getClientName()).get(0);
                 Company company = companyRepository.findAll().get(0);
 

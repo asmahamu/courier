@@ -40,7 +40,7 @@ public interface AccountCopyService {
 
     long totalByDocNoStartsWithAndClientNameStartsWithAndPodDate(String docNo, String clientName, Date podDate);
 
-    List<AccountCopy> findAllByBillNo(String billNo);
+    List<AccountCopy> findAllByBillNoOrderByPodDate(String billNo);
 
     void tagBillNo(String currentSelectedItem, Date fromLocaleDate, Date fromLocaleDate1, String type, String billNo);
 

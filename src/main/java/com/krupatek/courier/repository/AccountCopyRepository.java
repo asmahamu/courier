@@ -26,7 +26,7 @@ public interface AccountCopyRepository extends JpaRepository<AccountCopy, String
     long countByDocNoStartsWith(String docNo);
     long countByDocNoStartsWithAndClientNameStartsWith(String docNo, String clientName);
     long countByDocNoStartsWithAndClientNameStartsWithAndPodDate(String docNo, String clientName, Date podDate);
-    List<AccountCopy> findAllByBillNo(String billNo);
+    List<AccountCopy> findAllByBillNoOrderByPodDate(String billNo);
 
     @Modifying(clearAutomatically = true)
     @Query(value = "UPDATE account_copy SET bill_no =:billNo WHERE client_name = :clientName and type = :type and pod_dt BETWEEN :from AND :to", nativeQuery = true)

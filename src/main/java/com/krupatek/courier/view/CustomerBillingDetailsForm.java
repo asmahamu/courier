@@ -37,6 +37,10 @@ import java.io.*;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 
 @SpringComponent
 @UIScope
@@ -495,9 +499,13 @@ public class CustomerBillingDetailsForm extends Div {
         allByClientNameAndPodDateBetween.clear();
 
         if(currentSelectedItem.equalsIgnoreCase("ALL")){
-            allByClientNameAndPodDateBetween.addAll(accountCopyService.findAllByPodDateBetween(
+            List<AccountCopy> allByPodDateBetween = accountCopyService.findAllByPodDateBetween(
                     fromLocaleDate(dateFilter.getStartDate()),
-                    fromLocaleDate(dateFilter.getEndDate())));
+                    fromLocaleDate(dateFilter.getEndDate()));
+            allByClientNameAndPodDateBetween.addAll(allByPodDateBetween.stream().
+                    sorted(Comparator.comparing(AccountCopy::getPodDate)).
+                    collect(groupingBy(AccountCopy::getClientName, LinkedHashMap::new, toList())).
+                    values().stream().flatMap(Collection::stream).collect(toList()));
         } else {
             allByClientNameAndPodDateBetween.addAll(accountCopyService.findAllByClientNameAndPodDateBetween(
                     currentSelectedItem,

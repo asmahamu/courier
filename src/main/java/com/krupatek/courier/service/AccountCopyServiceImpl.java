@@ -95,8 +95,8 @@ public class AccountCopyServiceImpl implements AccountCopyService {
     }
 
     @Override
-    public List<AccountCopy> findAllByBillNo(String billNo) {
-        return accountCopyRepository.findAllByBillNo(billNo);
+    public List<AccountCopy> findAllByBillNoOrderByPodDate(String billNo) {
+        return accountCopyRepository.findAllByBillNoOrderByPodDate(billNo);
     }
 
     @Transactional
