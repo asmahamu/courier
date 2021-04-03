@@ -15,15 +15,13 @@ import java.util.SortedSet;
 @Repository
 public interface PlaceGenerationRepository extends JpaRepository<PlaceGeneration, Integer> {
 
-
-
-
-
-
     Optional<PlaceGeneration> findByCityName(String cityName);
 
     @Query(value = "SELECT distinct(city_name) FROM easynew.place_generation ORDER BY city_name;", nativeQuery = true)
     SortedSet<String> findDistinctCityNameOrderByCityName();
+
+    @Query(value = "SELECT max(place_id) FROM easynew.place_generation", nativeQuery = true)
+    long findMaxPlaceId();
 
     List<PlaceGeneration> findAllByPlaceCodeOrderByCityName(String placeCode);
 

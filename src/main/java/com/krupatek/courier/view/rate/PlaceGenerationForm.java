@@ -26,18 +26,19 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 public class PlaceGenerationForm extends Div {
-    public PlaceGenerationForm(ZonesService zonesService, PlaceGenerationRepository placeGenerationRepository,
-                               PlaceGenerationService placeGenerationService, StateService stateService){
+    public PlaceGenerationForm(ZonesService zonesService,
+                               PlaceGenerationService placeGenerationService, StateService stateService) {
         super();
 
 
-        Dialog dialog=new Dialog();
+        PlaceGeneration placeGeneration = new PlaceGeneration();
+
+        Dialog dialog = new Dialog();
         HorizontalLayout horizontalLayout = new HorizontalLayout();
         horizontalLayout.setPadding(true);
         horizontalLayout.setMargin(false);
 
-        Binder<PlaceGeneration> binder=new Binder<>(PlaceGeneration.class);
-        PlaceGeneration placeGeneration=placeGenerationRepository.findAll().get(0);
+        Binder<PlaceGeneration> binder = new Binder<>(PlaceGeneration.class);
 
         FormLayout formLayout = new FormLayout();
         formLayout.setResponsiveSteps(
@@ -67,96 +68,88 @@ public class PlaceGenerationForm extends Div {
                 // TODO
                 // PlaceGeneration - cityName
                 Optional<PlaceGeneration> placeGenerationOptional = placeGenerationService.findByCityName(cityName);
-                if(placeGenerationOptional.isPresent()){
+                if (placeGenerationOptional.isPresent()) {
                     // Show error
-                   cityTxt.setInvalid(true);
-                   cityTxt.setErrorMessage("City Already Exists !!");
+                    cityTxt.setInvalid(true);
+                    cityTxt.setErrorMessage("City Already Exists !!");
 
-                }
-                else
-                {
+                } else {
                     cityTxt.setInvalid(false);
-                    binder.readBean(placeGenerationOptional.get());
-
                 }
             }
         });
 //        cityTxt.setValue((placeGeneration.getCityName()));
 
-        ComboBox<String> stateSelect=new ComboBox<>();
+        ComboBox<String> stateSelect = new ComboBox<>();
         stateSelect.setWidth("50");
         stateSelect.setLabel("State :");
-        formLayout.add(stateSelect,2);
+        formLayout.add(stateSelect, 2);
 
-        TreeSet<String> stateSource=stateService.findAll().parallelStream().map(State::getStateName).collect(Collectors.toCollection(TreeSet::new));
+        TreeSet<String> stateSource = stateService.findAll().parallelStream().map(State::getStateName).collect(Collectors.toCollection(TreeSet::new));
         stateSelect.setItems(stateSource);
         //stateSelect.setValue(stateSource.first());
 
 
-
-
-
-
-        ComboBox<String> placeCodeSelect=new ComboBox<>();
+        ComboBox<String> placeCodeSelect = new ComboBox<>();
         placeCodeSelect.setWidth("50");
         placeCodeSelect.setLabel("Place code :");
-        formLayout.add(placeCodeSelect,2);
+        formLayout.add(placeCodeSelect, 2);
 
-        TreeSet<String> placeCodeSource= zonesService.findAll().parallelStream().map(Zones::getZoneCode).collect(Collectors.toCollection(TreeSet::new));
+        TreeSet<String> placeCodeSource = zonesService.findAll().parallelStream().map(Zones::getZoneCode).collect(Collectors.toCollection(TreeSet::new));
         placeCodeSelect.setItems(placeCodeSource);
         //placeCodeSelect.setValue(placeCodeSource.first());
 
 
         //ComboBox<String> stateComboBox = new ComboBox<>();
-     //   stateComboBox.setLabel("State :");
-      //  formLayout.add(stateComboBox,2);
-     //   List<PlaceGeneration> placeGenerationList=placeGenerationService.findAll();
-     //   List<String> stateNameList=new ArrayList<>();
-      //  placeGenerationList.forEach(c->stateNameList.add(c.getStateName()));
+        //   stateComboBox.setLabel("State :");
+        //  formLayout.add(stateComboBox,2);
+        //   List<PlaceGeneration> placeGenerationList=placeGenerationService.findAll();
+        //   List<String> stateNameList=new ArrayList<>();
+        //  placeGenerationList.forEach(c->stateNameList.add(c.getStateName()));
 
-     //   stateComboBox.setItems(stateNameList);
+        //   stateComboBox.setItems(stateNameList);
         //binder.bind(stateComboBox,PlaceGeneration::getStateName,PlaceGeneration::setStateName);
 
-      //  ComboBox<String> placeCodeComboBox = new ComboBox<>();
-      //  placeCodeComboBox.setLabel("Place Code :");
-     //   formLayout.add(placeCodeComboBox,2);
-     //   List<String> placeCodeNameList=new ArrayList<>();
-     //   placeGenerationList.forEach(c->placeCodeNameList.add(c.getPlaceCode()));
+        //  ComboBox<String> placeCodeComboBox = new ComboBox<>();
+        //  placeCodeComboBox.setLabel("Place Code :");
+        //   formLayout.add(placeCodeComboBox,2);
+        //   List<String> placeCodeNameList=new ArrayList<>();
+        //   placeGenerationList.forEach(c->placeCodeNameList.add(c.getPlaceCode()));
 
-     //   placeCodeComboBox.setItems(placeCodeNameList);
-
-
+        //   placeCodeComboBox.setItems(placeCodeNameList);
 
 
-        Button save=new Button("Save",
-                event->{
-            try{
-                binder.writeBean(placeGeneration);
+        Button save = new Button("Save",
+                event -> {
+                    try {
+                        binder.writeBean(placeGeneration);
 
-                placeGeneration.setCityName(cityTxt.getValue());
-                placeGeneration.setStateName(stateSelect.getValue());
-                placeGeneration.setPlaceCode(placeCodeSelect.getValue());
+                        placeGeneration.setPlaceId((int) placeGenerationService.nextPlaceId());
+                        placeGeneration.setCityName(cityTxt.getValue());
+                        placeGeneration.setStateName(stateSelect.getValue());
+                        placeGeneration.setPlaceCode(placeCodeSelect.getValue());
+
+                        Notification.show("PlaceGeneration : ");
+
+                        placeGenerationService.saveAndFlush(placeGeneration);
+                        Notification.show("Details saved successfully");
 
 
-                placeGenerationService.saveAndFlush(placeGeneration);
-                Notification.show("Details saved successfully");
+                    } catch (ValidationException e) {
+                        Notification.show("Details could not be saved");
 
-
-            }catch (ValidationException e){
-                Notification.show("Details could not be saved");
-
-            }
+                    }
 
                 });
 
-        Button cancel=new Button("Cancel",event->dialog.close());
+        Button cancel = new Button("Cancel", event -> dialog.close());
 
 
-      HorizontalLayout actions=new HorizontalLayout();
-      actions.add(save,cancel);
-      formLayout.add(actions,4);
-      horizontalLayout.add(formLayout);
-      dialog.add(horizontalLayout);
-      dialog.open();
+        HorizontalLayout actions = new HorizontalLayout();
+        actions.add(save, cancel);
+        formLayout.add(actions, 4);
+        horizontalLayout.add(formLayout);
+        dialog.add(horizontalLayout);
+        dialog.open();
     }
 }

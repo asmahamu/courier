@@ -262,10 +262,11 @@ public class AccountCopyForm extends Div {
         TextField receiverName = new TextField();
         receiverName.setLabel("Receiver Name : ");
         receiverName.setValueChangeMode(ValueChangeMode.ON_CHANGE);
-        binder.forField(receiverName).asRequired("Every Account copy must receiver name").bind(AccountCopy::getReceiverName, AccountCopy::setReceiverName);
+        binder.forField(receiverName).asRequired("Every Account copy must have receiver name").bind(AccountCopy::getReceiverName, AccountCopy::setReceiverName);
         receiverName.setAutoselect(true);
 
-        binder.bind(destinationComboBox, AccountCopy::getDestination,  (e, r) -> {
+        binder.forField(destinationComboBox).asRequired("Every Account copy must have the destination").
+        bind(AccountCopy::getDestination,  (e, r) -> {
             e.setDestination(r);
             e.setPlaceCode(r);
             try {
@@ -375,8 +376,8 @@ public class AccountCopyForm extends Div {
                             }
                         }
 
-                        if(resetDestination.getValue().equalsIgnoreCase("Yes")) {
-                            destinationComboBox.setValue(null);
+                        if(isNewAccountCopy && resetDestination.getValue().equalsIgnoreCase("Yes")) {
+                            destinationComboBox.setValue("");
                         }
                         Notification.show("Account copy updated successfully.");
                         if(isNewAccountCopy){

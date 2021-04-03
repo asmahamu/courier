@@ -311,11 +311,19 @@ public class CustomerBillingDetailsForm extends Div {
             embeddedPdfVLayout.setSizeFull();
 
                 Company company = companyRepository.findAll().get(0);
-                List<AccountCopy> allByClientNameAndPodDateBetween = accountCopyService.findAllByPodDateBetween(
+
+            List<AccountCopy> allByClientNameAndPodDateBetween = accountCopyService.findAllByPodDateBetween(
                         fromLocaleDate(dateFilter.getStartDate()),
                         fromLocaleDate(dateFilter.getEndDate()));
+
             try {
-                File pdfFile = dailyReportService.generateInvoiceFor(company, allByClientNameAndPodDateBetween, grossTotalTF.getValue(),  Locale.getDefault());
+                Comparator<AccountCopy> compareByName = Comparator
+                        .comparing(AccountCopy::getClientName)
+                        .thenComparing(AccountCopy::getDocNo);
+
+
+                File pdfFile = dailyReportService.generateInvoiceFor(company, allByClientNameAndPodDateBetween.stream().
+                        sorted(compareByName).collect(toList()), grossTotalTF.getValue(),  Locale.getDefault());
                 StreamResource resource = new StreamResource("Daily-Report.pdf", () -> {
                     try {
                         return new FileInputStream(pdfFile);
@@ -502,10 +510,11 @@ public class CustomerBillingDetailsForm extends Div {
             List<AccountCopy> allByPodDateBetween = accountCopyService.findAllByPodDateBetween(
                     fromLocaleDate(dateFilter.getStartDate()),
                     fromLocaleDate(dateFilter.getEndDate()));
+            Comparator<AccountCopy> compareByName = Comparator
+                    .comparing(AccountCopy::getClientName)
+                    .thenComparing(AccountCopy::getDocNo);
             allByClientNameAndPodDateBetween.addAll(allByPodDateBetween.stream().
-                    sorted(Comparator.comparing(AccountCopy::getPodDate)).
-                    collect(groupingBy(AccountCopy::getClientName, LinkedHashMap::new, toList())).
-                    values().stream().flatMap(Collection::stream).collect(toList()));
+                    sorted(compareByName).collect(toList()));
         } else {
             allByClientNameAndPodDateBetween.addAll(accountCopyService.findAllByClientNameAndPodDateBetween(
                     currentSelectedItem,

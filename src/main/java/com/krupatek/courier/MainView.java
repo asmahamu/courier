@@ -152,7 +152,7 @@ public class MainView extends VerticalLayout {
 
         rateMaster.getSubMenu().addItem(getMenuItemComponent(null, "Place Generation"), e -> {
             component.removeAll();
-            component.add(new PlaceGenerationForm(zonesService,placeGenerationRepository,placeGenerationService,stateService));
+            component.add(new PlaceGenerationForm(zonesService, placeGenerationService, stateService));
 
         });
 

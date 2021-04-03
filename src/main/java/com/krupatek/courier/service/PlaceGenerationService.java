@@ -15,4 +15,5 @@ public interface PlaceGenerationService {
     SortedSet<String> findDistinctCityName();
     List<PlaceGeneration> findAllByPlaceCode(String value);
     void updateCityWithZone(String cityName, String placeCode);
+    long nextPlaceId();
 }

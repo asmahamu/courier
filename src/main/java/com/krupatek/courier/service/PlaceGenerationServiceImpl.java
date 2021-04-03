@@ -47,4 +47,9 @@ public class PlaceGenerationServiceImpl implements PlaceGenerationService {
     public void updateCityWithZone(String cityName, String placeCode) {
         placeGenerationRepository.updateCityWithZone(cityName, placeCode);
     }
+
+    @Override
+    public long nextPlaceId(){
+        return placeGenerationRepository.findMaxPlaceId()+1;
+    }
 }
