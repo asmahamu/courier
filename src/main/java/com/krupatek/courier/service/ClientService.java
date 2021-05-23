@@ -16,4 +16,6 @@ public interface ClientService {
     List<Client> findByClientNameStartsWithOrderByClientName(String clientName);
     Page<Client> findByClientNameStartsWithOrderByClientName(int offset, int limit, String clientName);
     long countByClientNameStartsWith(String clientName);
+    long nextClientCode();
+    void delete(Client client);
 }

@@ -41,7 +41,7 @@ public class DateUtils {
         int year = localDate.getYear() % 100;
         String billYearTag = "";
 
-        if(month > 3){
+        if(month > 4){
             billYearTag = year+"-"+(year + 1);
         } else {
             billYearTag = (year - 1)+"-"+year;

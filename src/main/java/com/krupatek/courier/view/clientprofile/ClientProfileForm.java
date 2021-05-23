@@ -5,13 +5,16 @@ import com.krupatek.courier.service.ClientService;
 import com.krupatek.courier.utils.ViewUtils;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H5;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
@@ -28,6 +31,12 @@ public class ClientProfileForm extends Div {
         super();
 
         Dialog dialog = new Dialog();
+
+        boolean isNewClientEntry= client.getClientCode() == null || client.getClientCode() == 0;
+        if(isNewClientEntry){
+            client.setClientCode((int) clientService.nextClientCode());
+        }
+
 
         this.client = client;
         HorizontalLayout horizontalLayout = new HorizontalLayout();
@@ -174,9 +183,9 @@ public class ClientProfileForm extends Div {
                 event -> {
                     try {
                         binder.writeBean(this.client);
-                        clientService.saveAndFlush(this.client
-                        );
+                        clientService.saveAndFlush(this.client);
                         Notification.show("Client profile updated successfully.");
+                        dialog.close();
                         // A real application would also save the updated person
                         // using the application's backend
                     } catch (ValidationException e) {
@@ -189,9 +198,66 @@ public class ClientProfileForm extends Div {
 
         Button cancel = new Button("Cancel", event -> dialog.close());
 
+        Button delete = new Button("Delete", event -> {
+            Dialog confirmDialog = new Dialog();
+            confirmDialog.setCloseOnEsc(false);
+            confirmDialog.setCloseOnOutsideClick(false);
+            confirmDialog.setWidth("400px");
+            confirmDialog.setHeight("150px");
+
+            VerticalLayout containerLayout = new VerticalLayout();
+
+            H5 confirmDelete = new H5("Confirm delete");
+            containerLayout.add(confirmDelete);
+            containerLayout.add(new Label("Are you sure you want to delete the item?"));
+
+            HorizontalLayout buttonLayout = new HorizontalLayout();
+            buttonLayout.setWidth("100%");
+
+            Button deleteBtn = new Button("Delete");
+            deleteBtn.addThemeVariants(ButtonVariant.LUMO_ERROR);
+            deleteBtn.setWidth("30%");
+
+            Label emptyLbl = new Label();
+            emptyLbl.setWidth("40%");
+
+            Button cancelBtn = new Button("Cancel");
+            cancelBtn.setWidth("30%");
+            buttonLayout.add(cancelBtn, emptyLbl, deleteBtn);
+
+            containerLayout.add(buttonLayout);
+
+            confirmDialog.add(containerLayout);
+
+            deleteBtn.addClickListener(deleteEvent -> {
+                try {
+                    binder.writeBean(this.client);
+                    clientService.delete(client);
+                    Notification.show("Client profile deleted successfully.");
+                    confirmDialog.close();
+                    dialog.close();
+                } catch (ValidationException e) {
+                    Notification.show("Client could not be deleted, " +
+                            "please check error messages for each field.");
+                }
+            });
+            deleteBtn.addThemeVariants(ButtonVariant.LUMO_ERROR);
+
+
+            cancelBtn.addClickListener( cancelEvent -> {
+                confirmDialog.close();
+            });
+
+            confirmDialog.open();
+        });
+
         HorizontalLayout actions = new HorizontalLayout();
         actions.setAlignItems(HorizontalLayout.Alignment.END);
-        actions.add(save, reset, cancel);
+        if(isNewClientEntry) {
+            actions.add(save, reset, cancel);
+        } else {
+            actions.add(save,reset, cancel, delete);
+        }
         formLayout.add(actions);
         horizontalLayout.add(formLayout);
         dialog.add(horizontalLayout);

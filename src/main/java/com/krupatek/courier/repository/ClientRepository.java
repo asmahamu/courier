@@ -20,4 +20,7 @@ public interface ClientRepository extends JpaRepository<Client, Integer> {
 
     @Query(value = "SELECT client_name FROM easynew.client where enabled = 'Yes' ORDER BY client_name;", nativeQuery = true)
     Set<String> findAllEnabledOrderByClientName();
+
+    @Query(value = "SELECT max(client_code) FROM easynew.client", nativeQuery = true)
+    long findMaxClientId();
 }

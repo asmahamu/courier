@@ -52,4 +52,16 @@ public class ClientServiceImpl implements ClientService {
     public long countByClientNameStartsWith(String clientName) {
         return clientRepository.countByClientNameStartsWith(clientName);
     }
+
+    @Override
+    public long nextClientCode() {
+        return clientRepository.findMaxClientId()+1;
+    }
+
+    @Override
+    public void delete(Client client) {
+        clientRepository.delete(client);
+    }
+
+
 }
